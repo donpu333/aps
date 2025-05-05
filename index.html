@@ -3,117 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crypto Tools</title>
+    <title>Crypto Tools - Калькулятор</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
 </head>
-<body>
-    <nav class="nav-container" id="navContainer">
-        <div class="menu-hint">Меню</div>
-        <div class="nav-content">
-            <div>
-                <a class="nav-link" onclick="loadPage('calculator')">Калькулятор</a>
-                <a class="nav-link" onclick="loadPage('widgets')">Виджеты</a>
-            </div>
-            <div class="auth-links" id="authLinks">
-                <button class="auth-btn" onclick="showModal('loginModal')">Вход</button>
-                <button class="auth-btn" onclick="showModal('registerModal')">Регистрация</button>
-            </div>
-            <div class="user-info" id="userInfo" style="display: none;">
-                <span class="user-email" id="userEmail"></span>
-                <button class="auth-btn" onclick="logout()">Выход</button>
+<body class="bg-dark">
+    <!-- Навигация -->
+    <nav class="site-nav">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="nav-link active">
+                        <i class="fas fa-calculator mr-2"></i>Калькулятор
+                    </a>
+                    <a href="widgets.html" class="nav-link">
+                        <i class="fas fa-chart-line mr-2"></i>Виджеты
+                    </a>
+                </div>
+                <div class="flex items-center">
+                    <div id="connectionStatus" class="connection-status">
+                        <div class="status-dot status-connecting"></div>
+                        <span>Подключение к Binance...</span>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
 
-    <div class="content-wrapper">
-        <div class="tab-content">
-            <div id="calculator" class="tab-pane active">
-                <div class="loader">Загрузка калькулятора...</div>
-            </div>
-            <div id="widgets" class="tab-pane">
-                <div class="loader">Загрузка виджетов...</div>
-            </div>
+    <!-- Основное содержимое калькулятора -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="main-container">
+            <!-- Весь остальной код калькулятора из вашего файла "калькулятор.txt" -->
+            <!-- Вставьте сюда ВСЕ содержимое из <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"> до </div> -->
+            <!-- Не копируйте DOCTYPE, head и body из калькулятора.txt, только внутреннее содержимое -->
         </div>
     </div>
 
-    <!-- Модальные окна -->
-    <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="hideModal('loginModal')">&times;</span>
-            <h2>Вход</h2>
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="loginEmail">Email</label>
-                    <input type="email" id="loginEmail" required placeholder="Ваш email">
-                </div>
-                <div class="form-group">
-                    <label for="loginPassword">Пароль</label>
-                    <input type="password" id="loginPassword" required placeholder="Ваш пароль">
-                </div>
-                <div class="remember-me">
-                    <input type="checkbox" id="rememberMe" checked>
-                    <label for="rememberMe">Запомнить меня</label>
-                </div>
-                <div class="error-message" id="loginError"></div>
-                <div class="form-actions">
-                    <button type="button" class="auth-btn" onclick="login()">Войти</button>
-                </div>
-                <div style="text-align: center; margin-top: 1rem;">
-                    <a href="#" onclick="showForgotPassword()" style="color: #4285f4; font-size: 0.9rem;">Забыли пароль?</a>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="registerModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="hideModal('registerModal')">&times;</span>
-            <h2>Регистрация</h2>
-            <form id="registerForm">
-                <div class="form-group">
-                    <label for="registerUsername">Имя пользователя</label>
-                    <input type="text" id="registerUsername" required placeholder="Придумайте логин">
-                </div>
-                <div class="form-group">
-                    <label for="registerEmail">Email</label>
-                    <input type="email" id="registerEmail" required placeholder="Ваш email">
-                </div>
-                <div class="form-group">
-                    <label for="registerPassword">Пароль</label>
-                    <input type="password" id="registerPassword" required placeholder="Не менее 6 символов">
-                </div>
-                <div class="form-group">
-                    <label for="registerConfirmPassword">Подтвердите пароль</label>
-                    <input type="password" id="registerConfirmPassword" required placeholder="Повторите пароль">
-                </div>
-                <div class="error-message" id="registerError"></div>
-                <div class="success-message" id="registerSuccess"></div>
-                <div class="form-actions">
-                    <button type="button" class="auth-btn" onclick="register()">Зарегистрироваться</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="forgotPasswordModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="hideModal('forgotPasswordModal')">&times;</span>
-            <h2>Восстановление пароля</h2>
-            <form id="forgotPasswordForm">
-                <div class="form-group">
-                    <label for="forgotEmail">Email</label>
-                    <input type="email" id="forgotEmail" required placeholder="Ваш email">
-                </div>
-                <div class="error-message" id="forgotError"></div>
-                <div class="success-message" id="forgotSuccess"></div>
-                <div class="form-actions">
-                    <button type="button" class="auth-btn" onclick="sendResetLink()">Отправить ссылку</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <script src="script.js"></script>
+    <!-- Скрипты -->
+    <script>
+        // Навигация - активная ссылка
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function() {
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+    <!-- Все остальные скрипты из калькулятора.txt -->
+    <!-- Вставьте ВСЕ содержимое script из калькулятора.txt сюда -->
 </body>
 </html>
