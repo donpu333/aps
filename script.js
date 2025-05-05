@@ -1,3 +1,5 @@
+// script.js
+
 // Состояние приложения
 const state = {
     currentUser: null,
@@ -13,9 +15,13 @@ const userEmail = document.getElementById('userEmail');
 
 // Инициализация при загрузке
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM загружен');
     // Проверяем авторизацию в localStorage
     const savedUser = localStorage.getItem('cryptoAppUser');
     const savedSettings = localStorage.getItem('cryptoAppSettings');
+
+    console.log('Сохраненный пользователь:', savedUser);
+    console.log('Сохраненные настройки:', savedSettings);
 
     if (savedUser) {
         state.currentUser = JSON.parse(savedUser);
@@ -35,24 +41,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Функции для работы с модальными окнами
 function showModal(id) {
-    document.getElementById(id).style.display = 'block';
-    // Очищаем сообщения при открытии
-    if (id === 'registerModal') {
-        document.getElementById('registerError').textContent = '';
-        document.getElementById('registerSuccess').textContent = '';
-        document.getElementById('registerForm').reset();
-    } else if (id === 'loginModal') {
-        document.getElementById('loginError').textContent = '';
-        document.getElementById('loginForm').reset();
-    } else if (id === 'forgotPasswordModal') {
-        document.getElementById('forgotError').textContent = '';
-        document.getElementById('forgotSuccess').textContent = '';
-        document.getElementById('forgotPasswordForm').reset();
+    const modal = document.getElementById(id);
+    if (modal) {
+        modal.style.display = 'block';
+        // Очищаем сообщения при открытии
+        if (id === 'registerModal') {
+            document.getElementById('registerError').textContent = '';
+            document.getElementById('registerSuccess').textContent = '';
+            document.getElementById('registerForm').reset();
+        } else if (id === 'loginModal') {
+            document.getElementById('loginError').textContent = '';
+            document.getElementById('loginForm').reset();
+        } else if (id === 'forgotPasswordModal') {
+            document.getElementById('forgotError').textContent = '';
+            document.getElementById('forgotSuccess').textContent = '';
+            document.getElementById('forgotPasswordForm').reset();
+        }
     }
 }
 
 function hideModal(id) {
-    document.getElementById(id).style.display = 'none';
+    const modal = document.getElementById(id);
+    if (modal) {
+        modal.style.display = 'none';
+    }
 }
 
 function showForgotPassword() {
@@ -266,10 +278,12 @@ function loadPage(page) {
                     return response.text();
                 })
                 .then(html => {
+                    console.log('Страница загружена:', html);
                     activeTab.innerHTML = html;
                     state.pageCache[page] = html;
                 })
                 .catch(error => {
+                    console.error('Ошибка загрузки страницы:', error);
                     activeTab.innerHTML = `<div class="error">Не удалось загрузить страницу: ${error.message}</div>`;
                 });
         } else if (state.pageCache[page]) {
@@ -340,4 +354,3 @@ function checkRememberMe() {
         }
     }
 }
-
