@@ -3,55 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crypto Tools - Калькулятор</title>
+    <title>Crypto Tools</title>
+    <!-- Стили из оригинального калькулятора -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Ваши оригинальные стили из калькулятора */
+        :root {
+            --primary: #2196F3;
+            --secondary: #1976D2;
+            --accent-red: #C62828;
+            --accent-green: #2E7D32;
+            /* ... остальные переменные ... */
+        }
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: var(--dark);
+            color: var(--light);
+        }
+        /* ... все остальные стили из калькулятора.txt ... */
+    </style>
 </head>
 <body class="bg-dark">
-    <!-- Навигация -->
-    <nav class="site-nav">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center space-x-4">
-                    <a href="index.html" class="nav-link active">
-                        <i class="fas fa-calculator mr-2"></i>Калькулятор
-                    </a>
-                    <a href="widgets.html" class="nav-link">
-                        <i class="fas fa-chart-line mr-2"></i>Виджеты
-                    </a>
-                </div>
-                <div class="flex items-center">
-                    <div id="connectionStatus" class="connection-status">
-                        <div class="status-dot status-connecting"></div>
-                        <span>Подключение к Binance...</span>
-                    </div>
-                </div>
+    <!-- Навигация (как в вашем оригинальном коде) -->
+    <nav class="nav-container" id="navContainer">
+        <div class="menu-hint">Меню</div>
+        <div class="nav-content">
+            <div>
+                <a class="nav-link" onclick="showSection('calculator')">Калькулятор</a>
+                <a class="nav-link" onclick="showSection('widgets')">Виджеты</a>
+            </div>
+            <div class="auth-links" id="authLinks">
+                <button class="auth-btn" onclick="showModal('loginModal')">Вход</button>
+                <button class="auth-btn" onclick="showModal('registerModal')">Регистрация</button>
+            </div>
+            <div class="user-info" id="userInfo" style="display: none;">
+                <span class="user-email" id="userEmail"></span>
+                <button class="auth-btn" onclick="logout()">Выход</button>
             </div>
         </div>
     </nav>
 
-    <!-- Основное содержимое калькулятора -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="main-container">
-            <!-- Весь остальной код калькулятора из вашего файла "калькулятор.txt" -->
-            <!-- Вставьте сюда ВСЕ содержимое из <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"> до </div> -->
-            <!-- Не копируйте DOCTYPE, head и body из калькулятора.txt, только внутреннее содержимое -->
+    <!-- Основной контент -->
+    <div class="content-wrapper">
+        <!-- Калькулятор (оригинальный код) -->
+        <div id="calculator" class="content-section active">
+            <!-- ВСТАВЬТЕ СЮДА ВЕСЬ КОД ИЗ ВАШЕГО ФАЙЛА "калькулятор.txt" -->
+            <!-- Начиная от <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"> -->
+            <!-- И заканчивая </div> перед <script> -->
+        </div>
+
+        <!-- Виджеты (оригинальный код из widgets.html) -->
+        <div id="widgets" class="content-section">
+            <div class="widget calendar-container">
+                <iframe src="https://sslecal2.investing.com?columns=exc_flags,exc_currency,exc_importance,exc_actual,exc_forecast,exc_previous&importance=2,3&features=datepicker,timezone&countries=4,72,37,56,5&calType=week&timeZone=18&lang=7" 
+                        width="100%" height="467" frameborder="0"></iframe>
+            </div>
+            <div class="widget fear-greed-container">
+                <fear-and-greed theme="dark" direction="horizontal"></fear-and-greed>
+            </div>
         </div>
     </div>
 
-    <!-- Скрипты -->
+    <!-- Модальные окна регистрации/входа (ваш оригинальный код) -->
+    <div id="loginModal" class="modal">...</div>
+    <div id="registerModal" class="modal">...</div>
+    <div id="forgotPasswordModal" class="modal">...</div>
+
+    <!-- Все скрипты -->
+    <script src="https://static.coinstats.app/widgets/v5/cs-widget.js"></script>
     <script>
-        // Навигация - активная ссылка
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', function() {
-                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-                this.classList.add('active');
+        // 1. Ваши оригинальные скрипты из калькулятора.txt
+        // ВСТАВЬТЕ СЮДА ВЕСЬ <script> КОД ИЗ "калькулятор.txt"
+
+        // 2. Скрипты для навигации и модальных окон
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
             });
-        });
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        function showModal(id) {
+            document.getElementById(id).style.display = 'block';
+        }
+
+        function hideModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
     </script>
-    <!-- Все остальные скрипты из калькулятора.txt -->
-    <!-- Вставьте ВСЕ содержимое script из калькулятора.txt сюда -->
 </body>
 </html>
