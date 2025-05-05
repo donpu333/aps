@@ -3,83 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Финансовые виджеты</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 650px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        .widget {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 15px;
-            width: 100%;
-        }
-        .widget-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            color: #333;
-        }
-        .calendar-container {
-            width: 100%;
-        }
-        .fear-greed-container {
-            width: 100%;
-            margin-top: 10px;
-        }
-    </style>
+    <title>Crypto Tools - Виджеты</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-    <div class="container">
-        <div class="widget calendar-container">
-            <div class="widget-title">Экономический календарь</div>
-            <iframe
-                src="https://sslecal2.investing.com?columns=exc_flags,exc_currency,exc_importance,exc_actual,exc_forecast,exc_previous&importance=2,3&features=datepicker,timezone&countries=4,72,37,56,5&calType=week&timeZone=18&lang=7"
-                width="650"
-                height="467"
-                frameborder="0"
-                allowtransparency="true"
-                marginwidth="0"
-                marginheight="0">
-            </iframe>
-            <div class="poweredBy" style="font-family: Arial, Helvetica, sans-serif;">
-                <span style="font-size: 11px;color: #333333;text-decoration: none;">
-                    Экономический онлайн-календарь от
-                    <a href="https://ru.investing.com/" rel="nofollow" target="_blank" style="font-size: 11px;color: #06529D; font-weight: bold;" class="underline_link">Investing.com Россия</a>, ведущего финансового портала
-                </span>
+<body class="bg-dark">
+    <!-- Навигация -->
+    <nav class="site-nav">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="nav-link">
+                        <i class="fas fa-calculator mr-2"></i>Калькулятор
+                    </a>
+                    <a href="widgets.html" class="nav-link active">
+                        <i class="fas fa-chart-line mr-2"></i>Виджеты
+                    </a>
+                </div>
             </div>
         </div>
+    </nav>
 
-        <div class="widget fear-greed-container">
-            <div class="widget-title">Индекс страха и жадности</div>
-            <script async src="https://static.coinstats.app/widgets/v5/cs-widget.js"></script>
-            <fear-and-greed
-                theme="dark"
-                direction="horizontal"
-                background="#0D0D0D"
-                is-market-sentiment-visible="true"
-                is-last-updated-visible="true"
-                title-color="#FFFFFF"
-                chart-indicator-one-color="#F02935"
-                chart-indicator-two-color="#F07D29"
-                chart-indicator-three-color="#9ACB82"
-                chart-indicator-four-color="#34B349"
-                subtitle-color="#999999"
-                last-updated-color="#999999"
-                arrow-color="#262626">
-            </fear-and-greed>
+    <!-- Основное содержимое виджетов -->
+    <div class="container mx-auto px-4 py-8">
+        <div class="widget-container">
+            <div class="widget calendar-container">
+                <div class="widget-title">Экономический календарь</div>
+                <iframe 
+                    src="https://sslecal2.investing.com?columns=exc_flags,exc_currency,exc_importance,exc_actual,exc_forecast,exc_previous&importance=2,3&features=datepicker,timezone&countries=4,72,37,56,5&calType=week&timeZone=18&lang=7" 
+                    width="100%" 
+                    height="467" 
+                    frameborder="0" 
+                    allowtransparency="true" 
+                    marginwidth="0" 
+                    marginheight="0">
+                </iframe>
+                <div class="poweredBy">
+                    <span>Экономический онлайн-календарь от 
+                        <a href="https://ru.investing.com/" rel="nofollow" target="_blank">Investing.com Россия</a>
+                    </span>
+                </div>
+            </div>
+
+            <div class="widget fear-greed-container mt-8">
+                <div class="widget-title">Индекс страха и жадности</div>
+                <script async src="https://static.coinstats.app/widgets/v5/cs-widget.js"></script>
+                <fear-and-greed 
+                    theme="dark"
+                    direction="horizontal"
+                    background="#0D0D0D"
+                    is-market-sentiment-visible="true"
+                    is-last-updated-visible="true"
+                    title-color="#FFFFFF"
+                    chart-indicator-one-color="#F02935"
+                    chart-indicator-two-color="#F07D29"
+                    chart-indicator-three-color="#9ACB82"
+                    chart-indicator-four-color="#34B349"
+                    subtitle-color="#999999"
+                    last-updated-color="#999999"
+                    arrow-color="#262626">
+                </fear-and-greed>
+            </div>
         </div>
     </div>
+
+    <script>
+        // Навигация - активная ссылка
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function() {
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
 </body>
 </html>
