@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Tools</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'JetBrains Mono', monospace;
+            transition: margin-top 0.3s ease;
+            background-color: #121212;
+            color: #ffffff;
+        }
+        
+        .nav-container {
+            background: #1E1E1E;
+            height: 25px;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            z-index: 100;
+            transition: height 0.3s ease;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: flex-start;
+            cursor: pointer;
+        }
+        
+        .nav-container.expanded {
+            height: 65px;
+        }
+        
+        .nav-content {
+            display: flex;
+            gap: 1.5rem;
+            padding: 1rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            align-items: center;
+            width: 100%;
+        }
+        
+        .nav-container.expanded .nav-content {
+            opacity: 1;
+        }
+        
+        .nav-link {
+            color: #ffffff;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 1.1rem;
+            padding: 0.6rem 1.2rem;
+            transition: 0.2s;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+        
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .content-wrapper {
+            margin-top: 25px;
+            height: calc(100vh - 25px);
+            transition: margin-top 0.3s ease;
+        }
+        
+        .nav-container.expanded ~ .content-wrapper {
+            margin-top: 65px;
+            height: calc(100vh - 65px);
+        }
+        
+        .menu-hint {
+            color: #ffffff;
+            padding: 0.3rem 1rem;
+            font-size: 0.9rem;
+            opacity: 0.7;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            align-self: center;
+        }
+        
+        .nav-container.expanded .menu-hint {
+            opacity: 0;
+        }
+        
+        .auth-links {
+            display: flex;
+            gap: 1.5rem;
+            margin-left: auto;
+            align-items: center;
+        }
+        
+        .auth-btn {
+            background: #4285f4;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+        }
+        
+        .auth-btn:hover {
+            background: #357abd;
+        }
+        
+        /* Модальные окна */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 101;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            overflow: auto;
+        }
+        
+        .modal-content {
+            background-color: #1E1E1E;
+            margin: 100px auto;
+            padding: 25px;
+            border-radius: 8px;
+            width: 350px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            position: relative;
+        }
+        
+        .close-btn {
+            color: #aaa;
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close-btn:hover {
+            color: #fff;
+        }
+        
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 0.7rem;
+            border-radius: 4px;
+            border: 1px solid #333;
+            background-color: #252525;
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+        }
+        
+        .form-actions {
+            margin-top: 1.5rem;
+        }
+        
+        .error-message {
+            color: #ff4444;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            min-height: 20px;
+        }
+        
+        .success-message {
+            color: #00C851;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            min-height: 20px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .user-email {
+            color: #4285f4;
+            font-weight: bold;
+        }
+        
+        /* Анимация модального окна */
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .modal-content {
+            animation: modalFadeIn 0.3s ease-out;
+        }
+        
+        /* Чекбокс "Запомнить меня" */
+        .remember-me {
+            display: flex;
+            align-items: center;
+            margin: 1rem 0;
+        }
+        
+        .remember-me input {
+            margin-right: 0.5rem;
+        }
+        
+        /* Стили для вкладок */
+        .tab-content {
+            height: 100%;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+        
+        .tab-pane {
+            display: none;
+            height: 100%;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .tab-pane.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .loader {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            font-size: 1.2rem;
+        }
+        
+        .error {
+            color: #ff4444;
+            padding: 1rem;
+            background: rgba(255, 68, 68, 0.1);
+            border-radius: 4px;
+        }
+        
+        .page-content {
+            padding: 1rem;
+        }
+        
+        .page-title {
+            margin-top: 0;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #333;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-container" id="navContainer">
+        <div class="menu-hint">Меню</div>
+        <div class="nav-content">
+            <div>
+                <a class="nav-link" onclick="loadPage('calculator')">Калькулятор</a>
+                <a class="nav-link" onclick="loadPage('widgets')">виджеты</a>
+               
+            </div>
+            <div class="auth-links" id="authLinks">
+                <button class="auth-btn" onclick="showModal('loginModal')">Вход</button>
+                <button class="auth-btn" onclick="showModal('registerModal')">Регистрация</button>
+            </div>
+            <div class="user-info" id="userInfo" style="display: none;">
+                <span class="user-email" id="userEmail"></span>
+                <button class="auth-btn" onclick="logout()">Выход</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="content-wrapper">
+        <div class="tab-content">
+            <div id="calculator" class="tab-pane active">
+                <div class="loader">Загрузка калькулятора...</div>
+            </div>
+            <div id="charts" class="tab-pane">
+                <div class="loader">Загрузка графиков...</div>
+            </div>
+            <div id="alerts" class="tab-pane">
+                <div class="loader">Загрузка алертов...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно входа -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="hideModal('loginModal')">&times;</span>
+            <h2>Вход</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" required placeholder="Ваш email">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Пароль</label>
+                    <input type="password" id="loginPassword" required placeholder="Ваш пароль">
+                </div>
+                <div class="remember-me">
+                    <input type="checkbox" id="rememberMe" checked>
+                    <label for="rememberMe">Запомнить меня</label>
+                </div>
+                <div class="error-message" id="loginError"></div>
+                <div class="form-actions">
+                    <button type="button" class="auth-btn" onclick="login()">Войти</button>
+                </div>
+                <div style="text-align: center; margin-top: 1rem;">
+                    <a href="#" onclick="showForgotPassword()" style="color: #4285f4; font-size: 0.9rem;">Забыли пароль?</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Модальное окно регистрации -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="hideModal('registerModal')">&times;</span>
+            <h2>Регистрация</h2>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="registerUsername">Имя пользователя</label>
+                    <input type="text" id="registerUsername" required placeholder="Придумайте логин">
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" required placeholder="Ваш email">
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Пароль</label>
+                    <input type="password" id="registerPassword" required placeholder="Не менее 6 символов">
+                </div>
+                <div class="form-group">
+                    <label for="registerConfirmPassword">Подтвердите пароль</label>
+                    <input type="password" id="registerConfirmPassword" required placeholder="Повторите пароль">
+                </div>
+                <div class="error-message" id="registerError"></div>
+                <div class="success-message" id="registerSuccess"></div>
+                <div class="form-actions">
+                    <button type="button" class="auth-btn" onclick="register()">Зарегистрироваться</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Модальное окно восстановления пароля -->
+    <div id="forgotPasswordModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="hideModal('forgotPasswordModal')">&times;</span>
+            <h2>Восстановление пароля</h2>
+            <form id="forgotPasswordForm">
+                <div class="form-group">
+                    <label for="forgotEmail">Email</label>
+                    <input type="email" id="forgotEmail" required placeholder="Ваш email">
+                </div>
+                <div class="error-message" id="forgotError"></div>
+                <div class="success-message" id="forgotSuccess"></div>
+                <div class="form-actions">
+                    <button type="button" class="auth-btn" onclick="sendResetLink()">Отправить ссылку</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Состояние приложения
+        const state = {
+            currentUser: null,
+            settings: {},
+            pageCache: {}
+        };
+
+        // DOM элементы
+        const navContainer = document.getElementById('navContainer');
+        const authLinks = document.getElementById('authLinks');
+        const userInfo = document.getElementById('userInfo');
+        const userEmail = document.getElementById('userEmail');
+        
+        // Инициализация при загрузке
+        document.addEventListener('DOMContentLoaded', () => {
+            // Проверяем авторизацию в localStorage
+            const savedUser = localStorage.getItem('cryptoAppUser');
+            const savedSettings = localStorage.getItem('cryptoAppSettings');
+            
+            if (savedUser) {
+                state.currentUser = JSON.parse(savedUser);
+                if (savedSettings) {
+                    state.settings = JSON.parse(savedSettings);
+                }
+                updateUI();
+            }
+            
+            // Загружаем начальную страницу
+            const initialPage = state.currentUser ? state.settings.lastPage || 'calculator' : 'calculator';
+            loadPage(initialPage);
+            
+            // Проверяем "Запомнить меня"
+            checkRememberMe();
+        });
+
+        // Функции для работы с модальными окнами
+        function showModal(id) {
+            document.getElementById(id).style.display = 'block';
+            // Очищаем сообщения при открытии
+            if (id === 'registerModal') {
+                document.getElementById('registerError').textContent = '';
+                document.getElementById('registerSuccess').textContent = '';
+                document.getElementById('registerForm').reset();
+            } else if (id === 'loginModal') {
+                document.getElementById('loginError').textContent = '';
+                document.getElementById('loginForm').reset();
+            } else if (id === 'forgotPasswordModal') {
+                document.getElementById('forgotError').textContent = '';
+                document.getElementById('forgotSuccess').textContent = '';
+                document.getElementById('forgotPasswordForm').reset();
+            }
+        }
+        
+        function hideModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+        
+        function showForgotPassword() {
+            hideModal('loginModal');
+            showModal('forgotPasswordModal');
+        }
+
+        // Хеширование пароля (упрощенное для демонстрации)
+        function hashPassword(password) {
+            return btoa(unescape(encodeURIComponent(password))); // В реальном приложении используйте более надежное хеширование
+        }
+
+        // Регистрация нового пользователя
+        function register() {
+            const username = document.getElementById('registerUsername').value.trim();
+            const email = document.getElementById('registerEmail').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+            const errorElement = document.getElementById('registerError');
+            const successElement = document.getElementById('registerSuccess');
+            
+            // Валидация
+            if (!username || !email || !password || !confirmPassword) {
+                errorElement.textContent = 'Все поля обязательны для заполнения';
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                errorElement.textContent = 'Пароли не совпадают';
+                return;
+            }
+            
+            if (password.length < 6) {
+                errorElement.textContent = 'Пароль должен содержать минимум 6 символов';
+                return;
+            }
+            
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                errorElement.textContent = 'Введите корректный email';
+                return;
+            }
+            
+            // Проверяем, есть ли уже такой пользователь
+            const users = JSON.parse(localStorage.getItem('cryptoAppUsers')) || {};
+            if (users[email]) {
+                errorElement.textContent = 'Пользователь с таким email уже существует';
+                return;
+            }
+            
+            // Регистрируем пользователя
+            users[email] = { 
+                username,
+                email, 
+                password: hashPassword(password),
+                createdAt: new Date().toISOString(),
+                isVerified: false,
+                verifyToken: Math.random().toString(36).substring(2, 15)
+            };
+            localStorage.setItem('cryptoAppUsers', JSON.stringify(users));
+            
+            // Показываем сообщение об успехе
+            errorElement.textContent = '';
+            successElement.textContent = 'Регистрация прошла успешно!';
+            
+            // Автоматически входим через 1.5 секунды
+            setTimeout(() => {
+                state.currentUser = { username, email };
+                localStorage.setItem('cryptoAppUser', JSON.stringify(state.currentUser));
+                
+                // Создаем настройки по умолчанию
+                state.settings = {
+                    theme: 'dark',
+                    lastPage: 'calculator',
+                    alerts: []
+                };
+                localStorage.setItem('cryptoAppSettings', JSON.stringify(state.settings));
+                
+                updateUI();
+                hideModal('registerModal');
+                loadPage(state.settings.lastPage);
+            }, 1500);
+        }
+
+        // Вход пользователя
+        function login() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const remember = document.getElementById('rememberMe').checked;
+            const errorElement = document.getElementById('loginError');
+            
+            // Проверяем пользователя
+            const users = JSON.parse(localStorage.getItem('cryptoAppUsers')) || {};
+            const user = users[email];
+            
+            if (!user || user.password !== hashPassword(password)) {
+                errorElement.textContent = 'Неверный email или пароль';
+                return;
+            }
+            
+            if (!user.isVerified) {
+                errorElement.textContent = 'Подтвердите почту!';
+                return;
+            }
+            
+            // Входим
+            state.currentUser = { username: user.username, email };
+            localStorage.setItem('cryptoAppUser', JSON.stringify(state.currentUser));
+            
+            // Загружаем настройки
+            const allSettings = JSON.parse(localStorage.getItem('cryptoAppAllSettings')) || {};
+            state.settings = allSettings[email] || {
+                theme: 'dark',
+                lastPage: 'calculator',
+                alerts: []
+            };
+            
+            if (remember) {
+                const rememberToken = Math.random().toString(36).substring(2, 15);
+                user.rememberToken = hashPassword(rememberToken);
+                localStorage.setItem('cryptoAppUsers', JSON.stringify(users));
+                
+                // Устанавливаем куку на 30 дней
+                const date = new Date();
+                date.setTime(date.getTime() + (30 * 24 * 60 * 60 * 1000));
+                document.cookie = `remember=${rememberToken}; expires=${date.toUTCString()}; path=/`;
+            }
+            
+            updateUI();
+            hideModal('loginModal');
+            loadPage(state.settings.lastPage);
+        }
+
+        // Отправка ссылки для сброса пароля
+        function sendResetLink() {
+            const email = document.getElementById('forgotEmail').value.trim();
+            const errorElement = document.getElementById('forgotError');
+            const successElement = document.getElementById('forgotSuccess');
+            
+            if (!email) {
+                errorElement.textContent = 'Введите email';
+                return;
+            }
+            
+            // Проверяем существование пользователя
+            const users = JSON.parse(localStorage.getItem('cryptoAppUsers')) || {};
+            const user = users[email];
+            
+            if (!user) {
+                errorElement.textContent = 'Пользователь с таким email не найден';
+                return;
+            }
+            
+            // Генерируем токен сброса
+            user.resetToken = Math.random().toString(36).substring(2, 15);
+            user.resetTokenExpires = new Date(Date.now() + 3600000).toISOString(); // 1 час
+            localStorage.setItem('cryptoAppUsers', JSON.stringify(users));
+            
+            errorElement.textContent = '';
+            successElement.textContent = 'Ссылка для сброса пароля отправлена на ваш email';
+            
+            console.log(`Ссылка для сброса пароля: https://yourdomain.com/reset_password.html?token=${user.resetToken}&email=${encodeURIComponent(email)}`);
+        }
+
+        // Выход пользователя
+        function logout() {
+            state.currentUser = null;
+            localStorage.removeItem('cryptoAppUser');
+            
+            // Удаляем куку "Запомнить меня"
+            document.cookie = 'remember=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            
+            updateUI();
+            loadPage('calculator');
+        }
+
+        // Обновление интерфейса
+        function updateUI() {
+            if (state.currentUser) {
+                authLinks.style.display = 'none';
+                userInfo.style.display = 'flex';
+                userEmail.textContent = state.currentUser.username || state.currentUser.email;
+                
+                // Применяем настройки
+                document.body.style.backgroundColor = state.settings.theme === 'dark' ? '#121212' : '#f5f5f5';
+                document.body.style.color = state.settings.theme === 'dark' ? '#ffffff' : '#000000';
+            } else {
+                authLinks.style.display = 'flex';
+                userInfo.style.display = 'none';
+            }
+        }
+
+        // Загрузка страницы
+        function loadPage(page) {
+            // Скрываем все вкладки
+            document.querySelectorAll('.tab-pane').forEach(tab => {
+                tab.classList.remove('active');
+                tab.style.display = 'none';
+            });
+            
+            // Показываем выбранную вкладку
+            const activeTab = document.getElementById(page);
+            if (activeTab) {
+                activeTab.classList.add('active');
+                activeTab.style.display = 'block';
+                
+                // Загружаем контент, если он еще не загружен
+                if (!state.pageCache[page] && activeTab.innerHTML.trim() === '<div class="loader">Загрузка...</div>') {
+                    fetch(`${page}.html`)
+                        .then(response => {
+                            if (!response.ok) throw new Error('Страница не найдена');
+                            return response.text();
+                        })
+                        .then(html => {
+                            activeTab.innerHTML = html;
+                            state.pageCache[page] = html;
+                        })
+                        .catch(error => {
+                            activeTab.innerHTML = `<div class="error">Не удалось загрузить страницу: ${error.message}</div>`;
+                        });
+                } else if (state.pageCache[page]) {
+                    activeTab.innerHTML = state.pageCache[page];
+                }
+            }
+            
+            // Сворачиваем меню
+            navContainer.classList.remove('expanded');
+            
+            // Сохраняем последнюю страницу в настройках
+            if (state.currentUser) {
+                state.settings.lastPage = page;
+                const allSettings = JSON.parse(localStorage.getItem('cryptoAppAllSettings')) || {};
+                allSettings[state.currentUser.email] = state.settings;
+                localStorage.setItem('cryptoAppAllSettings', JSON.stringify(allSettings));
+            }
+        }
+
+        // Открытие/закрытие меню по клику
+        navContainer.addEventListener('click', function(e) {
+            if (e.target === navContainer) {
+                navContainer.classList.toggle('expanded');
+            }
+        });
+        
+        // Закрытие модальных окон при клике вне их области
+        window.addEventListener('click', function(event) {
+            if (event.target.className === 'modal') {
+                event.target.style.display = 'none';
+            }
+        });
+        
+        // Проверка куки "Запомнить меня" при загрузке
+        function checkRememberMe() {
+            const cookies = document.cookie.split(';');
+            let rememberToken = null;
+            
+            for (const cookie of cookies) {
+                const [name, value] = cookie.trim().split('=');
+                if (name === 'remember') {
+                    rememberToken = value;
+                    break;
+                }
+            }
+            
+            if (rememberToken) {
+                const users = JSON.parse(localStorage.getItem('cryptoAppUsers')) || {};
+                
+                for (const email in users) {
+                    const user = users[email];
+                    if (user.rememberToken && user.rememberToken === hashPassword(rememberToken)) {
+                        state.currentUser = { username: user.username, email };
+                        localStorage.setItem('cryptoAppUser', JSON.stringify(state.currentUser));
+                        
+                        // Загружаем настройки
+                        const allSettings = JSON.parse(localStorage.getItem('cryptoAppAllSettings')) || {};
+                        state.settings = allSettings[email] || {
+                            theme: 'dark',
+                            lastPage: 'calculator',
+                            alerts: []
+                        };
+                        
+                        updateUI();
+                        loadPage(state.settings.lastPage);
+                        break;
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html> что в этом коде?удали кнопки график и алерты добавь кноку виджет.и как реализована регестрация где сохраняются данные?мне нужно чтоб было две странице калькулятор и виджет
