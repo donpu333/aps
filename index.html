@@ -825,6 +825,21 @@
             initRiskCalculator();
         });
 
+        // Загрузка данных для виджета
+        function loadWidgetData() {
+            // Здесь можно добавить реальный API запрос
+            setTimeout(() => {
+                document.getElementById('btc-widget').innerHTML = `
+                    <p>Текущий курс: $<span id="btc-price">42,000</span></p>
+                    <p>Изменение за 24ч: <span style="color: #00C851">+2.5%</span></p>
+                `;
+                
+                document.getElementById('eth-widget').innerHTML = `
+                    <p>Текущий курс: $<span id="eth-price">2,800</span></p>
+                    <p>Изменение за 24ч: <span style="color: #00C851">+1.8%</span></p>
+                `;
+            }, 1000);
+        }
 
         // Функции для работы с модальными окнами
         function showModal(id) {
