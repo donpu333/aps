@@ -763,6 +763,16 @@
             background-color: var(--secondary);
             border-color: var(--secondary);
         }
+
+        /* History badge styles */
+        .history-badge {
+            background-color: #6B7280;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            margin-left: 0.5rem;
+        }
     </style>
 </head>
 <body class="bg-dark">
@@ -956,6 +966,9 @@
                                 </button>
                                 <button id="showTriggeredAlerts" class="compact-filter-btn bg-gray-700 text-gray-300">
                                     Сработавшие
+                                </button>
+                                <button id="showHistoryAlerts" class="compact-filter-btn bg-gray-700 text-gray-300">
+                                    История
                                 </button>
                                 <button id="showAllAlerts" class="compact-filter-btn bg-gray-700 text-gray-300">
                                     Все
@@ -1252,9 +1265,19 @@
         let alertCooldowns = {};
         let apiManager;
         
-        // Проверка поддержки localStorage
-        if (!window.localStorage) {
-            alert("Ваш браузер не поддерживает localStorage. Функция сохранения алертов недоступна.");
+        // Функция для сохранения сработавшего алерта в историю
+        function saveTriggeredAlert(alert) {
+            const history = JSON.parse(localStorage.getItem('triggeredAlertsHistory') || '[]');
+            history.push({
+                ...alert,
+                triggeredAt: new Date().toISOString()
+            });
+            localStorage.setItem('triggeredAlertsHistory', JSON.stringify(history));
+        }
+
+        // Функция для загрузки истории сработавших алертов
+        function loadTriggeredAlerts() {
+            return JSON.parse(localStorage.getItem('triggeredAlertsHistory') || '[]');
         }
 
         // Сохраняем состояние приложения
@@ -1779,62 +1802,67 @@
                 activeBtn.classList.remove('bg-gray-700', 'text-gray-300');
             }
             
-            if (userAlerts.length === 0) {
-                alertsContainer.innerHTML = `
-                    <div class="text-center text-gray-400 py-4">
-                        У вас пока нет алертов
-                    </div>
-                `;
-                return;
-            }
-            
             let filteredAlerts = [];
-            switch(filter) {
-                case 'active':
-                    filteredAlerts = userAlerts.filter(alert => !alert.triggered);
-                    break;
-                case 'triggered':
-                    filteredAlerts = userAlerts.filter(alert => alert.triggered);
-                    break;
-                case 'all':
-                    filteredAlerts = [...userAlerts];
-                    break;
-            }
-
-            if (filteredAlerts.length === 0) {
-                let message = '';
+            
+            if (filter === 'history') {
+                filteredAlerts = loadTriggeredAlerts();
+                
+                if (filteredAlerts.length === 0) {
+                    alertsContainer.innerHTML = `
+                        <div class="text-center text-gray-400 py-4">
+                            История срабатываний пуста
+                        </div>
+                    `;
+                    return;
+                }
+            } else {
                 switch(filter) {
                     case 'active':
-                        message = 'У вас пока нет активных алертов';
+                        filteredAlerts = userAlerts.filter(alert => !alert.triggered);
                         break;
                     case 'triggered':
-                        message = 'У вас пока нет сработавших алертов';
+                        filteredAlerts = userAlerts.filter(alert => alert.triggered);
                         break;
                     case 'all':
-                        message = 'У вас пока нет алертов';
+                        filteredAlerts = [...userAlerts];
                         break;
                 }
-                alertsContainer.innerHTML = `
-                    <div class="text-center text-gray-400 py-4">
-                        ${message}
-                    </div>
-                `;
-                return;
+
+                if (filteredAlerts.length === 0) {
+                    let message = '';
+                    switch(filter) {
+                        case 'active':
+                            message = 'У вас пока нет активных алертов';
+                            break;
+                        case 'triggered':
+                            message = 'У вас пока нет сработавших алертов';
+                            break;
+                        case 'all':
+                            message = 'У вас пока нет алертов';
+                            break;
+                    }
+                    alertsContainer.innerHTML = `
+                        <div class="text-center text-gray-400 py-4">
+                            ${message}
+                        </div>
+                    `;
+                    return;
+                }
             }
             
             filteredAlerts.sort((a, b) => {
-                if (a.triggered !== b.triggered) {
-                    return a.triggered ? 1 : -1;
-                }
-                return new Date(b.createdAt) - new Date(a.createdAt);
+                const dateA = a.triggeredAt || a.createdAt;
+                const dateB = b.triggeredAt || b.createdAt;
+                return new Date(dateB) - new Date(dateA);
             });
 
             let html = '';
             
             filteredAlerts.forEach(alert => {
-                const date = new Date(alert.createdAt);
-                const isTriggered = alert.triggered;
+                const date = new Date(alert.triggeredAt || alert.createdAt);
+                const isTriggered = alert.triggered || filter === 'history';
                 const isUp = alert.condition === '>';
+                const isHistory = filter === 'history';
                 
                 html += `
                     <div id="alert-${alert.id}" class="alert-card rounded-md p-4 shadow-sm">
@@ -1847,6 +1875,7 @@
                                             <div class="alert-price">
                                                 <span>${alert.condition} ${alert.value}</span>
                                                 <i class="fas ${isUp ? 'fa-caret-up price-up' : 'fa-caret-down price-down'} alert-direction"></i>
+                                                ${isHistory ? '<span class="history-badge">История</span>' : ''}
                                             </div>
                                         </div>
                                     </div>
@@ -1855,11 +1884,12 @@
                                         Тип: ${alert.type} | 
                                         Уведомлений: ${alert.notificationCount === 0 ? '∞' : alert.notificationCount} |
                                         Сработал: ${alert.triggeredCount || 0} раз |
-                                        Создан: ${date.toLocaleString()}
+                                        ${isHistory ? 'Сработал: ' : 'Создан: '}${date.toLocaleString()}
                                     </p>
                                 </div>
                             </div>
                             <div class="flex space-x-2">
+                                ${!isHistory ? `
                                 <button onclick="deleteAlert(${alert.id})" class="text-accent-red hover:text-red-300">
                                     <i class="fas fa-times"></i>
                                 </button>
@@ -1867,6 +1897,7 @@
                                 <button onclick="editAlert(${alert.id})" class="text-primary hover:text-blue-300">
                                     <i class="fas fa-edit"></i>
                                 </button>
+                                ` : ''}
                                 ` : ''}
                             </div>
                         </div>
@@ -2104,14 +2135,10 @@
                             alert.triggeredCount++;
                             alertCooldowns[cooldownKey] = now;
                             
-                            if (alert.notificationCount > 0 && alert.triggeredCount >= alert.notificationCount) {
-                                alert.triggered = true;
-                            }
+                            // Сохраняем в историю
+                            saveTriggeredAlert(alert);
                             
-                            userAlerts = userAlerts.map(a => a.id === alert.id ? alert : a);
-                            saveAppState();
-                            
-                            // Show notification in UI
+                            // Показываем уведомление в интерфейсе
                             showNotification('Алерт сработал', `Символ: ${alert.symbol}\nУсловие: ${alert.condition} ${alert.value}\nТекущая цена: ${price}`);
                         }
                     }
@@ -2493,6 +2520,11 @@
             const showTriggeredAlertsBtn = document.getElementById('showTriggeredAlerts');
             if (showTriggeredAlertsBtn) {
                 showTriggeredAlertsBtn.addEventListener('click', () => loadUserAlerts('triggered'));
+            }
+            
+            const showHistoryAlertsBtn = document.getElementById('showHistoryAlerts');
+            if (showHistoryAlertsBtn) {
+                showHistoryAlertsBtn.addEventListener('click', () => loadUserAlerts('history'));
             }
             
             const showAllAlertsBtn = document.getElementById('showAllAlerts');
