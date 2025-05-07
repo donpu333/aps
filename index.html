@@ -670,17 +670,130 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* Menu styles */
+        .menu-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .menu-button {
+            background-color: transparent;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 8px 12px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .menu-button:hover {
+            color: var(--primary);
+        }
+
+        .menu-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #1E1E1E;
+            min-width: 200px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 4px;
+            border: 1px solid #3D3D3D;
+        }
+
+        .menu-content.show {
+            display: block;
+        }
+
+        .menu-item {
+            color: white;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+            transition: background-color 0.3s;
+        }
+
+        .menu-item:hover {
+            background-color: #2D2D2D;
+            color: var(--primary);
+        }
+
+        .menu-divider {
+            height: 1px;
+            background-color: #3D3D3D;
+            margin: 4px 0;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 8px;
+            margin-left: auto;
+        }
+
+        .auth-button {
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .login-button {
+            background-color: transparent;
+            color: white;
+            border: 1px solid #3D3D3D;
+        }
+
+        .login-button:hover {
+            background-color: rgba(33, 150, 243, 0.1);
+            border-color: var(--primary);
+        }
+
+        .register-button {
+            background-color: var(--primary);
+            color: white;
+            border: 1px solid var(--primary);
+        }
+
+        .register-button:hover {
+            background-color: var(--secondary);
+            border-color: var(--secondary);
+        }
     </style>
 </head>
 <body class="bg-dark">
     <nav class="shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
+            <div class="flex justify-between h-16 items-center">
                 <div class="flex items-center">
                     <i class="fas fa-bell text-primary text-xl mr-2"></i>
                     <span class="text-xl font-bold text-light">Crypto Tools</span>
                 </div>
                 <div class="flex items-center space-x-4">
+                    <div class="menu-container">
+                        <button class="menu-button" id="menuButton">
+                            <i class="fas fa-bars mr-2"></i>Меню
+                        </button>
+                        <div class="menu-content" id="menuContent">
+                            <a href="index.html" class="menu-item">
+                                <i class="fas fa-calculator mr-2"></i>Калькулятор
+                            </a>
+                            <a href="widgets.html" class="menu-item">
+                                <i class="fas fa-chart-line mr-2"></i>Виджет
+                            </a>
+                            <div class="menu-divider"></div>
+                            <a href="#" class="menu-item" onclick="showLoginForm()">
+                                <i class="fas fa-sign-in-alt mr-2"></i>Вход
+                            </a>
+                            <a href="#" class="menu-item" onclick="showRegisterForm()">
+                                <i class="fas fa-user-plus mr-2"></i>Регистрация
+                            </a>
+                        </div>
+                    </div>
                     <div id="connectionStatus" class="connection-status">
                         <div class="status-dot status-connecting"></div>
                         <span>Подключение к Binance...</span>
@@ -769,7 +882,7 @@
                                 <option value="2">2 раза (интервал 30 сек)</option>
                                 <option value="3">3 раза (интервал 30 сек)</option>
                                 <option value="4">4 раза (интервал 30 сек)</option>
-                                <option value="5">5 раз (интервал 30 сек)</option>
+                                <option value="5">5 раза (интервал 30 сек)</option>
                                 <option value="0">Пока не отключу (интервал 30 сек)</option>
                             </select>
                         </div>
@@ -1057,6 +1170,60 @@
                 <p class="text-gray-300 mb-4">Для создания алертов необходимо подключиться к Telegram боту.</p>
                 <button onclick="openTelegramSettings()" class="btn-primary w-full text-white py-2 px-4 rounded-md font-medium">
                     <i class="fab fa-telegram mr-2"></i>Подключить бота
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="edit-modal">
+        <div class="edit-modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-primary">Вход в аккаунт</h3>
+                <button onclick="closeLoginModal()" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="mb-4">
+                <div class="input-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" placeholder="Ваш email">
+                </div>
+                <div class="input-group">
+                    <label for="loginPassword">Пароль</label>
+                    <input type="password" id="loginPassword" placeholder="Ваш пароль">
+                </div>
+                <button onclick="handleLogin()" class="btn-primary w-full text-white py-2 px-4 rounded-md font-medium mt-4">
+                    Войти
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="edit-modal">
+        <div class="edit-modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-primary">Регистрация</h3>
+                <button onclick="closeRegisterModal()" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="mb-4">
+                <div class="input-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" placeholder="Ваш email">
+                </div>
+                <div class="input-group">
+                    <label for="registerPassword">Пароль</label>
+                    <input type="password" id="registerPassword" placeholder="Придумайте пароль">
+                </div>
+                <div class="input-group">
+                    <label for="registerConfirmPassword">Подтвердите пароль</label>
+                    <input type="password" id="registerConfirmPassword" placeholder="Повторите пароль">
+                </div>
+                <button onclick="handleRegister()" class="btn-primary w-full text-white py-2 px-4 rounded-md font-medium mt-4">
+                    Зарегистрироваться
                 </button>
             </div>
         </div>
@@ -2014,6 +2181,92 @@
             const modal = document.getElementById('botConnectionHint');
             if (modal) modal.classList.remove('active');
         }
+
+        // Menu functions
+        function toggleMenu() {
+            const menuContent = document.getElementById('menuContent');
+            if (menuContent) {
+                menuContent.classList.toggle('show');
+            }
+        }
+
+        function showCalculator() {
+            toggleMenu();
+            // Прокручиваем страницу к калькулятору
+            const calculator = document.querySelector('.risk-calculator');
+            if (calculator) {
+                calculator.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function showWidget() {
+            toggleMenu();
+            // Прокручиваем страницу к виджету (можно добавить виджет в будущем)
+            const widget = document.querySelector('.average-calculator');
+            if (widget) {
+                widget.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function showLoginForm() {
+            toggleMenu();
+            const modal = document.getElementById('loginModal');
+            if (modal) {
+                modal.classList.add('active');
+            }
+        }
+
+        function closeLoginModal() {
+            const modal = document.getElementById('loginModal');
+            if (modal) {
+                modal.classList.remove('active');
+            }
+        }
+
+        function showRegisterForm() {
+            toggleMenu();
+            const modal = document.getElementById('registerModal');
+            if (modal) {
+                modal.classList.add('active');
+            }
+        }
+
+        function closeRegisterModal() {
+            const modal = document.getElementById('registerModal');
+            if (modal) {
+                modal.classList.remove('active');
+            }
+        }
+
+        function handleLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            // Здесь должна быть логика авторизации
+            console.log('Login attempt with:', email, password);
+            
+            // Временная заглушка
+            showNotification('Вход', 'Функция входа в разработке');
+            closeLoginModal();
+        }
+
+        function handleRegister() {
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+            
+            if (password !== confirmPassword) {
+                showNotification('Ошибка', 'Пароли не совпадают');
+                return;
+            }
+            
+            // Здесь должна быть логика регистрации
+            console.log('Register attempt with:', email, password);
+            
+            // Временная заглушка
+            showNotification('Регистрация', 'Функция регистрации в разработке');
+            closeRegisterModal();
+        }
         
         function setupEventListeners() {
             const coinSearch = document.getElementById('coinSearch');
@@ -2308,6 +2561,24 @@
                     reader.readAsText(file);
                 });
             }
+
+            // Обработчик для меню
+            const menuButton = document.getElementById('menuButton');
+            if (menuButton) {
+                menuButton.addEventListener('click', toggleMenu);
+            }
+
+            // Закрываем меню при клике вне его
+            window.addEventListener('click', function(event) {
+                const menuContent = document.getElementById('menuContent');
+                const menuButton = document.getElementById('menuButton');
+                
+                if (menuContent && menuButton && 
+                    !menuContent.contains(event.target) && 
+                    !menuButton.contains(event.target)) {
+                    menuContent.classList.remove('show');
+                }
+            });
         }
         
         // Инициализация приложения
@@ -2359,6 +2630,15 @@
         window.saveTelegramSettings = saveTelegramSettings;
         window.showBotConnectionHint = showBotConnectionHint;
         window.closeBotConnectionHint = closeBotConnectionHint;
+        window.showCalculator = showCalculator;
+        window.showWidget = showWidget;
+        window.showLoginForm = showLoginForm;
+        window.closeLoginModal = closeLoginModal;
+        window.showRegisterForm = showRegisterForm;
+        window.closeRegisterModal = closeRegisterModal;
+        window.handleLogin = handleLogin;
+        window.handleRegister = handleRegister;
+        window.toggleMenu = toggleMenu;
 
         // Risk Calculator Functions
         document.addEventListener('DOMContentLoaded', function() {
