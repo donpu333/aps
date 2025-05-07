@@ -796,11 +796,14 @@
                                 <i class="fas fa-chart-line mr-2"></i>Виджет
                             </a>
                             <div class="menu-divider"></div>
-                            <a href="#" class="menu-item" onclick="showLoginForm()">
+                            <a href="#" class="menu-item" onclick="showLoginForm()" id="loginMenuItem">
                                 <i class="fas fa-sign-in-alt mr-2"></i>Вход
                             </a>
-                            <a href="#" class="menu-item" onclick="showRegisterForm()">
+                            <a href="#" class="menu-item" onclick="showRegisterForm()" id="registerMenuItem">
                                 <i class="fas fa-user-plus mr-2"></i>Регистрация
+                            </a>
+                            <a href="#" class="menu-item hidden" onclick="handleLogout()" id="logoutMenuItem">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Выход
                             </a>
                         </div>
                     </div>
@@ -1265,6 +1268,120 @@
         let alertCooldowns = {};
         let apiManager;
         
+        // Функции для работы с пользователями
+        function isValidEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        function handleRegister() {
+            const email = document.getElementById('registerEmail').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+
+            // Валидация полей
+            if (!email || !password || !confirmPassword) {
+                showNotification('Ошибка', 'Все поля обязательны для заполнения');
+                return;
+            }
+
+            if (!isValidEmail(email)) {
+                showNotification('Ошибка', 'Введите корректный email');
+                return;
+            }
+
+            if (password.length < 8) {
+                showNotification('Ошибка', 'Пароль должен содержать минимум 8 символов');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showNotification('Ошибка', 'Пароли не совпадают');
+                return;
+            }
+
+            // Проверяем, есть ли уже такой пользователь
+            const users = JSON.parse(localStorage.getItem('users') || []);
+            const userExists = users.some(user => user.email === email);
+            
+            if (userExists) {
+                showNotification('Ошибка', 'Пользователь с таким email уже зарегистрирован');
+                return;
+            }
+
+            // Создаем нового пользователя
+            const newUser = {
+                email: email,
+                password: btoa(password), // Простое шифрование (не безопасно для продакшена!)
+                createdAt: new Date().toISOString(),
+                alerts: []
+            };
+
+            // Сохраняем пользователя
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+            localStorage.setItem('currentUser', JSON.stringify({ email: email }));
+
+            showNotification('Успех', 'Регистрация прошла успешно!');
+            closeRegisterModal();
+            
+            // Обновляем интерфейс для зарегистрированного пользователя
+            updateUserUI(email);
+        }
+
+        function handleLogin() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            if (!email || !password) {
+                showNotification('Ошибка', 'Введите email и пароль');
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('users') || []);
+            const user = users.find(u => u.email === email && atob(u.password) === password);
+
+            if (!user) {
+                showNotification('Ошибка', 'Неверный email или пароль');
+                return;
+            }
+
+            localStorage.setItem('currentUser', JSON.stringify({ email: email }));
+            showNotification('Успех', 'Вход выполнен успешно!');
+            closeLoginModal();
+            updateUserUI(email);
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('currentUser');
+            showNotification('Успех', 'Вы успешно вышли из системы');
+            updateUserUI(null);
+            toggleMenu();
+        }
+
+        function updateUserUI(email) {
+            const userProfileBtn = document.getElementById('userProfileBtn');
+            const userName = document.getElementById('userName');
+            const loginMenuItem = document.getElementById('loginMenuItem');
+            const registerMenuItem = document.getElementById('registerMenuItem');
+            const logoutMenuItem = document.getElementById('logoutMenuItem');
+
+            if (email) {
+                // Пользователь авторизован
+                if (userProfileBtn) userProfileBtn.classList.remove('hidden');
+                if (userName) userName.textContent = email.split('@')[0];
+                if (loginMenuItem) loginMenuItem.classList.add('hidden');
+                if (registerMenuItem) registerMenuItem.classList.add('hidden');
+                if (logoutMenuItem) logoutMenuItem.classList.remove('hidden');
+            } else {
+                // Гость
+                if (userProfileBtn) userProfileBtn.classList.add('hidden');
+                if (loginMenuItem) loginMenuItem.classList.remove('hidden');
+                if (registerMenuItem) registerMenuItem.classList.remove('hidden');
+                if (logoutMenuItem) logoutMenuItem.classList.add('hidden');
+            }
+        }
+
         // Функция для сохранения сработавшего алерта в историю
         function saveTriggeredAlert(alert) {
             const history = JSON.parse(localStorage.getItem('triggeredAlertsHistory') || '[]');
@@ -1522,11 +1639,6 @@
             if (spotMatch) return 'spot';
             
             return null;
-        }
-        
-        function isValidEmail(email) {
-            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return re.test(email);
         }
         
         function showValidationError(fieldId, message) {
@@ -2065,32 +2177,57 @@
                 return;
             }
             
-            const updatedAlert = {
-                id: parseInt(alertId),
-                symbol,
-                type,
-                condition,
-                value: parseFloat(value),
-                notificationMethods,
-                notificationCount: parseInt(notificationCount),
-                chatId: useTelegram ? (localStorage.getItem('tg_chat_id') || userChatId) : null,
-                triggeredCount: userAlerts.find(a => a.id === parseInt(alertId))?.triggeredCount || 0,
-                createdAt: userAlerts.find(a => a.id === parseInt(alertId))?.createdAt || new Date().toISOString(),
-                triggered: false,
-                lastNotificationTime: 0,
-                marketType: getMarketTypeBySymbol(symbol)
-            };
-            
-            userAlerts = userAlerts.map(a => a.id === parseInt(alertId) ? updatedAlert : a);
-            saveAppState();
-            
-            if (useEmail) {
-                localStorage.setItem('userEmail', userEmail);
+            const editAlertId = document.getElementById('editAlertId')?.value;
+            if (editAlertId) {
+                // Редактирование существующего алерта
+                const updatedAlert = {
+                    id: parseInt(alertId),
+                    symbol,
+                    type,
+                    condition,
+                    value: parseFloat(value),
+                    notificationMethods,
+                    notificationCount: parseInt(notificationCount),
+                    chatId: useTelegram ? (localStorage.getItem('tg_chat_id') || userChatId) : null,
+                    triggeredCount: userAlerts.find(a => a.id === parseInt(alertId))?.triggeredCount || 0,
+                    createdAt: userAlerts.find(a => a.id === parseInt(alertId))?.createdAt || new Date().toISOString(),
+                    triggered: false,
+                    lastNotificationTime: 0,
+                    marketType: getMarketTypeBySymbol(symbol)
+                };
+                
+                userAlerts = userAlerts.map(a => a.id === parseInt(alertId) ? updatedAlert : a);
+                saveAppState();
+                
+                if (useEmail) {
+                    localStorage.setItem('userEmail', userEmail);
+                }
+                
+                loadUserAlerts(currentAlertFilter);
+                showNotification('Успешно', `Алерт для ${symbol} обновлен`);
+            } else {
+                // Создание нового алерта
+                const success = addUserAlert(symbol, type, condition, value, notificationMethods, notificationCount, userChatId);
+                if (success) {
+                    showNotification('Успешно', `Алерт для ${symbol} создан`);
+                }
             }
             
-            loadUserAlerts(currentAlertFilter);
-            closeEditModal();
-            showNotification('Успешно', `Алерт для ${symbol} обновлен`);
+            form.reset();
+            const symbolInput = document.getElementById('symbol');
+            if (symbolInput) symbolInput.classList.add('hidden');
+            
+            const hint = document.getElementById('marketTypeHint');
+            if (hint) hint.innerHTML = '';
+            
+            const editAlertIdInput = document.getElementById('editAlertId');
+            if (editAlertIdInput) editAlertIdInput.value = '';
+            
+            const submitBtnText = document.getElementById('submitBtnText');
+            if (submitBtnText) submitBtnText.textContent = 'Создать алерт';
+            
+            const currentPriceContainer = document.getElementById('currentPriceContainer');
+            if (currentPriceContainer) currentPriceContainer.classList.add('hidden');
         }
         
         function closeEditModal() {
@@ -2265,36 +2402,6 @@
             }
         }
 
-        function handleLogin() {
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            
-            // Здесь должна быть логика авторизации
-            console.log('Login attempt with:', email, password);
-            
-            // Временная заглушка
-            showNotification('Вход', 'Функция входа в разработке');
-            closeLoginModal();
-        }
-
-        function handleRegister() {
-            const email = document.getElementById('registerEmail').value;
-            const password = document.getElementById('registerPassword').value;
-            const confirmPassword = document.getElementById('registerConfirmPassword').value;
-            
-            if (password !== confirmPassword) {
-                showNotification('Ошибка', 'Пароли не совпадают');
-                return;
-            }
-            
-            // Здесь должна быть логика регистрации
-            console.log('Register attempt with:', email, password);
-            
-            // Временная заглушка
-            showNotification('Регистрация', 'Функция регистрации в разработке');
-            closeRegisterModal();
-        }
-        
         function setupEventListeners() {
             const coinSearch = document.getElementById('coinSearch');
             if (coinSearch) {
@@ -2613,65 +2720,6 @@
             });
         }
         
-        // Инициализация приложения
-        document.addEventListener('DOMContentLoaded', async () => {
-            apiManager = new BinanceAPIManager();
-            
-            try {
-                await apiManager.init();
-                loadAppState();
-                setupEventListeners();
-                await loadMarketData();
-                loadUserAlerts(currentAlertFilter);
-                
-                // Проверяем сохраненный chat_id
-                const savedChatId = localStorage.getItem('tg_chat_id');
-                if (savedChatId) {
-                    const userChatId = document.getElementById('userChatId');
-                    if (userChatId) userChatId.value = savedChatId;
-                }
-                
-                // Проверяем сохраненный email
-                const savedEmail = localStorage.getItem('userEmail');
-                if (savedEmail) {
-                    const userEmail = document.getElementById('userEmail');
-                    if (userEmail) userEmail.value = savedEmail;
-                }
-                
-                // Запускаем проверку алертов каждые 5 секунд
-                setInterval(checkAlerts, 5000);
-            } catch (error) {
-                console.error('Failed to initialize application:', error);
-                showNotification('Critical Error', 'Failed to connect to Binance API');
-            }
-        });
-
-        // Глобальный обработчик ошибок
-        window.addEventListener('error', (event) => {
-            console.error('Global error:', event.error);
-            showNotification('System Error', event.message || 'Unknown error occurred');
-        });
-        
-        window.createAlertForSymbol = createAlertForSymbol;
-        window.deleteAlert = deleteAlert;
-        window.applyCurrentPrice = applyCurrentPrice;
-        window.editAlert = editAlert;
-        window.closeEditModal = closeEditModal;
-        window.openTelegramSettings = openTelegramSettings;
-        window.closeTelegramSettings = closeTelegramSettings;
-        window.saveTelegramSettings = saveTelegramSettings;
-        window.showBotConnectionHint = showBotConnectionHint;
-        window.closeBotConnectionHint = closeBotConnectionHint;
-        window.showCalculator = showCalculator;
-        window.showWidget = showWidget;
-        window.showLoginForm = showLoginForm;
-        window.closeLoginModal = closeLoginModal;
-        window.showRegisterForm = showRegisterForm;
-        window.closeRegisterModal = closeRegisterModal;
-        window.handleLogin = handleLogin;
-        window.handleRegister = handleRegister;
-        window.toggleMenu = toggleMenu;
-
         // Risk Calculator Functions
         document.addEventListener('DOMContentLoaded', function() {
             // Элементы интерфейса
@@ -2900,6 +2948,72 @@ ATR: ${atrInput.value} USDT
                 </div>
             `;
         }
+
+        // Инициализация приложения
+        document.addEventListener('DOMContentLoaded', async () => {
+            apiManager = new BinanceAPIManager();
+            
+            try {
+                await apiManager.init();
+                loadAppState();
+                setupEventListeners();
+                await loadMarketData();
+                loadUserAlerts(currentAlertFilter);
+                
+                // Проверяем сохраненный chat_id
+                const savedChatId = localStorage.getItem('tg_chat_id');
+                if (savedChatId) {
+                    const userChatId = document.getElementById('userChatId');
+                    if (userChatId) userChatId.value = savedChatId;
+                }
+                
+                // Проверяем сохраненный email
+                const savedEmail = localStorage.getItem('userEmail');
+                if (savedEmail) {
+                    const userEmail = document.getElementById('userEmail');
+                    if (userEmail) userEmail.value = savedEmail;
+                }
+
+                // Проверяем авторизацию пользователя
+                const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+                if (currentUser && currentUser.email) {
+                    updateUserUI(currentUser.email);
+                }
+                
+                // Запускаем проверку алертов каждые 5 секунд
+                setInterval(checkAlerts, 5000);
+            } catch (error) {
+                console.error('Failed to initialize application:', error);
+                showNotification('Critical Error', 'Failed to connect to Binance API');
+            }
+        });
+
+        // Глобальный обработчик ошибок
+        window.addEventListener('error', (event) => {
+            console.error('Global error:', event.error);
+            showNotification('System Error', event.message || 'Unknown error occurred');
+        });
+        
+        window.createAlertForSymbol = createAlertForSymbol;
+        window.deleteAlert = deleteAlert;
+        window.applyCurrentPrice = applyCurrentPrice;
+        window.editAlert = editAlert;
+        window.closeEditModal = closeEditModal;
+        window.openTelegramSettings = openTelegramSettings;
+        window.closeTelegramSettings = closeTelegramSettings;
+        window.saveTelegramSettings = saveTelegramSettings;
+        window.showBotConnectionHint = showBotConnectionHint;
+        window.closeBotConnectionHint = closeBotConnectionHint;
+        window.showCalculator = showCalculator;
+        window.showWidget = showWidget;
+        window.showLoginForm = showLoginForm;
+        window.closeLoginModal = closeLoginModal;
+        window.showRegisterForm = showRegisterForm;
+        window.closeRegisterModal = closeRegisterModal;
+        window.handleLogin = handleLogin;
+        window.handleRegister = handleRegister;
+        window.handleLogout = handleLogout;
+        window.toggleMenu = toggleMenu;
     </script>
 </body>
 </html>
