@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Финансовые виджеты</title>
+    <style>
+        body {
+            background-color: #121212; /* Тёмный фон страницы */
+            color: #e0e0e0; /* Светлый текст для контраста */
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        
+        .widget-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .widget-box {
+            background-color: #1e1e1e; /* Тёмный фон для контейнеров виджетов */
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #ffffff;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Финансовые индикаторы</h1>
+    
+    <div class="widget-container">
+        <!-- Экономический календарь -->
+        <div class="widget-box">
+            <div id="economic-calendar-867663">
+                <script type="text/javascript" src="https://www.rebatekingfx.com/Content/remote/remote-calendar-widget.js"></script>
+                <script type="text/javascript">
+                    RemoteCalendar({
+                        "Lang": "ru",
+                        "DefaultTime": "today",
+                        "DefaultTheme": "dark",
+                        "Url": "https://www.rebatekingfx.com",
+                        "SubPath": "economic-calendar",
+                        "IsShowEmbedButton": true,
+                        "DefaultCountries": "EU,RU,US,UK,EMU",
+                        "DefaultImpacts": "HIGH,MEDIUM",
+                        "ContainerId": "economic-calendar-867663"
+                    });
+                </script>
+            </div>
+        </div>
+        
+        <!-- Индекс страха и жадности -->
+        <div class="widget-box">
+            <script async src="https://static.coinstats.app/widgets/v5/cs-widget.js"></script>
+            <cs-widget 
+                type="fear-and-greed"
+                theme="темный"
+                direction="горизонтальный"
+                background="rgba(0,0,0,0)" /* Прозрачный фон, чтобы сливаться с нашим тёмным контейнером */
+                is-market-sentiment-visible="true"
+                is-last-updated-visible="true"
+                title-color="rgba(197,197,206,1)"
+                chart-indicator-one-color="rgba(148,4,13,1)"
+                chart-indicator-two-color="rgba(247,60,56,1)"
+                chart-indicator-three-color="rgba(95,191,107,1)"
+                chart-indicator-four-color="rgba(0,125,23,1)"
+                subtitle-color="rgba(236,236,228,1)"
+                last-updated-color="rgba(12,193,12,1)"
+                arrow-color="rgba(219,241,247,1)">
+            </cs-widget>
+        </div>
+    </div>
+</body>
+</html>
