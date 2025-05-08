@@ -895,7 +895,7 @@
                                 <option value="2">2 раза (интервал 30 сек)</option>
                                 <option value="3">3 раза (интервал 30 сек)</option>
                                 <option value="4">4 раза (интервал 30 сек)</option>
-                                <option value="5">5 раза (интервал 30 сек)</option>
+                                <option value="5">5 раз (интервал 30 сек)</option>
                                 <option value="0">Пока не отключу (интервал 30 сек)</option>
                             </select>
                         </div>
@@ -2272,11 +2272,20 @@
                             alert.triggeredCount++;
                             alertCooldowns[cooldownKey] = now;
                             
+                            // Проверяем лимит уведомлений
+                            if (alert.notificationCount > 0 && alert.triggeredCount >= alert.notificationCount) {
+                                alert.triggered = true;
+                                showNotification('Алерт завершен', `Алерт для ${alert.symbol} достиг лимита уведомлений (${alert.notificationCount})`);
+                            }
+                            
                             // Сохраняем в историю
                             saveTriggeredAlert(alert);
                             
                             // Показываем уведомление в интерфейсе
                             showNotification('Алерт сработал', `Символ: ${alert.symbol}\nУсловие: ${alert.condition} ${alert.value}\nТекущая цена: ${price}`);
+                            
+                            // Сохраняем изменения
+                            saveAppState();
                         }
                     }
                 } catch (error) {
@@ -3016,4 +3025,4 @@ ATR: ${atrInput.value} USDT
         window.toggleMenu = toggleMenu;
     </script>
 </body>
-</html> 
+</html>
