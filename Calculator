@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Tools - Calculator</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2196F3;
+            --secondary: #1976D2;
+            --accent-red: #C62828;
+            --accent-green: #2E7D32;
+            --accent-orange: #FF6D00;
+            --dark: #121212;
+            --light: #ffffff;
+            --success-color: #03DAC6;
+            --warning-color: #FFA000;
+            --teal-accent: #4CAF50;
+            --green-gradient-start: #4CAF50;
+            --green-gradient-end: #2E7D32;
+            --red-gradient-start: #F44336;
+            --red-gradient-end: #C62828;
+            --border-radius: 12px;
+        }
+        
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: var(--dark);
+            color: var(--light);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            transition: all 0.3s ease;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(33, 150, 243, 0.3);
+        }
+        
+        .card {
+            background-color: #1E1E1E;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        nav {
+            background-color: #1E1E1E;
+            border-bottom: 1px solid #2D2D2D;
+        }
+        
+        footer {
+            background-color: #1E1E1E;
+            border-top: 1px solid #2D2D2D;
+        }
+        
+        .calculator-container {
+            background-color: #1E1E1E;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(33, 150, 243, 0.2);
+            margin-bottom: 20px;
+        }
+        
+        .section {
+            margin-bottom: 15px;
+            padding: 12px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+        
+        .section-title {
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--primary);
+            font-size: 1rem;
+        }
+        
+        .input-group {
+            margin-bottom: 12px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            color: #9CA3AF;
+        }
+        
+        .input-group input[type="number"],
+        .input-group input[type="text"] {
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: 6px;
+            background-color: #2D2D2D;
+            border: 1px solid #3D3D3D;
+            color: white;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .input-group input[type="range"] {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            background: #3D3D3D;
+            border-radius: 3px;
+            outline: none;
+            margin: 10px 0;
+        }
+        
+        .input-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+        }
+        
+        .input-group input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+        }
+        
+        .direction-buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            background: #2A2A2A;
+            padding: 5px;
+            border-radius: 10px;
+        }
+
+        .direction-btn {
+            flex: 1;
+            padding: 10px 0;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.85rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .long {
+            background: transparent;
+            color: #A5D6A7;
+        }
+
+        .short {
+            background: transparent;
+            color: #EF9A9A;
+        }
+
+        .direction-btn.active {
+            color: white;
+        }
+
+        .long.active {
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+        }
+
+        .short.active {
+            background: linear-gradient(135deg, #F44336 0%, #C62828 100%);
+        }
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding: 8px;
+            background-color: rgba(255, 255, 255, 0.03);
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .result-value {
+            font-weight: 500;
+        }
+        
+        .profit {
+            color: var(--success-color);
+        }
+        
+        .loss {
+            color: var(--accent-red);
+        }
+        
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .slider-value {
+            min-width: 30px;
+            text-align: right;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .preview-value {
+            color: var(--warning-color);
+            font-size: 0.8rem;
+            margin-top: 5px;
+            padding: 4px;
+            background-color: rgba(255, 160, 0, 0.1);
+            border-radius: 4px;
+        }
+        
+        .leverage-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .leverage-value {
+            min-width: 40px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--primary);
+            background-color: rgba(33, 150, 243, 0.1);
+            padding: 4px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .leverage-warning {
+            color: var(--danger-color);
+            font-size: 0.75rem;
+            margin-top: 5px;
+            padding: 4px;
+            background-color: rgba(207, 102, 121, 0.1);
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .export-btn {
+            width: 100%;
+            padding: 10px 15px;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .export-btn:hover {
+            background: #1976D2;
+        }
+        
+        .main-header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--accent-color);
+            font-weight: 600;
+            font-size: 2rem;
+        }
+        
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .menu-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .menu-button {
+            background-color: transparent;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 8px 12px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .menu-button:hover {
+            color: var(--primary);
+        }
+
+        .menu-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #1E1E1E;
+            min-width: 200px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 4px;
+            border: 1px solid #3D3D3D;
+        }
+
+        .menu-content.show {
+            display: block;
+        }
+
+        .menu-item {
+            color: white;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+            transition: background-color 0.3s;
+        }
+
+        .menu-item:hover {
+            background-color: #2D2D2D;
+            color: var(--primary);
+        }
+
+        .menu-divider {
+            height: 1px;
+            background-color: #3D3D3D;
+            margin: 4px 0;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 8px;
+            margin-left: auto;
+        }
+
+        .auth-button {
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .login-button {
+            background-color: transparent;
+            color: white;
+            border: 1px solid #3D3D3D;
+        }
+
+        .login-button:hover {
+            background-color: rgba(33, 150, 243, 0.1);
+            border-color: var(--primary);
+        }
+
+        .register-button {
+            background-color: var(--primary);
+            color: white;
+            border: 1px solid var(--primary);
+        }
+
+        .register-button:hover {
+            background-color: var(--secondary);
+            border-color: var(--secondary);
+        }
+    </style>
+</head>
+<body class="bg-dark">
+    <nav class="shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center">
+                    <i class="fas fa-calculator text-primary text-xl mr-2"></i>
+                    <span class="text-xl font-bold text-light">Crypto Calculator</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="menu-container">
+                        <button class="menu-button" id="menuButton">
+                            <i class="fas fa-bars mr-2"></i>Меню
+                        </button>
+                        <div class="menu-content" id="menuContent">
+                            <a href="index.html" class="menu-item">
+                                <i class="fas fa-calculator mr-2"></i>Калькулятор
+                            </a>
+                            <a href="alerts.html" class="menu-item">
+                                <i class="fas fa-bell mr-2"></i>Алерты
+                            </a>
+                            <div class="menu-divider"></div>
+                            <a href="#" class="menu-item" onclick="showLoginForm()" id="loginMenuItem">
+                                <i class="fas fa-sign-in-alt mr-2"></i>Вход
+                            </a>
+                            <a href="#" class="menu-item" onclick="showRegisterForm()" id="registerMenuItem">
+                                <i class="fas fa-user-plus mr-2"></i>Регистрация
+                            </a>
+                            <a href="#" class="menu-item hidden" onclick="handleLogout()" id="logoutMenuItem">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Выход
+                            </a>
+                        </div>
+                    </div>
+                    <button id="userProfileBtn" class="hidden items-center text-gray-300 hover:text-white">
+                        <img id="userAvatar" class="w-8 h-8 rounded-full mr-2" src="https://via.placeholder.com/32/2D2D2D/6B7280?text=U" alt="User">
+                        <span id="userName">Гость</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="main-container">
+            <!-- Risk Calculator -->
+            <div class="calculator-container risk-calculator">
+                <h1>Калькулятор рисков</h1>
+                
+                <div class="section">
+                    <div class="section-title">Параметры сделки</div>
+                    
+                    <div class="direction-buttons">
+                        <button id="longBtn" class="direction-btn long active">Лонг</button>
+                        <button id="shortBtn" class="direction-btn short">Шорт</button>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="entryPrice">Цена входа (USDT)</label>
+                        <input type="number" id="entryPrice" min="0" step="0.01" value="100.00">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="leverage">Кредитное плечо</label>
+                        <div class="leverage-container">
+                            <input type="range" id="leverage" min="1" max="100" value="1">
+                            <span class="leverage-value" id="leverageValue">1x</span>
+                        </div>
+                        <div class="leverage-warning" id="leverageWarning">
+                            Высокое плечо увеличивает риск ликвидации!
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="atr">ATR (USDT)</label>
+                        <input type="number" id="atr" min="0" step="0.01" value="5.00">
+                        <div class="preview-value">
+                            Размер ATR: <span id="atrValue">5.00 USDT</span>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="riskPercent">Риск стоп-лосс (% от ATR)</label>
+                        <div class="slider-container">
+                            <input type="range" id="riskPercent" min="1" max="100" value="10">
+                            <span class="slider-value" id="riskPercentValue">10</span>%
+                        </div>
+                        <div class="preview-value">
+                            Стоп-лосс: минус <span id="previewAtrPercent">0.50 USDT</span> (<span id="previewAtrPercentValue">10%</span> от ATR)
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="riskAmount">Риск на сделку (USDT)</label>
+                        <input type="number" id="riskAmount" min="0" step="0.01" value="100.00">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="rewardRatio">Соотношение тейк-профита (1:X)</label>
+                        <div class="slider-container">
+                            <input type="range" id="rewardRatio" min="3" max="20" value="3">
+                            <span class="slider-value" id="rewardRatioValue">3</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <div class="section-title">Результаты</div>
+                    
+                    <div class="result-item">
+                        <span>Размер позиции:</span>
+                        <span class="result-value" id="positionSize">200.0000</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span>Стоп-лосс:</span>
+                        <span class="result-value loss" id="stopLoss">99.50 USDT</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span>Тейк-профит (1:<span id="currentRatio">3</span>):</span>
+                        <span class="result-value profit" id="takeProfit">101.50 USDT</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span>Потенциальная прибыль:</span>
+                        <span class="result-value profit" id="potentialProfit">300.00 USDT</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span>Цена ликвидации:</span>
+                        <span class="result-value loss" id="liquidationPrice">95.00 USDT</span>
+                    </div>
+                </div>
+                
+                <button class="export-btn" id="exportTextBtn">Экспорт в текст</button>
+            </div>
+            
+            <!-- Average Calculator -->
+            <div class="calculator-container average-calculator">
+                <h1>Калькулятор среднего</h1>
+                <div class="section">
+                    <div class="input-group">
+                        <label for="numbersInput">Введите числа через пробел:</label>
+                        <input type="text" id="numbersInput" placeholder="5 10 15 20">
+                    </div>
+                    <button onclick="calculateAverage()" style="width: 100%; padding: 10px; background: var(--accent-color); border: none; border-radius: 5px; color: white; font-weight: 600;">Рассчитать</button>
+                    <div id="result" style="margin-top: 15px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-80 flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-dark rounded-lg p-6 w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-primary">Вход в аккаунт</h3>
+                <button onclick="closeLoginModal()" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="mb-4">
+                <div class="input-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" placeholder="Ваш email">
+                </div>
+                <div class="input-group">
+                    <label for="loginPassword">Пароль</label>
+                    <input type="password" id="loginPassword" placeholder="Ваш пароль">
+                </div>
+                <button onclick="handleLogin()" class="btn-primary w-full text-white py-2 px-4 rounded-md font-medium mt-4">
+                    Войти
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-80 flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-dark rounded-lg p-6 w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-primary">Регистрация</h3>
+                <button onclick="closeRegisterModal()" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="mb-4">
+                <div class="input-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" placeholder="Ваш email">
+                </div>
+                <div class="input-group">
+                    <label for="registerPassword">Пароль</label>
+                    <input type="password" id="registerPassword" placeholder="Придумайте пароль">
+                </div>
+                <div class="input-group">
+                    <label for="registerConfirmPassword">Подтвердите пароль</label>
+                    <input type="password" id="registerConfirmPassword" placeholder="Повторите пароль">
+                </div>
+                <button onclick="handleRegister()" class="btn-primary w-full text-white py-2 px-4 rounded-md font-medium mt-4">
+                    Зарегистрироваться
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Функции для работы с пользователями
+        function isValidEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        function handleRegister() {
+            const email = document.getElementById('registerEmail').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+
+            // Валидация полей
+            if (!email || !password || !confirmPassword) {
+                alert('Все поля обязательны для заполнения');
+                return;
+            }
+
+            if (!isValidEmail(email)) {
+                alert('Введите корректный email');
+                return;
+            }
+
+            if (password.length < 8) {
+                alert('Пароль должен содержать минимум 8 символов');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                alert('Пароли не совпадают');
+                return;
+            }
+
+            // Проверяем, есть ли уже такой пользователь
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const userExists = users.some(user => user.email === email);
+            
+            if (userExists) {
+                alert('Пользователь с таким email уже зарегистрирован');
+                return;
+            }
+
+            // Создаем нового пользователя
+            const newUser = {
+                email: email,
+                password: btoa(password),
+                createdAt: new Date().toISOString(),
+                alerts: []
+            };
+
+            // Сохраняем пользователя
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+            localStorage.setItem('currentUser', JSON.stringify({ email: email }));
+
+            alert('Регистрация прошла успешно!');
+            closeRegisterModal();
+            
+            // Обновляем интерфейс для зарегистрированного пользователя
+            updateUserUI(email);
+        }
+
+        function handleLogin() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            if (!email || !password) {
+                alert('Введите email и пароль');
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const user = users.find(u => u.email === email && atob(u.password) === password);
+
+            if (!user) {
+                alert('Неверный email или пароль');
+                return;
+            }
+
+            localStorage.setItem('currentUser', JSON.stringify({ email: email }));
+            alert('Вход выполнен успешно!');
+            closeLoginModal();
+            updateUserUI(email);
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('currentUser');
+            alert('Вы успешно вышли из системы');
+            updateUserUI(null);
+            toggleMenu();
+        }
+
+        function updateUserUI(email) {
+            const userProfileBtn = document.getElementById('userProfileBtn');
+            const userName = document.getElementById('userName');
+            const loginMenuItem = document.getElementById('loginMenuItem');
+            const registerMenuItem = document.getElementById('registerMenuItem');
+            const logoutMenuItem = document.getElementById('logoutMenuItem');
+
+            if (email) {
+                // Пользователь авторизован
+                if (userProfileBtn) userProfileBtn.classList.remove('hidden');
+                if (userName) userName.textContent = email.split('@')[0];
+                if (loginMenuItem) loginMenuItem.classList.add('hidden');
+                if (registerMenuItem) registerMenuItem.classList.add('hidden');
+                if (logoutMenuItem) logoutMenuItem.classList.remove('hidden');
+            } else {
+                // Гость
+                if (userProfileBtn) userProfileBtn.classList.add('hidden');
+                if (loginMenuItem) loginMenuItem.classList.remove('hidden');
+                if (registerMenuItem) registerMenuItem.classList.remove('hidden');
+                if (logoutMenuItem) logoutMenuItem.classList.add('hidden');
+            }
+        }
+
+        // Risk Calculator Functions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Элементы интерфейса
+            const longBtn = document.getElementById('longBtn');
+            const shortBtn = document.getElementById('shortBtn');
+            const entryPriceInput = document.getElementById('entryPrice');
+            const leverageInput = document.getElementById('leverage');
+            const leverageValue = document.getElementById('leverageValue');
+            const leverageWarning = document.getElementById('leverageWarning');
+            const atrInput = document.getElementById('atr');
+            const riskPercentInput = document.getElementById('riskPercent');
+            const riskPercentValue = document.getElementById('riskPercentValue');
+            const riskAmountInput = document.getElementById('riskAmount');
+            const rewardRatioInput = document.getElementById('rewardRatio');
+            const rewardRatioValue = document.getElementById('rewardRatioValue');
+            const currentRatioSpan = document.getElementById('currentRatio');
+            const atrValueSpan = document.getElementById('atrValue');
+            const previewAtrPercent = document.getElementById('previewAtrPercent');
+            const previewAtrPercentValue = document.getElementById('previewAtrPercentValue');
+            
+            // Элементы результатов
+            const positionSizeSpan = document.getElementById('positionSize');
+            const stopLossSpan = document.getElementById('stopLoss');
+            const takeProfitSpan = document.getElementById('takeProfit');
+            const potentialProfitSpan = document.getElementById('potentialProfit');
+            const liquidationPriceSpan = document.getElementById('liquidationPrice');
+            
+            // Переменные состояния
+            let isLong = true;
+            
+            // Инициализация
+            function init() {
+                updateSliderValues();
+                updateAtrPreview();
+                calculateRisk();
+                
+                // Назначение обработчиков событий
+                longBtn.addEventListener('click', () => {
+                    isLong = true;
+                    longBtn.classList.add('active');
+                    shortBtn.classList.remove('active');
+                    calculateRisk();
+                });
+                
+                shortBtn.addEventListener('click', () => {
+                    isLong = false;
+                    shortBtn.classList.add('active');
+                    longBtn.classList.remove('active');
+                    calculateRisk();
+                });
+                
+                entryPriceInput.addEventListener('input', calculateRisk);
+                leverageInput.addEventListener('input', () => {
+                    leverageValue.textContent = leverageInput.value + 'x';
+                    if (leverageInput.value > 10) {
+                        leverageWarning.style.display = 'block';
+                    } else {
+                        leverageWarning.style.display = 'none';
+                    }
+                    calculateRisk();
+                });
+                atrInput.addEventListener('input', () => {
+                    updateAtrPreview();
+                    calculateRisk();
+                });
+                riskPercentInput.addEventListener('input', () => {
+                    updateSliderValues();
+                    updateAtrPreview();
+                    calculateRisk();
+                });
+                riskAmountInput.addEventListener('input', calculateRisk);
+                rewardRatioInput.addEventListener('input', () => {
+                    updateSliderValues();
+                    calculateRisk();
+                });
+                
+                // Инициализация кнопки экспорта
+                document.getElementById('exportTextBtn').addEventListener('click', exportToText);
+            }
+            
+            // Обновление значений слайдеров
+            function updateSliderValues() {
+                riskPercentValue.textContent = riskPercentInput.value;
+                rewardRatioValue.textContent = rewardRatioInput.value;
+                currentRatioSpan.textContent = rewardRatioInput.value;
+                previewAtrPercentValue.textContent = riskPercentInput.value + '%';
+            }
+            
+            // Предварительный просмотр ATR
+            function updateAtrPreview() {
+                const atr = parseFloat(atrInput.value) || 0;
+                const riskPercent = parseFloat(riskPercentInput.value) / 100;
+                
+                atrValueSpan.textContent = atr.toFixed(2) + ' USDT';
+                previewAtrPercent.textContent = (atr * riskPercent).toFixed(2) + ' USDT';
+            }
+            
+            // Расчет цены ликвидации
+            function calculateLiquidationPrice(entryPrice, leverage, isLong) {
+                if (isLong) {
+                    return entryPrice * (1 - (1 / leverage));
+                } else {
+                    return entryPrice * (1 + (1 / leverage));
+                }
+            }
+            
+            // Основная функция расчета
+            function calculateRisk() {
+                const entryPrice = parseFloat(entryPriceInput.value) || 0;
+                const leverage = parseFloat(leverageInput.value) || 1;
+                const atr = parseFloat(atrInput.value) || 0;
+                const riskPercent = parseFloat(riskPercentInput.value) / 100;
+                const riskAmount = parseFloat(riskAmountInput.value) || 0;
+                const rewardRatio = parseFloat(rewardRatioInput.value) || 3;
+                
+                // Расчет стоп-лосса
+                let stopLossPrice;
+                if (isLong) {
+                    stopLossPrice = entryPrice - (atr * riskPercent);
+                } else {
+                    stopLossPrice = entryPrice + (atr * riskPercent);
+                }
+                
+                // Расчет размера позиции (без учета плеча)
+                const priceDifference = Math.abs(entryPrice - stopLossPrice);
+                const positionSize = priceDifference > 0 ? (riskAmount / priceDifference) : 0;
+                
+                // Расчет тейк-профита
+                let takeProfitPrice;
+                if (isLong) {
+                    takeProfitPrice = entryPrice + (priceDifference * rewardRatio);
+                } else {
+                    takeProfitPrice = entryPrice - (priceDifference * rewardRatio);
+                }
+                
+                // Расчет потенциальной прибыли
+                const potentialProfit = positionSize * Math.abs(takeProfitPrice - entryPrice);
+                
+                // Расчет цены ликвидации
+                const liquidationPrice = calculateLiquidationPrice(entryPrice, leverage, isLong);
+                
+                // Обновление интерфейса
+                positionSizeSpan.textContent = positionSize.toFixed(4);
+                stopLossSpan.textContent = `${stopLossPrice.toFixed(2)} USDT`;
+                takeProfitSpan.textContent = `${takeProfitPrice.toFixed(2)} USDT`;
+                potentialProfitSpan.textContent = `${potentialProfit.toFixed(2)} USDT`;
+                liquidationPriceSpan.textContent = `${liquidationPrice.toFixed(2)} USDT`;
+            }
+            
+            // Экспорт в текстовый файл
+            function exportToText() {
+                const content = `
+Калькулятор рисков - Результаты
+===============================
+Дата: ${new Date().toLocaleString()}
+Направление: ${isLong ? 'Лонг' : 'Шорт'}
+
+Параметры сделки:
+-----------------
+Цена входа: ${entryPriceInput.value} USDT
+Кредитное плечо: ${leverageInput.value}x
+ATR: ${atrInput.value} USDT
+Риск стоп-лосс: ${riskPercentInput.value}% от ATR
+Риск на сделку: ${riskAmountInput.value} USDT
+Соотношение тейк-профита: 1:${rewardRatioInput.value}
+
+Результаты:
+-----------
+Размер позиции: ${positionSizeSpan.textContent}
+Стоп-лосс: ${stopLossSpan.textContent}
+Тейк-профит (1:${rewardRatioInput.value}): ${takeProfitSpan.textContent}
+Потенциальная прибыль: ${potentialProfitSpan.textContent}
+Цена ликвидации: ${liquidationPriceSpan.textContent}
+                `;
+                
+                const blob = new Blob([content], {type: 'text/plain'});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'расчет_рисков.txt';
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+            
+            // Запуск приложения
+            init();
+        });
+        
+        // Average Calculator Function
+        function calculateAverage() {
+            const input = document.getElementById('numbersInput').value.trim();
+            const resultDiv = document.getElementById('result');
+            
+            if (!input) {
+                resultDiv.innerHTML = '<p style="color: #F44336;">Введите числа!</p>';
+                return;
+            }
+
+            let numbers;
+            try {
+                numbers = input.split(' ').map(num => parseFloat(num));
+                if (numbers.some(isNaN)) {
+                    throw new Error();
+                }
+            } catch {
+                resultDiv.innerHTML = '<p style="color: #F44336;">Ошибка: вводите только числа, разделённые пробелами!</p>';
+                return;
+            }
+
+            const sum = numbers.reduce((sum, num) => sum + num, 0);
+            const count = numbers.length;
+            const mean = sum / count;
+            const deviations = numbers.map(num => num - mean);
+
+            resultDiv.innerHTML = `
+                <div style="background: rgba(30,30,30,0.5); padding: 10px; border-radius: 5px;">
+                    <p><strong>Чисел:</strong> ${count}</p>
+                    <p><strong>Сумма:</strong> ${sum.toFixed(2)}</p>
+                    <p><strong>Среднее:</strong> ${mean.toFixed(2)}</p>
+                    <p><strong>Отклонения:</strong></p>
+                    <ul style="padding-left: 20px;">
+                        ${numbers.map((num, i) => 
+                            `<li>${num} - ${mean.toFixed(2)} = ${deviations[i].toFixed(2)}</li>`
+                        ).join('')}
+                    </ul>
+                </div>
+            `;
+        }
+
+        // Menu functions
+        function toggleMenu() {
+            const menuContent = document.getElementById('menuContent');
+            if (menuContent) {
+                menuContent.classList.toggle('show');
+            }
+        }
+
+        function showCalculator() {
+            toggleMenu();
+            // Перенаправляем на страницу калькулятора
+            window.location.href = 'index.html';
+        }
+
+        function showAlerts() {
+            toggleMenu();
+            // Перенаправляем на страницу алертов
+            window.location.href = 'alerts.html';
+        }
+
+        function showLoginForm() {
+            toggleMenu();
+            const modal = document.getElementById('loginModal');
+            if (modal) {
+                modal.classList.add('opacity-100', 'pointer-events-auto');
+            }
+        }
+
+        function closeLoginModal() {
+            const modal = document.getElementById('loginModal');
+            if (modal) {
+                modal.classList.remove('opacity-100', 'pointer-events-auto');
+            }
+        }
+
+        function showRegisterForm() {
+            toggleMenu();
+            const modal = document.getElementById('registerModal');
+            if (modal) {
+                modal.classList.add('opacity-100', 'pointer-events-auto');
+            }
+        }
+
+        function closeRegisterModal() {
+            const modal = document.getElementById('registerModal');
+            if (modal) {
+                modal.classList.remove('opacity-100', 'pointer-events-auto');
+            }
+        }
+
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            // Проверяем авторизацию пользователя
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (currentUser && currentUser.email) {
+                updateUserUI(currentUser.email);
+            }
+            
+            // Обработчик для меню
+            const menuButton = document.getElementById('menuButton');
+            if (menuButton) {
+                menuButton.addEventListener('click', toggleMenu);
+            }
+
+            // Закрываем меню при клике вне его
+            window.addEventListener('click', function(event) {
+                const menuContent = document.getElementById('menuContent');
+                const menuButton = document.getElementById('menuButton');
+                
+                if (menuContent && menuButton && 
+                    !menuContent.contains(event.target) && 
+                    !menuButton.contains(event.target)) {
+                    menuContent.classList.remove('show');
+                }
+            });
+        });
+
+        window.showCalculator = showCalculator;
+        window.showAlerts = showAlerts;
+        window.showLoginForm = showLoginForm;
+        window.closeLoginModal = closeLoginModal;
+        window.showRegisterForm = showRegisterForm;
+        window.closeRegisterModal = closeRegisterModal;
+        window.handleLogin = handleLogin;
+        window.handleRegister = handleRegister;
+        window.handleLogout = handleLogout;
+        window.toggleMenu = toggleMenu;
+        window.calculateAverage = calculateAverage;
+    </script>
+</body>
+</html>
