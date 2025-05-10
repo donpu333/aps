@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crypto Tools - Alerts & Calculators</title>
+    <title>Crypto Tools - Alerts</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --primary: #2196F3;
@@ -430,247 +429,6 @@
             color: #6B7280;
         }
 
-        /* Calculator styles */
-        .calculator-container {
-            background-color: #1E1E1E;
-            border-radius: var(--border-radius);
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(33, 150, 243, 0.2);
-            margin-bottom: 20px;
-        }
-        
-        .section {
-            margin-bottom: 15px;
-            padding: 12px;
-            background-color: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-        }
-        
-        .section-title {
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: var(--primary);
-            font-size: 1rem;
-        }
-        
-        .input-group {
-            margin-bottom: 12px;
-        }
-        
-        .input-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 0.9rem;
-            color: #9CA3AF;
-        }
-        
-        .input-group input[type="number"],
-        .input-group input[type="text"] {
-            width: 100%;
-            padding: 8px 12px;
-            border-radius: 6px;
-            background-color: #2D2D2D;
-            border: 1px solid #3D3D3D;
-            color: white;
-            font-family: 'JetBrains Mono', monospace;
-        }
-        
-        .input-group input[type="range"] {
-            width: 100%;
-            height: 6px;
-            -webkit-appearance: none;
-            background: #3D3D3D;
-            border-radius: 3px;
-            outline: none;
-            margin: 10px 0;
-        }
-        
-        .input-group input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: var(--primary);
-            cursor: pointer;
-        }
-        
-        .input-group input[type="range"]::-moz-range-thumb {
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: var(--primary);
-            cursor: pointer;
-        }
-        
-        .direction-buttons {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 15px;
-            background: #2A2A2A;
-            padding: 5px;
-            border-radius: 10px;
-        }
-
-        .direction-btn {
-            flex: 1;
-            padding: 10px 0;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-size: 0.85rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .long {
-            background: transparent;
-            color: #A5D6A7;
-        }
-
-        .short {
-            background: transparent;
-            color: #EF9A9A;
-        }
-
-        .direction-btn.active {
-            color: white;
-        }
-
-        .long.active {
-            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
-        }
-
-        .short.active {
-            background: linear-gradient(135deg, #F44336 0%, #C62828 100%);
-        }
-        
-        .result-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            padding: 8px;
-            background-color: rgba(255, 255, 255, 0.03);
-            border-radius: 5px;
-            font-size: 0.9rem;
-        }
-        
-        .result-value {
-            font-weight: 500;
-        }
-        
-        .profit {
-            color: var(--success-color);
-        }
-        
-        .loss {
-            color: var(--accent-red);
-        }
-        
-        .slider-container {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .slider-value {
-            min-width: 30px;
-            text-align: right;
-            font-weight: 500;
-            font-size: 0.9rem;
-        }
-        
-        .preview-value {
-            color: var(--warning-color);
-            font-size: 0.8rem;
-            margin-top: 5px;
-            padding: 4px;
-            background-color: rgba(255, 160, 0, 0.1);
-            border-radius: 4px;
-        }
-        
-        .leverage-container {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .leverage-value {
-            min-width: 40px;
-            text-align: center;
-            font-weight: 600;
-            color: var(--primary);
-            background-color: rgba(33, 150, 243, 0.1);
-            padding: 4px;
-            border-radius: 4px;
-            font-size: 0.9rem;
-        }
-
-        .leverage-warning {
-            color: var(--danger-color);
-            font-size: 0.75rem;
-            margin-top: 5px;
-            padding: 4px;
-            background-color: rgba(207, 102, 121, 0.1);
-            border-radius: 4px;
-            display: none;
-        }
-        
-        .export-btn {
-            width: 100%;
-            padding: 10px 15px;
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            margin-top: 20px;
-            text-align: center;
-        }
-        
-        .export-btn:hover {
-            background: #1976D2;
-        }
-        
-        .main-header {
-            text-align: center;
-            margin-bottom: 30px;
-            color: var(--accent-color);
-            font-weight: 600;
-            font-size: 2rem;
-        }
-        
-        .main-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            max-width: 1800px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        .left-column {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        
-        .right-column {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        
-        @media (max-width: 1200px) {
-            .main-container {
-                grid-template-columns: 1fr;
-            }
-        }
-
         /* Menu styles */
         .menu-container {
             position: relative;
@@ -781,7 +539,7 @@
             <div class="flex justify-between h-16 items-center">
                 <div class="flex items-center">
                     <i class="fas fa-bell text-primary text-xl mr-2"></i>
-                    <span class="text-xl font-bold text-light">Crypto Tools</span>
+                    <span class="text-xl font-bold text-light">Crypto Alerts</span>
                 </div>
                 <div class="flex items-center space-x-4">
                     <div class="menu-container">
@@ -792,8 +550,8 @@
                             <a href="index.html" class="menu-item">
                                 <i class="fas fa-calculator mr-2"></i>Калькулятор
                             </a>
-                            <a href="widgets.html" class="menu-item">
-                                <i class="fas fa-chart-line mr-2"></i>Виджет
+                            <a href="alerts.html" class="menu-item">
+                                <i class="fas fa-bell mr-2"></i>Алерты
                             </a>
                             <div class="menu-divider"></div>
                             <a href="#" class="menu-item" onclick="showLoginForm()" id="loginMenuItem">
@@ -821,281 +579,170 @@
     </nav>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="main-container">
-            <!-- Left Column - Alerts -->
-            <div class="left-column">
-                <div class="card rounded-lg p-6">
-                    <h2 class="text-xl font-bold mb-6 text-primary">
-                        <i class="fas fa-plus-circle mr-2"></i>Создать новый алерт
-                    </h2>
+        <div class="grid grid-cols-1 gap-8">
+            <!-- Alerts Section -->
+            <div class="card rounded-lg p-6">
+                <h2 class="text-xl font-bold mb-6 text-primary">
+                    <i class="fas fa-plus-circle mr-2"></i>Создать новый алерт
+                </h2>
+                
+                <form id="alertForm">
+                    <input type="hidden" id="editAlertId" value="">
+                    <div class="mb-4">
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Криптовалюта</label>
+                        <div class="relative">
+                            <input 
+                                type="text" 
+                                id="coinSearch" 
+                                placeholder="Поиск монеты..." 
+                                class="w-full pl-10 pr-4 py-2 rounded-md focus:ring-primary focus:border-primary"
+                                required
+                            >
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-search text-gray-400"></i>
+                            </div>
+                            <div id="marketTypeHint" class="market-type-hint"></div>
+                        </div>
+                        <div id="coinError" class="validation-message">Пожалуйста, выберите криптовалюту</div>
+                        <select id="symbol" size="5" class="w-full mt-2 px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary hidden">
+                        </select>
+                    </div>
                     
-                    <form id="alertForm">
-                        <input type="hidden" id="editAlertId" value="">
-                        <div class="mb-4">
-                            <label class="block text-gray-300 text-sm font-medium mb-2">Криптовалюта</label>
-                            <div class="relative">
+                    <div class="mb-4">
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Тип алерта</label>
+                        <select id="alertType" class="w-full px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
+                            <option value="price">Цена</option>
+                            <option value="liquidation">Ликвидации</option>
+                            <option value="funding">Фандинг</option>
+                            <option value="oi">Открытый интерес</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Условие</label>
+                        <div class="flex">
+                            <select id="condition" class="w-1/3 px-3 py-2 rounded-l-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
+                                <option value=">">Выше</option>
+                                <option value="<">Ниже</option>
+                            </select>
+                            <input 
+                                type="number" 
+                                id="value" 
+                                class="w-2/3 px-3 py-2 border-t border-b border-r rounded-r-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary" 
+                                placeholder="Значение"
+                                step="0.0001"
+                                required
+                            >
+                        </div>
+                        <div id="valueError" class="validation-message">Пожалуйста, укажите значение</div>
+                        <div id="currentPriceContainer" class="current-price-container hidden">
+                            <span class="current-price-label">Текущая цена:</span>
+                            <span id="currentPriceValue" class="current-price-value"></span>
+                            <button type="button" onclick="applyCurrentPrice()" class="apply-price-btn" title="Применить текущую цену">
+                                <i class="fas fa-sync-alt"></i>
+                                <span>Применить</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Количество уведомлений</label>
+                        <select id="notificationCount" class="w-full px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
+                            <option value="1">1 раз (интервал 30 сек)</option>
+                            <option value="2">2 раза (интервал 30 сек)</option>
+                            <option value="3">3 раза (интервал 30 сек)</option>
+                            <option value="4">4 раза (интервал 30 сек)</option>
+                            <option value="5">5 раз (интервал 30 сек)</option>
+                            <option value="0">Пока не отключу (интервал 30 сек)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Уведомления</label>
+                        <div class="notification-methods">
+                            <div class="notification-method">
+                                <input id="telegram" type="checkbox" checked class="h-4 w-4 focus:ring-primary">
+                                <label for="telegram" class="ml-2 block text-sm text-gray-300">
+                                    <i class="fab fa-telegram mr-1 text-blue-400"></i> Telegram
+                                </label>
+                                <button onclick="openTelegramSettings()" class="ml-2 text-sm text-blue-400 hover:text-blue-300 text-xs px-2 py-1">
+                                    Настроить
+                                </button>
                                 <input 
                                     type="text" 
-                                    id="coinSearch" 
-                                    placeholder="Поиск монеты..." 
-                                    class="w-full pl-10 pr-4 py-2 rounded-md focus:ring-primary focus:border-primary"
-                                    required
+                                    id="userChatId" 
+                                    placeholder="Ваш Chat ID" 
+                                    class="ml-2 px-2 py-1 text-sm rounded-md hidden"
                                 >
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <i class="fas fa-search text-gray-400"></i>
-                                </div>
-                                <div id="marketTypeHint" class="market-type-hint"></div>
                             </div>
-                            <div id="coinError" class="validation-message">Пожалуйста, выберите криптовалюту</div>
-                            <select id="symbol" size="5" class="w-full mt-2 px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary hidden">
-                            </select>
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label class="block text-gray-300 text-sm font-medium mb-2">Тип алерта</label>
-                            <select id="alertType" class="w-full px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
-                                <option value="price">Цена</option>
-                                <option value="liquidation">Ликвидации</option>
-                                <option value="funding">Фандинг</option>
-                                <option value="oi">Открытый интерес</option>
-                            </select>
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label class="block text-gray-300 text-sm font-medium mb-2">Условие</label>
-                            <div class="flex">
-                                <select id="condition" class="w-1/3 px-3 py-2 rounded-l-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
-                                    <option value=">">Выше</option>
-                                    <option value="<">Ниже</option>
-                                </select>
+                            <div class="notification-method">
+                                <input id="email" type="checkbox" class="h-4 w-4 focus:ring-primary">
+                                <label for="email" class="ml-2 block text-sm text-gray-300">
+                                    <i class="fas fa-envelope mr-1 text-gray-400"></i> Email
+                                </label>
                                 <input 
-                                    type="number" 
-                                    id="value" 
-                                    class="w-2/3 px-3 py-2 border-t border-b border-r rounded-r-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary" 
-                                    placeholder="Значение"
-                                    step="0.0001"
-                                    required
+                                    type="email" 
+                                    id="userEmail" 
+                                    placeholder="Ваш email" 
+                                    class="ml-2 px-2 py-1 text-sm rounded-md hidden"
                                 >
-                            </div>
-                            <div id="valueError" class="validation-message">Пожалуйста, укажите значение</div>
-                            <div id="currentPriceContainer" class="current-price-container hidden">
-                                <span class="current-price-label">Текущая цена:</span>
-                                <span id="currentPriceValue" class="current-price-value"></span>
-                                <button type="button" onclick="applyCurrentPrice()" class="apply-price-btn" title="Применить текущую цену">
-                                    <i class="fas fa-sync-alt"></i>
-                                    <span>Применить</span>
-                                </button>
+                                <div id="userEmailError" class="validation-message">Неверный формат email</div>
                             </div>
                         </div>
-                        
-                        <div class="mb-4">
-                            <label class="block text-gray-300 text-sm font-medium mb-2">Количество уведомлений</label>
-                            <select id="notificationCount" class="w-full px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
-                                <option value="1">1 раз (интервал 30 сек)</option>
-                                <option value="2">2 раза (интервал 30 сек)</option>
-                                <option value="3">3 раза (интервал 30 сек)</option>
-                                <option value="4">4 раза (интервал 30 сек)</option>
-                                <option value="5">5 раз (интервал 30 сек)</option>
-                                <option value="0">Пока не отключу (интервал 30 сек)</option>
-                            </select>
-                        </div>
-                        
-                        <div class="mb-6">
-                            <label class="block text-gray-300 text-sm font-medium mb-2">Уведомления</label>
-                            <div class="notification-methods">
-                                <div class="notification-method">
-                                    <input id="telegram" type="checkbox" checked class="h-4 w-4 focus:ring-primary">
-                                    <label for="telegram" class="ml-2 block text-sm text-gray-300">
-                                        <i class="fab fa-telegram mr-1 text-blue-400"></i> Telegram
-                                    </label>
-                                    <button onclick="openTelegramSettings()" class="ml-2 text-sm text-blue-400 hover:text-blue-300 text-xs px-2 py-1">
-                                        Настроить
-                                    </button>
-                                    <input 
-                                        type="text" 
-                                        id="userChatId" 
-                                        placeholder="Ваш Chat ID" 
-                                        class="ml-2 px-2 py-1 text-sm rounded-md hidden"
-                                    >
-                                </div>
-                                <div class="notification-method">
-                                    <input id="email" type="checkbox" class="h-4 w-4 focus:ring-primary">
-                                    <label for="email" class="ml-2 block text-sm text-gray-300">
-                                        <i class="fas fa-envelope mr-1 text-gray-400"></i> Email
-                                    </label>
-                                    <input 
-                                        type="email" 
-                                        id="userEmail" 
-                                        placeholder="Ваш email" 
-                                        class="ml-2 px-2 py-1 text-sm rounded-md hidden"
-                                    >
-                                    <div id="userEmailError" class="validation-message">Неверный формат email</div>
-                                </div>
-                            </div>
-                            <div class="mt-4">
-                                <div class="tooltip file-input-container">
-                                    <button class="file-input-label text-xs px-3 py-1">
-                                        <i class="fas fa-file-import mr-1"></i>Импорт из TXT
-                                    </button>
-                                    <input type="file" id="bulkImportFile" class="file-input" accept=".txt">
-                                    <span class="tooltiptext">
-                                        Формат файла:<br>
-                                        Каждая строка должна содержать:<br>
-                                        СИМВОЛ УСЛОВИЕ ЗНАЧЕНИЕ<br><br>
-                                        Пример:<br>
-                                        BTCUSDT > 50000<br>
-                                        ETHUSDT < 3000<br>
-                                        SOLUSDT > 150
-                                    </span>
-                                </div>
+                        <div class="mt-4">
+                            <div class="tooltip file-input-container">
+                                <button class="file-input-label text-xs px-3 py-1">
+                                    <i class="fas fa-file-import mr-1"></i>Импорт из TXT
+                                </button>
+                                <input type="file" id="bulkImportFile" class="file-input" accept=".txt">
+                                <span class="tooltiptext">
+                                    Формат файла:<br>
+                                    Каждая строка должна содержать:<br>
+                                    СИМВОЛ УСЛОВИЕ ЗНАЧЕНИЕ<br><br>
+                                    Пример:<br>
+                                    BTCUSDT > 50000<br>
+                                    ETHUSDT < 3000<br>
+                                    SOLUSDT > 150
+                                </span>
                             </div>
                         </div>
-                        
-                        <button type="submit" class="btn-primary w-full text-white py-2 px-4 rounded-md font-medium mt-4">
-                            <i class="fas fa-bell mr-2"></i><span id="submitBtnText">Создать алерт</span>
-                        </button>
-                    </form>
-                </div>
-                
-                <div class="card rounded-lg p-6">
-                    <div class="compact-alerts-header">
-                        <div class="flex items-center flex-1 min-w-0">
-                            <h2 class="compact-alerts-title">
-                                <i class="fas fa-bell mr-1"></i>Алерты
-                            </h2>
-                            <div class="compact-filters no-scrollbar">
-                                <button id="showActiveAlerts" class="compact-filter-btn bg-blue-900 text-blue-300 active">
-                                    Активные
-                                </button>
-                                <button id="showTriggeredAlerts" class="compact-filter-btn bg-gray-700 text-gray-300">
-                                    Сработавшие
-                                </button>
-                                <button id="showHistoryAlerts" class="compact-filter-btn bg-gray-700 text-gray-300">
-                                    История
-                                </button>
-                                <button id="showAllAlerts" class="compact-filter-btn bg-gray-700 text-gray-300">
-                                    Все
-                                </button>
-                            </div>
-                        </div>
-                        <button id="clearAlerts" class="compact-clear-btn hover:text-red-300">
-                            <i class="fas fa-trash-alt mr-1"></i>Очистить
-                        </button>
                     </div>
                     
-                    <div id="userAlerts" class="alerts-container space-y-4">
-                        <div class="text-center text-gray-400 py-4">
-                            У вас пока нет активных алертов
-                        </div>
-                    </div>
-                </div>
+                    <button type="submit" class="btn-primary w-full text-white py-2 px-4 rounded-md font-medium mt-4">
+                        <i class="fas fa-bell mr-2"></i><span id="submitBtnText">Создать алерт</span>
+                    </button>
+                </form>
             </div>
-
-            <!-- Right Column - Calculators -->
-            <div class="right-column">
-                <!-- Risk Calculator -->
-                <div class="calculator-container risk-calculator">
-                    <h1>Калькулятор рисков</h1>
-                    
-                    <div class="section">
-                        <div class="section-title">Параметры сделки</div>
-                        
-                        <div class="direction-buttons">
-                            <button id="longBtn" class="direction-btn long active">Лонг</button>
-                            <button id="shortBtn" class="direction-btn short">Шорт</button>
-                        </div>
-                        
-                        <div class="input-group">
-                            <label for="entryPrice">Цена входа (USDT)</label>
-                            <input type="number" id="entryPrice" min="0" step="0.01" value="100.00">
-                        </div>
-                        
-                        <div class="input-group">
-                            <label for="leverage">Кредитное плечо</label>
-                            <div class="leverage-container">
-                                <input type="range" id="leverage" min="1" max="100" value="1">
-                                <span class="leverage-value" id="leverageValue">1x</span>
-                            </div>
-                            <div class="leverage-warning" id="leverageWarning">
-                                Высокое плечо увеличивает риск ликвидации!
-                            </div>
-                        </div>
-                        
-                        <div class="input-group">
-                            <label for="atr">ATR (USDT)</label>
-                            <input type="number" id="atr" min="0" step="0.01" value="5.00">
-                            <div class="preview-value">
-                                Размер ATR: <span id="atrValue">5.00 USDT</span>
-                            </div>
-                        </div>
-                        
-                        <div class="input-group">
-                            <label for="riskPercent">Риск стоп-лосс (% от ATR)</label>
-                            <div class="slider-container">
-                                <input type="range" id="riskPercent" min="1" max="100" value="50">
-                                <span class="slider-value" id="riskPercentValue">50</span>%
-                            </div>
-                            <div class="preview-value">
-                                Стоп-лосс: минус <span id="previewAtrPercent">2.50 USDT</span> (<span id="previewAtrPercentValue">50%</span> от ATR)
-                            </div>
-                        </div>
-                        
-                        <div class="input-group">
-                            <label for="riskAmount">Риск на сделку (USDT)</label>
-                            <input type="number" id="riskAmount" min="0" step="0.01" value="100.00">
-                        </div>
-                        
-                        <div class="input-group">
-                            <label for="rewardRatio">Соотношение тейк-профита (1:X)</label>
-                            <div class="slider-container">
-                                <input type="range" id="rewardRatio" min="3" max="20" value="3">
-                                <span class="slider-value" id="rewardRatioValue">3</span>
-                            </div>
+            
+            <div class="card rounded-lg p-6">
+                <div class="compact-alerts-header">
+                    <div class="flex items-center flex-1 min-w-0">
+                        <h2 class="compact-alerts-title">
+                            <i class="fas fa-bell mr-1"></i>Алерты
+                        </h2>
+                        <div class="compact-filters no-scrollbar">
+                            <button id="showActiveAlerts" class="compact-filter-btn bg-blue-900 text-blue-300 active">
+                                Активные
+                            </button>
+                            <button id="showTriggeredAlerts" class="compact-filter-btn bg-gray-700 text-gray-300">
+                                Сработавшие
+                            </button>
+                            <button id="showHistoryAlerts" class="compact-filter-btn bg-gray-700 text-gray-300">
+                                История
+                            </button>
+                            <button id="showAllAlerts" class="compact-filter-btn bg-gray-700 text-gray-300">
+                                Все
+                            </button>
                         </div>
                     </div>
-                    
-                    <div class="section">
-                        <div class="section-title">Результаты</div>
-                        
-                        <div class="result-item">
-                            <span>Размер позиции:</span>
-                            <span class="result-value" id="positionSize">40.0000</span>
-                        </div>
-                        
-                        <div class="result-item">
-                            <span>Стоп-лосс:</span>
-                            <span class="result-value loss" id="stopLoss">97.50 USDT</span>
-                        </div>
-                        
-                        <div class="result-item">
-                            <span>Тейк-профит (1:<span id="currentRatio">3</span>):</span>
-                            <span class="result-value profit" id="takeProfit">107.50 USDT</span>
-                        </div>
-                        
-                        <div class="result-item">
-                            <span>Потенциальная прибыль:</span>
-                            <span class="result-value profit" id="potentialProfit">300.00 USDT</span>
-                        </div>
-                        
-                        <div class="result-item">
-                            <span>Цена ликвидации:</span>
-                            <span class="result-value loss" id="liquidationPrice">95.00 USDT</span>
-                        </div>
-                    </div>
-                    
-                    <button class="export-btn" id="exportTextBtn">Экспорт в текст</button>
+                    <button id="clearAlerts" class="compact-clear-btn hover:text-red-300">
+                        <i class="fas fa-trash-alt mr-1"></i>Очистить
+                    </button>
                 </div>
                 
-                <!-- Average Calculator -->
-                <div class="calculator-container average-calculator">
-                    <h1>Калькулятор среднего</h1>
-                    <div class="section">
-                        <div class="input-group">
-                            <label for="numbersInput">Введите числа через пробел:</label>
-                            <input type="text" id="numbersInput" placeholder="5 10 15 20">
-                        </div>
-                        <button onclick="calculateAverage()" style="width: 100%; padding: 10px; background: var(--accent-color); border: none; border-radius: 5px; color: white; font-weight: 600;">Рассчитать</button>
-                        <div id="result" style="margin-top: 15px;"></div>
+                <div id="userAlerts" class="alerts-container space-y-4">
+                    <div class="text-center text-gray-400 py-4">
+                        У вас пока нет активных алертов
                     </div>
                 </div>
             </div>
@@ -1631,6 +1278,21 @@
             }
         }
         
+        function applyCurrentPriceForEdit() {
+            const currentPriceValue = document.getElementById('editCurrentPriceValue');
+            if (!currentPriceValue) return;
+            
+            const priceText = currentPriceValue.textContent;
+            const price = parseFloat(priceText);
+            if (!isNaN(price)) {
+                const valueInput = document.getElementById('editValue');
+                if (valueInput) {
+                    valueInput.value = price;
+                    hideValidationError('editValue');
+                }
+            }
+        }
+        
         function getMarketTypeBySymbol(symbol) {
             const futuresMatch = allFutures.find(c => c.symbol === symbol);
             if (futuresMatch) return 'futures';
@@ -1720,6 +1382,24 @@
                 } else {
                     hideValidationError('userEmail');
                 }
+            }
+            
+            return isValid;
+        }
+        
+        function validateEditForm() {
+            let isValid = true;
+            
+            // Проверка значения
+            const value = document.getElementById('editValue');
+            if (!value || !value.value.trim()) {
+                showValidationError('editValue', 'Пожалуйста, укажите значение');
+                isValid = false;
+            } else if (isNaN(parseFloat(value.value))) {
+                showValidationError('editValue', 'Пожалуйста, укажите числовое значение');
+                isValid = false;
+            } else {
+                hideValidationError('editValue');
             }
             
             return isValid;
@@ -2049,11 +1729,6 @@
             const alert = userAlerts.find(a => a.id === alertId);
             if (!alert) return;
             
-            const editAlertIdInput = document.getElementById('editAlertId');
-            if (editAlertIdInput) {
-                editAlertIdInput.value = alertId;
-            }
-            
             openEditModal(alert);
         }
 
@@ -2063,94 +1738,171 @@
             
             if (!editModal || !editFormContent) return;
             
-            // Создаем копию формы для редактирования
-            const formClone = document.getElementById('alertForm').cloneNode(true);
-            formClone.id = 'editAlertForm';
-            formClone.removeAttribute('id'); // Удаляем id, чтобы избежать дублирования
+            // Создаем HTML для формы редактирования
+            editFormContent.innerHTML = `
+                <form id="editAlertForm" class="space-y-4">
+                    <input type="hidden" id="editAlertId" value="${alert.id}">
+                    
+                    <div>
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Криптовалюта</label>
+                        <input 
+                            type="text" 
+                            id="editCoinSearch" 
+                            value="${alert.symbol}" 
+                            class="w-full px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+                            readonly
+                        >
+                        <div id="editMarketTypeHint" class="market-type-hint">
+                            ${alert.marketType === 'spot' ? '<span class="spot-badge">SPOT</span>' : '<span class="futures-badge">FUTURES</span>'}
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Тип алерта</label>
+                        <select id="editAlertType" class="w-full px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
+                            <option value="price" ${alert.type === 'price' ? 'selected' : ''}>Цена</option>
+                            <option value="liquidation" ${alert.type === 'liquidation' ? 'selected' : ''}>Ликвидации</option>
+                            <option value="funding" ${alert.type === 'funding' ? 'selected' : ''}>Фандинг</option>
+                            <option value="oi" ${alert.type === 'oi' ? 'selected' : ''}>Открытый интерес</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Условие</label>
+                        <div class="flex">
+                            <select id="editCondition" class="w-1/3 px-3 py-2 rounded-l-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
+                                <option value=">" ${alert.condition === '>' ? 'selected' : ''}>Выше</option>
+                                <option value="<" ${alert.condition === '<' ? 'selected' : ''}>Ниже</option>
+                            </select>
+                            <input 
+                                type="number" 
+                                id="editValue" 
+                                value="${alert.value}"
+                                class="w-2/3 px-3 py-2 border-t border-b border-r rounded-r-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary" 
+                                placeholder="Значение"
+                                step="0.0001"
+                                required
+                            >
+                        </div>
+                        <div id="editValueError" class="validation-message">Пожалуйста, укажите значение</div>
+                        <div id="editCurrentPriceContainer" class="current-price-container">
+                            <span class="current-price-label">Текущая цена:</span>
+                            <span id="editCurrentPriceValue" class="current-price-value">Загрузка...</span>
+                            <button type="button" onclick="applyCurrentPriceForEdit()" class="apply-price-btn" title="Применить текущую цену">
+                                <i class="fas fa-sync-alt"></i>
+                                <span>Применить</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Количество уведомлений</label>
+                        <select id="editNotificationCount" class="w-full px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
+                            <option value="1" ${alert.notificationCount === 1 ? 'selected' : ''}>1 раз (интервал 30 сек)</option>
+                            <option value="2" ${alert.notificationCount === 2 ? 'selected' : ''}>2 раза (интервал 30 сек)</option>
+                            <option value="3" ${alert.notificationCount === 3 ? 'selected' : ''}>3 раза (интервал 30 сек)</option>
+                            <option value="4" ${alert.notificationCount === 4 ? 'selected' : ''}>4 раза (интервал 30 сек)</option>
+                            <option value="5" ${alert.notificationCount === 5 ? 'selected' : ''}>5 раз (интервал 30 сек)</option>
+                            <option value="0" ${alert.notificationCount === 0 ? 'selected' : ''}>Пока не отключу (интервал 30 сек)</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Уведомления</label>
+                        <div class="notification-methods">
+                            <div class="notification-method">
+                                <input id="editTelegram" type="checkbox" ${alert.notificationMethods.includes('telegram') ? 'checked' : ''} class="h-4 w-4 focus:ring-primary">
+                                <label for="editTelegram" class="ml-2 block text-sm text-gray-300">
+                                    <i class="fab fa-telegram mr-1 text-blue-400"></i> Telegram
+                                </label>
+                                <button onclick="openTelegramSettings()" class="ml-2 text-sm text-blue-400 hover:text-blue-300 text-xs px-2 py-1">
+                                    Настроить
+                                </button>
+                                <input 
+                                    type="text" 
+                                    id="editUserChatId" 
+                                    placeholder="Ваш Chat ID" 
+                                    class="ml-2 px-2 py-1 text-sm rounded-md ${alert.notificationMethods.includes('telegram') ? '' : 'hidden'}"
+                                    value="${alert.chatId || ''}"
+                                >
+                            </div>
+                            <div class="notification-method">
+                                <input id="editEmail" type="checkbox" ${alert.notificationMethods.includes('email') ? 'checked' : ''} class="h-4 w-4 focus:ring-primary">
+                                <label for="editEmail" class="ml-2 block text-sm text-gray-300">
+                                    <i class="fas fa-envelope mr-1 text-gray-400"></i> Email
+                                </label>
+                                <input 
+                                    type="email" 
+                                    id="editUserEmail" 
+                                    placeholder="Ваш email" 
+                                    class="ml-2 px-2 py-1 text-sm rounded-md ${alert.notificationMethods.includes('email') ? '' : 'hidden'}"
+                                    value="${localStorage.getItem('userEmail') || ''}"
+                                >
+                                <div id="editUserEmailError" class="validation-message">Неверный формат email</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary w-full text-white py-2 px-4 rounded-md font-medium mt-4">
+                        <i class="fas fa-save mr-2"></i>Сохранить изменения
+                    </button>
+                </form>
+            `;
             
-            // Обновляем текст кнопки отправки
-            const submitBtnText = formClone.querySelector('#submitBtnText');
-            if (submitBtnText) {
-                submitBtnText.textContent = 'Сохранить изменения';
-            }
-            
-            // Устанавливаем ID редактируемого алерта
-            const editAlertIdInput = formClone.querySelector('#editAlertId');
-            if (editAlertIdInput) {
-                editAlertIdInput.value = alert.id;
-            }
-            
-            // Заполняем форму данными алерта
-            const coinSearch = formClone.querySelector('#coinSearch');
-            const symbol = formClone.querySelector('#symbol');
-            const alertType = formClone.querySelector('#alertType');
-            const condition = formClone.querySelector('#condition');
-            const value = formClone.querySelector('#value');
-            const notificationCount = formClone.querySelector('#notificationCount');
-            const telegram = formClone.querySelector('#telegram');
-            const email = formClone.querySelector('#email');
-            const userEmail = formClone.querySelector('#userEmail');
-            const userChatId = formClone.querySelector('#userChatId');
-            
-            if (coinSearch) coinSearch.value = alert.symbol;
-            if (symbol) symbol.value = alert.symbol;
-            if (alertType) alertType.value = alert.type;
-            if (condition) condition.value = alert.condition;
-            if (value) value.value = alert.value;
-            if (notificationCount) notificationCount.value = alert.notificationCount;
-            
-            // Устанавливаем методы уведомлений
-            if (telegram) {
-                telegram.checked = alert.notificationMethods.includes('telegram');
-                // Показываем поле Chat ID, если Telegram выбран
-                if (telegram.checked && userChatId) {
-                    userChatId.value = alert.chatId || '';
-                    userChatId.classList.remove('hidden');
+            // Получаем текущую цену для отображения
+            apiManager.getCurrentPrice(alert.symbol, alert.marketType).then(price => {
+                if (price !== null) {
+                    const currentPriceValue = document.getElementById('editCurrentPriceValue');
+                    if (currentPriceValue) {
+                        currentPriceValue.textContent = price;
+                    }
                 }
+            });
+            
+            // Назначаем обработчики событий для чекбоксов
+            const telegramCheckbox = document.getElementById('editTelegram');
+            if (telegramCheckbox) {
+                telegramCheckbox.addEventListener('change', function() {
+                    const userChatId = document.getElementById('editUserChatId');
+                    if (!userChatId) return;
+                    
+                    if (this.checked) {
+                        userChatId.classList.remove('hidden');
+                        userChatId.required = true;
+                        const savedChatId = localStorage.getItem('tg_chat_id');
+                        if (savedChatId) userChatId.value = savedChatId;
+                    } else {
+                        userChatId.classList.add('hidden');
+                        userChatId.required = false;
+                    }
+                });
             }
             
-            if (email) {
-                email.checked = alert.notificationMethods.includes('email');
-                // Показываем поле Email, если Email выбран
-                if (email.checked && userEmail) {
-                    userEmail.value = localStorage.getItem('userEmail') || '';
-                    userEmail.classList.remove('hidden');
-                }
-            }
-
-            // Обработчик отправки формы редактирования
-            formClone.onsubmit = function(e) {
-                e.preventDefault();
-                handleEditSubmit(alert.id);
-            };
-            
-            // Очищаем содержимое модального окна и добавляем форму
-            editFormContent.innerHTML = '';
-            editFormContent.appendChild(formClone);
-            
-            // Устанавливаем тип рынка
-            const marketType = getMarketTypeBySymbol(alert.symbol);
-            const badge = marketType === 'spot' ? 
-                '<span class="spot-badge">SPOT</span>' : 
-                '<span class="futures-badge">FUTURES</span>';
-            
-            const hint = formClone.querySelector('#marketTypeHint');
-            if (hint) {
-                hint.innerHTML = badge;
+            const emailCheckbox = document.getElementById('editEmail');
+            if (emailCheckbox) {
+                emailCheckbox.addEventListener('change', function() {
+                    const userEmail = document.getElementById('editUserEmail');
+                    if (!userEmail) return;
+                    
+                    if (this.checked) {
+                        userEmail.classList.remove('hidden');
+                        userEmail.required = true;
+                        const savedEmail = localStorage.getItem('userEmail');
+                        if (savedEmail) userEmail.value = savedEmail;
+                    } else {
+                        userEmail.classList.add('hidden');
+                        userEmail.required = false;
+                    }
+                });
             }
             
-            // Показываем текущую цену
-            const currentPriceContainer = formClone.querySelector('#currentPriceContainer');
-            if (currentPriceContainer) {
-                currentPriceContainer.classList.remove('hidden');
-                const currentPriceValue = formClone.querySelector('#currentPriceValue');
-                if (currentPriceValue) {
-                    apiManager.getCurrentPrice(alert.symbol, marketType).then(price => {
-                        if (price !== null) {
-                            currentPriceValue.textContent = price;
-                        }
-                    });
-                }
+            // Назначаем обработчик отправки формы
+            const editForm = document.getElementById('editAlertForm');
+            if (editForm) {
+                editForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    handleEditSubmit(alert.id);
+                });
             }
             
             // Отображаем модальное окно
@@ -2158,20 +1910,17 @@
         }
 
         function handleEditSubmit(alertId) {
-            const form = document.querySelector('#editModal #editAlertForm');
-            if (!form) return;
-            
-            if (!validateForm()) return;
+            if (!validateEditForm()) return;
 
-            const symbol = form.querySelector('#symbol')?.value;
-            const type = form.querySelector('#alertType')?.value;
-            const condition = form.querySelector('#condition')?.value;
-            const value = form.querySelector('#value')?.value;
-            const useTelegram = form.querySelector('#telegram')?.checked;
-            const useEmail = form.querySelector('#email')?.checked;
-            const userEmail = useEmail ? form.querySelector('#userEmail')?.value : '';
-            const userChatId = useTelegram ? form.querySelector('#userChatId')?.value : '';
-            const notificationCount = form.querySelector('#notificationCount')?.value;
+            const symbol = document.getElementById('editCoinSearch')?.value;
+            const type = document.getElementById('editAlertType')?.value;
+            const condition = document.getElementById('editCondition')?.value;
+            const value = document.getElementById('editValue')?.value;
+            const useTelegram = document.getElementById('editTelegram')?.checked;
+            const useEmail = document.getElementById('editEmail')?.checked;
+            const userEmail = useEmail ? document.getElementById('editUserEmail')?.value : '';
+            const userChatId = useTelegram ? document.getElementById('editUserChatId')?.value : '';
+            const notificationCount = document.getElementById('editNotificationCount')?.value;
             
             if (!symbol || !type || !condition || !value || notificationCount === undefined) {
                 showNotification('Ошибка', 'Не все обязательные поля заполнены');
@@ -2365,20 +2114,14 @@
 
         function showCalculator() {
             toggleMenu();
-            // Прокручиваем страницу к калькулятору
-            const calculator = document.querySelector('.risk-calculator');
-            if (calculator) {
-                calculator.scrollIntoView({ behavior: 'smooth' });
-            }
+            // Перенаправляем на страницу калькулятора
+            window.location.href = 'index.html';
         }
 
-        function showWidget() {
+        function showAlerts() {
             toggleMenu();
-            // Прокручиваем страницу к виджету (можно добавить виджет в будущем)
-            const widget = document.querySelector('.average-calculator');
-            if (widget) {
-                widget.scrollIntoView({ behavior: 'smooth' });
-            }
+            // Перенаправляем на страницу алертов
+            window.location.href = 'alerts.html';
         }
 
         function showLoginForm() {
@@ -2727,235 +2470,6 @@
                     menuContent.classList.remove('show');
                 }
             });
-
-            // Исправленный калькулятор рисков
-            document.addEventListener('DOMContentLoaded', function() {
-                // Элементы интерфейса
-                const longBtn = document.getElementById('longBtn');
-                const shortBtn = document.getElementById('shortBtn');
-                const entryPriceInput = document.getElementById('entryPrice');
-                const leverageInput = document.getElementById('leverage');
-                const leverageValue = document.getElementById('leverageValue');
-                const leverageWarning = document.getElementById('leverageWarning');
-                const atrInput = document.getElementById('atr');
-                const riskPercentInput = document.getElementById('riskPercent');
-                const riskPercentValue = document.getElementById('riskPercentValue');
-                const riskAmountInput = document.getElementById('riskAmount');
-                const rewardRatioInput = document.getElementById('rewardRatio');
-                const rewardRatioValue = document.getElementById('rewardRatioValue');
-                const currentRatioSpan = document.getElementById('currentRatio');
-                const atrValueSpan = document.getElementById('atrValue');
-                const previewAtrPercent = document.getElementById('previewAtrPercent');
-                const previewAtrPercentValue = document.getElementById('previewAtrPercentValue');
-                
-                // Элементы результатов
-                const positionSizeSpan = document.getElementById('positionSize');
-                const stopLossSpan = document.getElementById('stopLoss');
-                const takeProfitSpan = document.getElementById('takeProfit');
-                const potentialProfitSpan = document.getElementById('potentialProfit');
-                const liquidationPriceSpan = document.getElementById('liquidationPrice');
-                
-                // Переменные состояния
-                let isLong = true;
-                
-                // Инициализация
-                function init() {
-                    updateSliderValues();
-                    updateAtrPreview();
-                    calculateRisk();
-                    
-                    // Назначение обработчиков событий
-                    longBtn.addEventListener('click', () => {
-                        isLong = true;
-                        longBtn.classList.add('active');
-                        shortBtn.classList.remove('active');
-                        calculateRisk();
-                    });
-                    
-                    shortBtn.addEventListener('click', () => {
-                        isLong = false;
-                        shortBtn.classList.add('active');
-                        longBtn.classList.remove('active');
-                        calculateRisk();
-                    });
-                    
-                    entryPriceInput.addEventListener('input', calculateRisk);
-                    leverageInput.addEventListener('input', () => {
-                        leverageValue.textContent = leverageInput.value + 'x';
-                        if (leverageInput.value > 10) {
-                            leverageWarning.style.display = 'block';
-                        } else {
-                            leverageWarning.style.display = 'none';
-                        }
-                        calculateRisk();
-                    });
-                    atrInput.addEventListener('input', () => {
-                        updateAtrPreview();
-                        calculateRisk();
-                    });
-                    riskPercentInput.addEventListener('input', () => {
-                        updateSliderValues();
-                        updateAtrPreview();
-                        calculateRisk();
-                    });
-                    riskAmountInput.addEventListener('input', calculateRisk);
-                    rewardRatioInput.addEventListener('input', () => {
-                        updateSliderValues();
-                        calculateRisk();
-                    });
-                    
-                    // Инициализация кнопки экспорта
-                    document.getElementById('exportTextBtn').addEventListener('click', exportToText);
-                }
-                
-                // Обновление значений слайдеров
-                function updateSliderValues() {
-                    riskPercentValue.textContent = riskPercentInput.value;
-                    rewardRatioValue.textContent = rewardRatioInput.value;
-                    currentRatioSpan.textContent = rewardRatioInput.value;
-                    previewAtrPercentValue.textContent = riskPercentInput.value + '%';
-                }
-                
-                // Предварительный просмотр ATR
-                function updateAtrPreview() {
-                    const atr = parseFloat(atrInput.value) || 0;
-                    const riskPercent = parseFloat(riskPercentInput.value) / 100;
-                    
-                    atrValueSpan.textContent = atr.toFixed(2) + ' USDT';
-                    previewAtrPercent.textContent = (atr * riskPercent).toFixed(2) + ' USDT';
-                }
-                
-                // Расчет цены ликвидации (корректная формула)
-                function calculateLiquidationPrice(entryPrice, leverage, isLong) {
-                    if (isLong) {
-                        return entryPrice * (1 - (1 / leverage) + (0.00075 / leverage));
-                    } else {
-                        return entryPrice * (1 + (1 / leverage) - (0.00075 / leverage));
-                    }
-                }
-                
-                // Основная функция расчета (исправленная)
-                function calculateRisk() {
-                    const entryPrice = parseFloat(entryPriceInput.value) || 0;
-                    const leverage = parseFloat(leverageInput.value) || 1;
-                    const atr = parseFloat(atrInput.value) || 0;
-                    const riskPercent = parseFloat(riskPercentInput.value) / 100;
-                    const riskAmount = parseFloat(riskAmountInput.value) || 0;
-                    const rewardRatio = parseFloat(rewardRatioInput.value) || 3;
-                    
-                    // Расчет стоп-лосса с учетом ATR
-                    let stopLossPrice;
-                    if (isLong) {
-                        stopLossPrice = entryPrice - (atr * riskPercent);
-                    } else {
-                        stopLossPrice = entryPrice + (atr * riskPercent);
-                    }
-                    
-                    // Расчет размера позиции (корректная формула)
-                    const priceDifference = Math.abs(entryPrice - stopLossPrice);
-                    const positionSize = (riskAmount / priceDifference) * entryPrice;
-                    
-                    // Расчет тейк-профита
-                    let takeProfitPrice;
-                    if (isLong) {
-                        takeProfitPrice = entryPrice + (priceDifference * rewardRatio);
-                    } else {
-                        takeProfitPrice = entryPrice - (priceDifference * rewardRatio);
-                    }
-                    
-                    // Расчет потенциальной прибыли (корректная формула)
-                    const potentialProfit = (positionSize * Math.abs(takeProfitPrice - entryPrice)) / entryPrice;
-                    
-                    // Расчет цены ликвидации
-                    const liquidationPrice = calculateLiquidationPrice(entryPrice, leverage, isLong);
-                    
-                    // Обновление интерфейса
-                    positionSizeSpan.textContent = positionSize.toFixed(4);
-                    stopLossSpan.textContent = `${stopLossPrice.toFixed(2)} USDT`;
-                    takeProfitSpan.textContent = `${takeProfitPrice.toFixed(2)} USDT`;
-                    potentialProfitSpan.textContent = `${potentialProfit.toFixed(2)} USDT (${(potentialProfit / riskAmount * 100).toFixed(2)}%)`;
-                    liquidationPriceSpan.textContent = `${liquidationPrice.toFixed(2)} USDT`;
-                }
-                
-                // Экспорт в текстовый файл
-                function exportToText() {
-                    const content = `
-Калькулятор рисков - Результаты
-===============================
-Дата: ${new Date().toLocaleString()}
-Направление: ${isLong ? 'Лонг' : 'Шорт'}
-
-Параметры сделки:
------------------
-Цена входа: ${entryPriceInput.value} USDT
-Кредитное плечо: ${leverageInput.value}x
-ATR: ${atrInput.value} USDT
-Риск стоп-лосс: ${riskPercentInput.value}% от ATR
-Риск на сделку: ${riskAmountInput.value} USDT
-Соотношение тейк-профита: 1:${rewardRatioInput.value}
-
-Результаты:
------------
-Размер позиции: ${positionSizeSpan.textContent}
-Стоп-лосс: ${stopLossSpan.textContent}
-Тейк-профит (1:${rewardRatioInput.value}): ${takeProfitSpan.textContent}
-Потенциальная прибыль: ${potentialProfitSpan.textContent}
-Цена ликвидации: ${liquidationPriceSpan.textContent}
-                    `;
-                    
-                    const blob = new Blob([content], {type: 'text/plain'});
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'расчет_рисков.txt';
-                    a.click();
-                    URL.revokeObjectURL(url);
-                }
-                
-                // Запуск приложения
-                init();
-            });
-
-            // Average Calculator Function
-            function calculateAverage() {
-                const input = document.getElementById('numbersInput').value.trim();
-                const resultDiv = document.getElementById('result');
-                
-                if (!input) {
-                    resultDiv.innerHTML = '<p style="color: #F44336;">Введите числа!</p>';
-                    return;
-                }
-
-                let numbers;
-                try {
-                    numbers = input.split(' ').map(num => parseFloat(num));
-                    if (numbers.some(isNaN)) {
-                        throw new Error();
-                    }
-                } catch {
-                    resultDiv.innerHTML = '<p style="color: #F44336;">Ошибка: вводите только числа, разделённые пробелами!</p>';
-                    return;
-                }
-
-                const sum = numbers.reduce((sum, num) => sum + num, 0);
-                const count = numbers.length;
-                const mean = sum / count;
-                const deviations = numbers.map(num => num - mean);
-
-                resultDiv.innerHTML = `
-                    <div style="background: rgba(30,30,30,0.5); padding: 10px; border-radius: 5px;">
-                        <p><strong>Чисел:</strong> ${count}</p>
-                        <p><strong>Сумма:</strong> ${sum.toFixed(2)}</p>
-                        <p><strong>Среднее:</strong> ${mean.toFixed(2)}</p>
-                        <p><strong>Отклонения:</strong></p>
-                        <ul style="padding-left: 20px;">
-                            ${numbers.map((num, i) => 
-                                `<li>${num} - ${mean.toFixed(2)} = ${deviations[i].toFixed(2)}</li>`
-                            ).join('')}
-                        </ul>
-                    </div>
-                `;
-            }
         }
 
         // Инициализация приложения
@@ -3006,6 +2520,7 @@ ATR: ${atrInput.value} USDT
         window.createAlertForSymbol = createAlertForSymbol;
         window.deleteAlert = deleteAlert;
         window.applyCurrentPrice = applyCurrentPrice;
+        window.applyCurrentPriceForEdit = applyCurrentPriceForEdit;
         window.editAlert = editAlert;
         window.closeEditModal = closeEditModal;
         window.openTelegramSettings = openTelegramSettings;
@@ -3014,7 +2529,7 @@ ATR: ${atrInput.value} USDT
         window.showBotConnectionHint = showBotConnectionHint;
         window.closeBotConnectionHint = closeBotConnectionHint;
         window.showCalculator = showCalculator;
-        window.showWidget = showWidget;
+        window.showAlerts = showAlerts;
         window.showLoginForm = showLoginForm;
         window.closeLoginModal = closeLoginModal;
         window.showRegisterForm = showRegisterForm;
