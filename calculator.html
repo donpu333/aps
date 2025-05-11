@@ -436,14 +436,14 @@
                     
                     <div class="input-group">
                         <label for="entryPrice">Цена входа (USDT)</label>
-                        <input type="number" id="entryPrice" min="0" step="0.01" value="100.00">
+                        <input type="number" id="entryPrice" min="0" step="0.00000001" value="100.00">
                     </div>
                     
                     <div class="input-group">
                         <label for="leverage">Кредитное плечо</label>
                         <div class="leverage-container">
-                            <input type="range" id="leverage" min="1" max="100" value="1">
-                            <span class="leverage-value" id="leverageValue">1x</span>
+                            <input type="range" id="leverage" min="1" max="100" value="10">
+                            <span class="leverage-value" id="leverageValue">10x</span>
                         </div>
                         <div class="leverage-warning" id="leverageWarning">
                             Высокое плечо увеличивает риск ликвидации!
@@ -452,7 +452,7 @@
                     
                     <div class="input-group">
                         <label for="atr">ATR (USDT)</label>
-                        <input type="number" id="atr" min="0" step="0.01" value="5.00">
+                        <input type="number" id="atr" min="0" step="0.00000001" value="5.00">
                         <div class="preview-value">
                             Размер ATR: <span id="atrValue">5.00 USDT</span>
                         </div>
@@ -471,7 +471,7 @@
                     
                     <div class="input-group">
                         <label for="riskAmount">Риск на сделку (USDT)</label>
-                        <input type="number" id="riskAmount" min="0" step="0.01" value="100.00">
+                        <input type="number" id="riskAmount" min="0" step="0.00000001" value="100.00">
                     </div>
                     
                     <div class="input-group">
@@ -731,6 +731,10 @@
             
             // Инициализация
             function init() {
+                // Установка плеча по умолчанию на 10
+                leverageInput.value = 10;
+                leverageValue.textContent = '10x';
+                
                 updateSliderValues();
                 updateAtrPreview();
                 calculateRisk();
@@ -792,8 +796,9 @@
                 const atr = parseFloat(atrInput.value) || 0;
                 const riskPercent = parseFloat(riskPercentInput.value) / 100;
                 
-                atrValueSpan.textContent = atr.toFixed(2) + ' USDT';
-                previewAtrPercent.textContent = (atr * riskPercent).toFixed(2) + ' USDT';
+                // Отображаем точное значение ATR без округления
+                atrValueSpan.textContent = atr + ' USDT';
+                previewAtrPercent.textContent = (atr * riskPercent) + ' USDT';
             }
             
             // Расчет цены ликвидации
@@ -841,11 +846,11 @@
                 const liquidationPrice = calculateLiquidationPrice(entryPrice, leverage, isLong);
                 
                 // Обновление интерфейса
-                positionSizeSpan.textContent = positionSize.toFixed(4);
-                stopLossSpan.textContent = `${stopLossPrice.toFixed(2)} USDT`;
-                takeProfitSpan.textContent = `${takeProfitPrice.toFixed(2)} USDT`;
-                potentialProfitSpan.textContent = `${potentialProfit.toFixed(2)} USDT`;
-                liquidationPriceSpan.textContent = `${liquidationPrice.toFixed(2)} USDT`;
+                positionSizeSpan.textContent = positionSize.toFixed(8);
+                stopLossSpan.textContent = `${stopLossPrice} USDT`;
+                takeProfitSpan.textContent = `${takeProfitPrice} USDT`;
+                potentialProfitSpan.textContent = `${potentialProfit.toFixed(8)} USDT`;
+                liquidationPriceSpan.textContent = `${liquidationPrice.toFixed(8)} USDT`;
             }
             
             // Экспорт в текстовый файл
