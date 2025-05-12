@@ -660,7 +660,7 @@
                                 id="value" 
                                 class="w-2/3 px-3 py-2 border-t border-b border-r rounded-r-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary" 
                                 placeholder="Значение"
-                                step="0.0001"
+                                step="any"
                                 required
                             >
                         </div>
@@ -1546,7 +1546,7 @@
             hint.innerHTML = badge;
             
             symbolInput.value = symbol;
-            valueInput.value = currentPrice.toFixed(4);
+            valueInput.value = currentPrice;
             symbolInput.classList.add('hidden');
             
             // Скрываем ошибки валидации при выборе из списка
@@ -1810,7 +1810,7 @@
                                 value="${alert.value}"
                                 class="w-2/3 px-3 py-2 border-t border-b border-r rounded-r-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary" 
                                 placeholder="Значение"
-                                step="0.0001"
+                                step="any"
                                 required
                             >
                         </div>
@@ -1828,11 +1828,11 @@
                     <div>
                         <label class="block text-gray-300 text-sm font-medium mb-2">Количество уведомлений</label>
                         <select id="editNotificationCount" class="w-full px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
+                           <option value="5" ${alert.notificationCount === 5 ? 'selected' : ''}>5 раз (интервал 30 сек)</option>
                             <option value="1" ${alert.notificationCount === 1 ? 'selected' : ''}>1 раз (интервал 30 сек)</option>
                             <option value="2" ${alert.notificationCount === 2 ? 'selected' : ''}>2 раза (интервал 30 сек)</option>
                             <option value="3" ${alert.notificationCount === 3 ? 'selected' : ''}>3 раза (интервал 30 сек)</option>
                             <option value="4" ${alert.notificationCount === 4 ? 'selected' : ''}>4 раза (интервал 30 сек)</option>
-                            <option value="5" ${alert.notificationCount === 5 ? 'selected' : ''}>5 раз (интервал 30 сек)</option>
                             <option value="0" ${alert.notificationCount === 0 ? 'selected' : ''}>Пока не отключу (интервал 30 сек)</option>
                         </select>
                     </div>
@@ -2372,24 +2372,26 @@
                         const success = await addUserAlert(symbol, alertType, condition, value, notificationMethods, notificationCount, userChatId);
                         if (success) {
                             showNotification('Успешно', `Алерт для ${symbol} создан`);
+                            // Сбрасываем форму только для нового алерта
+                            this.reset();
+                            const symbolInput = document.getElementById('symbol');
+                            if (symbolInput) symbolInput.classList.add('hidden');
+                            
+                            const hint = document.getElementById('marketTypeHint');
+                            if (hint) hint.innerHTML = '';
+                            
+                            const currentPriceContainer = document.getElementById('currentPriceContainer');
+                            if (currentPriceContainer) currentPriceContainer.classList.add('hidden');
                         }
                     }
                     
-                    this.reset();
-                    const symbolInput = document.getElementById('symbol');
-                    if (symbolInput) symbolInput.classList.add('hidden');
-                    
-                    const hint = document.getElementById('marketTypeHint');
-                    if (hint) hint.innerHTML = '';
-                    
+                    // Всегда сбрасываем editAlertId
                     const editAlertIdInput = document.getElementById('editAlertId');
                     if (editAlertIdInput) editAlertIdInput.value = '';
                     
+                    // Обновляем текст кнопки
                     const submitBtnText = document.getElementById('submitBtnText');
                     if (submitBtnText) submitBtnText.textContent = 'Создать алерт';
-                    
-                    const currentPriceContainer = document.getElementById('currentPriceContainer');
-                    if (currentPriceContainer) currentPriceContainer.classList.add('hidden');
                 });
             }
             
@@ -2539,8 +2541,8 @@
                     updateUserUI(currentUser.email);
                 }
                 
-                // Запускаем проверку алертов каждые 5 секунд
-                setInterval(checkAlerts, 5000);
+                // Запускаем проверку алертов каждые 2 секунд
+                setInterval(checkAlerts, 2000);
             } catch (error) {
                 console.error('Failed to initialize application:', error);
                 showNotification('Critical Error', 'Failed to connect to Binance API');
