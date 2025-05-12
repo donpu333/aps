@@ -374,6 +374,33 @@
             background-color: var(--secondary);
             border-color: var(--secondary);
         }
+
+        /* Новые стили для нескольких тейк-профитов */
+        .take-profit-levels {
+            margin-top: 10px;
+        }
+
+        .take-profit-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            padding: 5px;
+            background-color: rgba(0, 255, 0, 0.05);
+            border-radius: 3px;
+        }
+
+        .take-profit-ratio {
+            color: var(--success-color);
+            font-weight: 500;
+        }
+
+        .take-profit-price {
+            color: var(--success-color);
+        }
+
+        .take-profit-value {
+            color: var(--success-color);
+        }
     </style>
 </head>
 <body class="bg-dark">
@@ -475,16 +502,29 @@
                     </div>
                     
                     <div class="input-group">
-                        <label for="rewardRatio">Соотношение тейк-профита (1:X)</label>
+                        <label for="rewardRatio1">Соотношение тейк-профита (1:X)</label>
                         <div class="slider-container">
-                            <input type="range" id="rewardRatio" min="3" max="20" value="3">
-                            <span class="slider-value" id="rewardRatioValue">3</span>
+                            <input type="range" id="rewardRatio1" min="1" max="20" value="3">
+                            <span class="slider-value" id="rewardRatio1Value">3</span>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="rewardRatio2">Дополнительный тейк-профит (1:X)</label>
+                        <div class="slider-container">
+                            <input type="range" id="rewardRatio2" min="1" max="20" value="5">
+                            <span class="slider-value" id="rewardRatio2Value">5</span>
                         </div>
                     </div>
                 </div>
                 
                 <div class="section">
                     <div class="section-title">Результаты</div>
+                    
+                    <div class="result-item">
+                        <span>Цена входа:</span>
+                        <span class="result-value" id="entryPriceResult">100.00 USDT</span>
+                    </div>
                     
                     <div class="result-item">
                         <span>Размер позиции:</span>
@@ -496,14 +536,8 @@
                         <span class="result-value loss" id="stopLoss">99.50 USDT</span>
                     </div>
                     
-                    <div class="result-item">
-                        <span>Тейк-профит (1:<span id="currentRatio">3</span>):</span>
-                        <span class="result-value profit" id="takeProfit">101.50 USDT</span>
-                    </div>
-                    
-                    <div class="result-item">
-                        <span>Потенциальная прибыль:</span>
-                        <span class="result-value profit" id="potentialProfit">300.00 USDT</span>
+                    <div class="take-profit-levels" id="takeProfitLevels">
+                        <!-- Здесь будут динамически добавляться уровни тейк-профита -->
                     </div>
                     
                     <div class="result-item">
@@ -521,7 +555,7 @@
                 <div class="section">
                     <div class="input-group">
                         <label for="numbersInput">Введите числа через пробел:</label>
-                        <input type="text" id="numbersInput" placeholder="5 10 15 20">
+                        <input type="text" id="numbersInput" placeholder="5 10 15 20 0.0000012">
                     </div>
                     <button onclick="calculateAverage()" style="width: 100%; padding: 10px; background: var(--accent-color); border: none; border-radius: 5px; color: white; font-weight: 600;">Рассчитать</button>
                     <div id="result" style="margin-top: 15px;"></div>
@@ -705,6 +739,7 @@
             const longBtn = document.getElementById('longBtn');
             const shortBtn = document.getElementById('shortBtn');
             const entryPriceInput = document.getElementById('entryPrice');
+            const entryPriceResult = document.getElementById('entryPriceResult');
             const leverageInput = document.getElementById('leverage');
             const leverageValue = document.getElementById('leverageValue');
             const leverageWarning = document.getElementById('leverageWarning');
@@ -712,9 +747,10 @@
             const riskPercentInput = document.getElementById('riskPercent');
             const riskPercentValue = document.getElementById('riskPercentValue');
             const riskAmountInput = document.getElementById('riskAmount');
-            const rewardRatioInput = document.getElementById('rewardRatio');
-            const rewardRatioValue = document.getElementById('rewardRatioValue');
-            const currentRatioSpan = document.getElementById('currentRatio');
+            const rewardRatio1Input = document.getElementById('rewardRatio1');
+            const rewardRatio1Value = document.getElementById('rewardRatio1Value');
+            const rewardRatio2Input = document.getElementById('rewardRatio2');
+            const rewardRatio2Value = document.getElementById('rewardRatio2Value');
             const atrValueSpan = document.getElementById('atrValue');
             const previewAtrPercent = document.getElementById('previewAtrPercent');
             const previewAtrPercentValue = document.getElementById('previewAtrPercentValue');
@@ -722,8 +758,7 @@
             // Элементы результатов
             const positionSizeSpan = document.getElementById('positionSize');
             const stopLossSpan = document.getElementById('stopLoss');
-            const takeProfitSpan = document.getElementById('takeProfit');
-            const potentialProfitSpan = document.getElementById('potentialProfit');
+            const takeProfitLevelsDiv = document.getElementById('takeProfitLevels');
             const liquidationPriceSpan = document.getElementById('liquidationPrice');
             
             // Переменные состояния
@@ -774,7 +809,11 @@
                     calculateRisk();
                 });
                 riskAmountInput.addEventListener('input', calculateRisk);
-                rewardRatioInput.addEventListener('input', () => {
+                rewardRatio1Input.addEventListener('input', () => {
+                    updateSliderValues();
+                    calculateRisk();
+                });
+                rewardRatio2Input.addEventListener('input', () => {
                     updateSliderValues();
                     calculateRisk();
                 });
@@ -786,9 +825,8 @@
             // Обновление значений слайдеров
             function updateSliderValues() {
                 riskPercentValue.textContent = riskPercentInput.value;
-                rewardRatioValue.textContent = rewardRatioInput.value;
-                currentRatioSpan.textContent = rewardRatioInput.value;
-                previewAtrPercentValue.textContent = riskPercentInput.value + '%';
+                rewardRatio1Value.textContent = rewardRatio1Input.value;
+                rewardRatio2Value.textContent = rewardRatio2Input.value;
             }
             
             // Предварительный просмотр ATR
@@ -817,7 +855,8 @@
                 const atr = parseFloat(atrInput.value) || 0;
                 const riskPercent = parseFloat(riskPercentInput.value) / 100;
                 const riskAmount = parseFloat(riskAmountInput.value) || 0;
-                const rewardRatio = parseFloat(rewardRatioInput.value) || 3;
+                const rewardRatio1 = parseFloat(rewardRatio1Input.value) || 3;
+                const rewardRatio2 = parseFloat(rewardRatio2Input.value) || 5;
                 
                 // Расчет стоп-лосса
                 let stopLossPrice;
@@ -831,30 +870,57 @@
                 const priceDifference = Math.abs(entryPrice - stopLossPrice);
                 const positionSize = priceDifference > 0 ? (riskAmount / priceDifference) : 0;
                 
-                // Расчет тейк-профита
-                let takeProfitPrice;
-                if (isLong) {
-                    takeProfitPrice = entryPrice + (priceDifference * rewardRatio);
-                } else {
-                    takeProfitPrice = entryPrice - (priceDifference * rewardRatio);
-                }
-                
-                // Расчет потенциальной прибыли
-                const potentialProfit = positionSize * Math.abs(takeProfitPrice - entryPrice);
-                
                 // Расчет цены ликвидации
                 const liquidationPrice = calculateLiquidationPrice(entryPrice, leverage, isLong);
                 
                 // Обновление интерфейса
+                entryPriceResult.textContent = `${entryPrice} USDT`;
                 positionSizeSpan.textContent = positionSize.toFixed(8);
-                stopLossSpan.textContent = `${stopLossPrice} USDT`;
-                takeProfitSpan.textContent = `${takeProfitPrice} USDT`;
-                potentialProfitSpan.textContent = `${potentialProfit.toFixed(8)} USDT`;
+                stopLossSpan.textContent = `${stopLossPrice.toFixed(8)} USDT`;
                 liquidationPriceSpan.textContent = `${liquidationPrice.toFixed(8)} USDT`;
+                
+                // Генерация уровней тейк-профита
+                generateTakeProfitLevels(entryPrice, stopLossPrice, isLong, rewardRatio1, rewardRatio2, positionSize);
+            }
+            
+            // Генерация уровней тейк-профита
+            function generateTakeProfitLevels(entryPrice, stopLossPrice, isLong, ratio1, ratio2, positionSize) {
+                takeProfitLevelsDiv.innerHTML = '';
+                
+                // Создаем массив уровней тейк-профита
+                const levels = [ratio1, ratio2];
+                
+                levels.forEach(ratio => {
+                    let takeProfitPrice;
+                    if (isLong) {
+                        takeProfitPrice = entryPrice + (entryPrice - stopLossPrice) * ratio;
+                    } else {
+                        takeProfitPrice = entryPrice - (stopLossPrice - entryPrice) * ratio;
+                    }
+                    
+                    const profit = positionSize * Math.abs(takeProfitPrice - entryPrice);
+                    
+                    const levelDiv = document.createElement('div');
+                    levelDiv.className = 'take-profit-item';
+                    levelDiv.innerHTML = `
+                        <span class="take-profit-ratio">Тейк-профит (1:${ratio.toFixed(1)}):</span>
+                        <span class="take-profit-price">${takeProfitPrice.toFixed(8)} USDT</span>
+                        <span class="take-profit-value">+${profit.toFixed(8)} USDT</span>
+                    `;
+                    takeProfitLevelsDiv.appendChild(levelDiv);
+                });
             }
             
             // Экспорт в текстовый файл
             function exportToText() {
+                const entryPrice = parseFloat(entryPriceInput.value) || 0;
+                const leverage = parseFloat(leverageInput.value) || 1;
+                const atr = parseFloat(atrInput.value) || 0;
+                const riskPercent = parseFloat(riskPercentInput.value);
+                const riskAmount = parseFloat(riskAmountInput.value) || 0;
+                const rewardRatio1 = parseFloat(rewardRatio1Input.value) || 3;
+                const rewardRatio2 = parseFloat(rewardRatio2Input.value) || 5;
+                
                 const content = `
 Калькулятор рисков - Результаты
 ===============================
@@ -863,19 +929,24 @@
 
 Параметры сделки:
 -----------------
-Цена входа: ${entryPriceInput.value} USDT
-Кредитное плечо: ${leverageInput.value}x
-ATR: ${atrInput.value} USDT
-Риск стоп-лосс: ${riskPercentInput.value}% от ATR
-Риск на сделку: ${riskAmountInput.value} USDT
-Соотношение тейк-профита: 1:${rewardRatioInput.value}
+Цена входа: ${entryPrice} USDT
+Кредитное плечо: ${leverage}x
+ATR: ${atr} USDT
+Риск стоп-лосс: ${riskPercent}% от ATR
+Риск на сделку: ${riskAmount} USDT
+Соотношение тейк-профита: 1:${rewardRatio1} и 1:${rewardRatio2}
 
 Результаты:
 -----------
+Цена входа: ${entryPrice} USDT
 Размер позиции: ${positionSizeSpan.textContent}
 Стоп-лосс: ${stopLossSpan.textContent}
-Тейк-профит (1:${rewardRatioInput.value}): ${takeProfitSpan.textContent}
-Потенциальная прибыль: ${potentialProfitSpan.textContent}
+
+Уровни тейк-профита:
+${Array.from(takeProfitLevelsDiv.children).map(el => 
+    el.textContent.trim().replace(/\s+/g, ' ')
+).join('\n')}
+
 Цена ликвидации: ${liquidationPriceSpan.textContent}
                 `;
                 
@@ -892,7 +963,7 @@ ATR: ${atrInput.value} USDT
             init();
         });
         
-        // Average Calculator Function
+        // Калькулятор среднего
         function calculateAverage() {
             const input = document.getElementById('numbersInput').value.trim();
             const resultDiv = document.getElementById('result');
@@ -904,8 +975,20 @@ ATR: ${atrInput.value} USDT
 
             let numbers;
             try {
-                numbers = input.split(' ').map(num => parseFloat(num));
-                if (numbers.some(isNaN)) {
+                // Разбиваем строку на числа, учитывая как точку, так и запятую в качестве разделителя
+                numbers = input.split(' ')
+                    .map(num => num.replace(',', '.')) // заменяем запятые на точки
+                    .filter(num => num !== '') // удаляем пустые строки
+                    .map(num => {
+                        // Преобразуем строку в число
+                        const parsed = parseFloat(num);
+                        if (isNaN(parsed)) {
+                            throw new Error();
+                        }
+                        return parsed;
+                    });
+                
+                if (numbers.length === 0) {
                     throw new Error();
                 }
             } catch {
@@ -918,15 +1001,32 @@ ATR: ${atrInput.value} USDT
             const mean = sum / count;
             const deviations = numbers.map(num => num - mean);
 
+            // Функция для форматирования чисел - показывает до 8 знаков после запятой, если нужно
+            const formatNumber = (num) => {
+                if (Math.abs(num) < 0.0001 || Math.abs(num) > 1000000) {
+                    return num.toExponential(6);
+                }
+                // Проверяем, есть ли дробная часть
+                if (num % 1 !== 0) {
+                    // Округляем до 8 знаков после запятой, если нужно
+                    const str = num.toString();
+                    const decimalIndex = str.indexOf('.');
+                    if (decimalIndex !== -1 && str.length - decimalIndex > 8) {
+                        return num.toFixed(8);
+                    }
+                }
+                return num.toString();
+            };
+
             resultDiv.innerHTML = `
                 <div style="background: rgba(30,30,30,0.5); padding: 10px; border-radius: 5px;">
                     <p><strong>Чисел:</strong> ${count}</p>
-                    <p><strong>Сумма:</strong> ${sum.toFixed(2)}</p>
-                    <p><strong>Среднее:</strong> ${mean.toFixed(2)}</p>
+                    <p><strong>Сумма:</strong> ${formatNumber(sum)}</p>
+                    <p><strong>Среднее:</strong> ${formatNumber(mean)}</p>
                     <p><strong>Отклонения:</strong></p>
                     <ul style="padding-left: 20px;">
                         ${numbers.map((num, i) => 
-                            `<li>${num} - ${mean.toFixed(2)} = ${deviations[i].toFixed(2)}</li>`
+                            `<li>${formatNumber(num)} - ${formatNumber(mean)} = ${formatNumber(deviations[i])}</li>`
                         ).join('')}
                     </ul>
                 </div>
