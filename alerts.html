@@ -30,6 +30,23 @@
             font-family: 'JetBrains Mono', monospace;
             background-color: var(--dark);
             color: var(--light);
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .main-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .content-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
         }
         
         .alert-card {
@@ -169,7 +186,7 @@
         }
         
         .alerts-container {
-            max-height: 500px;
+            max-height: 100%;
             overflow-y: auto;
         }
         
@@ -561,218 +578,225 @@
     </style>
 </head>
 <body class="bg-dark">
-    <nav class="shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 items-center">
-                <div class="flex items-center">
-                    <i class="fas fa-bell text-primary text-xl mr-2"></i>
-                    <span class="text-xl font-bold text-light">Crypto Alerts</span>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <div class="menu-container">
-                        <button class="menu-button" id="menuButton">
-                            <i class="fas fa-bars mr-2"></i>Меню
+    <div class="main-container">
+        <nav class="shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16 items-center">
+                    <div class="flex items-center">
+                        <i class="fas fa-bell text-primary text-xl mr-2"></i>
+                        <span class="text-xl font-bold text-light">Crypto Alerts</span>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="menu-container">
+                            <button class="menu-button" id="menuButton">
+                                <i class="fas fa-bars mr-2"></i>Меню
+                            </button>
+                            <div class="menu-content" id="menuContent">
+                               <a href="index.html" class="menu-item">
+                                    <i class="fas fa-home mr-2"></i>Главная
+                            </a>
+                                 <i class="fas fa-bell mr-2"></i>Алерты
+                                </a>
+                                <a href="calculator.html" class="menu-item">
+                                  <i class="fas fa-calculator mr-2"></i>Калькулятор
+                                </a>
+                                <a href="widget.html" class="menu-item">
+                                    <i class="fas fa-chart-line mr-2"></i>Виджет
+                                </a>
+                                <div class="menu-divider"></div>
+                                <a href="#" class="menu-item" onclick="showLoginForm()" id="loginMenuItem">
+                                    <i class="fas fa-sign-in-alt mr-2"></i>Вход
+                                </a>
+                                <a href="#" class="menu-item" onclick="showRegisterForm()" id="registerMenuItem">
+                                    <i class="fas fa-user-plus mr-2"></i>Регистрация
+                                </a>
+                                <a href="#" class="menu-item hidden" onclick="handleLogout()" id="logoutMenuItem">
+                                    <i class="fas fa-sign-out-alt mr-2"></i>Выход
+                                </a>
+                            </div>
+                        </div>
+                        <div id="connectionStatus" class="connection-status">
+                            <div class="status-dot status-connecting"></div>
+                            <span>Подключение к Binance...</span>
+                        </div>
+                        <button id="userProfileBtn" class="hidden items-center text-gray-300 hover:text-white">
+                            <img id="userAvatar" class="w-8 h-8 rounded-full mr-2" src="https://via.placeholder.com/32/2D2D2D/6B7280?text=U" alt="User">
+                            <span id="userName">Гость</span>
                         </button>
-                        <div class="menu-content" id="menuContent">
-                           <a href="index.html" class="menu-item">
-                             <i class="fas fa-bell mr-2"></i>Алерты
-                            </a>
-                            <a href="calculator.html" class="menu-item">
-                              <i class="fas fa-calculator mr-2"></i>Калькулятор
-                            </a>
-                            <a href="widget.html" class="menu-item">
-                                <i class="fas fa-chart-line mr-2"></i>Виджет
-                            </a>
-                            <div class="menu-divider"></div>
-                            <a href="#" class="menu-item" onclick="showLoginForm()" id="loginMenuItem">
-                                <i class="fas fa-sign-in-alt mr-2"></i>Вход
-                            </a>
-                            <a href="#" class="menu-item" onclick="showRegisterForm()" id="registerMenuItem">
-                                <i class="fas fa-user-plus mr-2"></i>Регистрация
-                            </a>
-                            <a href="#" class="menu-item hidden" onclick="handleLogout()" id="logoutMenuItem">
-                                <i class="fas fa-sign-out-alt mr-2"></i>Выход
-                            </a>
-                        </div>
                     </div>
-                    <div id="connectionStatus" class="connection-status">
-                        <div class="status-dot status-connecting"></div>
-                        <span>Подключение к Binance...</span>
-                    </div>
-                    <button id="userProfileBtn" class="hidden items-center text-gray-300 hover:text-white">
-                        <img id="userAvatar" class="w-8 h-8 rounded-full mr-2" src="https://via.placeholder.com/32/2D2D2D/6B7280?text=U" alt="User">
-                        <span id="userName">Гость</span>
-                    </button>
                 </div>
             </div>
-        </div>
-    </nav>
+        </nav>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="grid grid-cols-1 gap-8">
-            <!-- Alerts Section -->
-            <div class="card rounded-lg p-6">
-                <h2 class="text-xl font-bold mb-6 text-primary">
-                    <i class="fas fa-plus-circle mr-2"></i>Создать новый алерт
-                </h2>
-                
-                <form id="alertForm">
-                    <input type="hidden" id="editAlertId" value="">
-                    <div class="mb-4">
-                        <label class="block text-gray-300 text-sm font-medium mb-2">Криптовалюта</label>
-                        <div class="relative">
-                            <input 
-                                type="text" 
-                                id="coinSearch" 
-                                placeholder="Поиск монеты..." 
-                                class="w-full pl-10 pr-4 py-2 rounded-md focus:ring-primary focus:border-primary"
-                                required
-                            >
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i class="fas fa-search text-gray-400"></i>
-                            </div>
-                            <div id="marketTypeHint" class="market-type-hint"></div>
-                        </div>
-                        <div id="coinError" class="validation-message">Пожалуйста, выберите криптовалюту</div>
-                        <select id="symbol" size="5" class="w-full mt-2 px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary hidden">
-                        </select>
-                    </div>
-                    
-                    <div class="mb-4">
-                        <label class="block text-gray-300 text-sm font-medium mb-2">Тип алерта</label>
-                        <select id="alertType" class="w-full px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
-                            <option value="price">Цена</option>
-                            <option value="liquidation">Ликвидации</option>
-                            <option value="funding">Фандинг</option>
-                            <option value="oi">Открытый интерес</option>
-                        </select>
-                    </div>
-                    
-                    <div class="mb-4">
-                        <label class="block text-gray-300 text-sm font-medium mb-2">Условие</label>
-                        <div class="flex">
-                            <select id="condition" class="w-1/3 px-3 py-2 rounded-l-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
-                                <option value=">">Выше</option>
-                                <option value="<">Ниже</option>
-                            </select>
-                            <input 
-                                type="number" 
-                                id="value" 
-                                class="w-2/3 px-3 py-2 border-t border-b border-r rounded-r-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary" 
-                                placeholder="Значение"
-                                step="any"
-                                required
-                            >
-                        </div>
-                        <div id="valueError" class="validation-message">Пожалуйста, укажите значение</div>
-                        <div id="currentPriceContainer" class="current-price-container hidden">
-                            <span class="current-price-label">Текущая цена:</span>
-                            <span id="currentPriceValue" class="current-price-value"></span>
-                            <button type="button" onclick="applyCurrentPrice()" class="apply-price-btn" title="Применить текущую цену">
-                                <i class="fas fa-sync-alt"></i>
-                                <span>Применить</span>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-4">
-                        <label class="block text-gray-300 text-sm font-medium mb-2">Количество уведомлений</label>
-                        <select id="notificationCount" class="w-full px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
-                            <option value="5" selected>5 раз (интервал 30 сек)</option>
-                            <option value="1">1 раз (интервал 30 сек)</option>
-                            <option value="2">2 раза (интервал 30 сек)</option>
-                            <option value="3">3 раза (интервал 30 сек)</option>
-                            <option value="4">4 раза (интервал 30 сек)</option>
-                            <option value="0">Пока не отключу (интервал 30 сек)</option>
-                        </select>
-                    </div>
-                    
-                    <div class="mb-6">
-                        <label class="block text-gray-300 text-sm font-medium mb-2">Уведомления</label>
-                        <div class="notification-methods">
-                            <div class="notification-method">
-                                <input id="telegram" type="checkbox" checked class="h-4 w-4 focus:ring-primary">
-                                <label for="telegram" class="ml-2 block text-sm text-gray-300">
-                                    <i class="fab fa-telegram mr-1 text-blue-400"></i> Telegram
-                                </label>
-                                <button onclick="openTelegramSettings()" class="ml-2 text-sm text-blue-400 hover:text-blue-300 text-xs px-2 py-1">
-                                    Настроить
-                                </button>
-                                <input 
-                                    type="text" 
-                                    id="userChatId" 
-                                    placeholder="Ваш Chat ID" 
-                                    class="ml-2 px-2 py-1 text-sm rounded-md hidden"
-                                >
-                            </div>
-                            <div class="notification-method">
-                                <input id="email" type="checkbox" class="h-4 w-4 focus:ring-primary">
-                                <label for="email" class="ml-2 block text-sm text-gray-300">
-                                    <i class="fas fa-envelope mr-1 text-gray-400"></i> Email
-                                </label>
-                                <input 
-                                    type="email" 
-                                    id="userEmail" 
-                                    placeholder="Ваш email" 
-                                    class="ml-2 px-2 py-1 text-sm rounded-md hidden"
-                                >
-                                <div id="userEmailError" class="validation-message">Неверный формат email</div>
-                            </div>
-                        </div>
-                        <div class="mt-4">
-                            <div class="tooltip file-input-container">
-                                <button class="file-input-label text-xs px-3 py-1">
-                                    <i class="fas fa-file-import mr-1"></i>Импорт из TXT
-                                </button>
-                                <input type="file" id="bulkImportFile" class="file-input" accept=".txt">
-                                <span class="tooltiptext">
-                                    Формат файла:<br>
-                                    Каждая строка должна содержать:<br>
-                                    СИМВОЛ УСЛОВИЕ ЗНАЧЕНИЕ<br><br>
-                                    Пример:<br>
-                                    BTCUSDT > 50000<br>
-                                    ETHUSDT < 3000<br>
-                                    SOLUSDT > 150
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <button type="submit" class="btn-primary w-full text-white py-2 px-4 rounded-md font-medium mt-4">
-                        <i class="fas fa-bell mr-2"></i><span id="submitBtnText">Создать алерт</span>
-                    </button>
-                </form>
-            </div>
-            
-            <div class="card rounded-lg p-6">
-                <div class="compact-alerts-header">
-                    <div class="flex items-center flex-1 min-w-0">
-                        <h2 class="compact-alerts-title">
-                            <i class="fas fa-bell mr-1"></i>Алерты
+        <div class="content-container">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div class="grid grid-cols-1 gap-8">
+                    <!-- Alerts Section -->
+                    <div class="card rounded-lg p-6">
+                        <h2 class="text-xl font-bold mb-6 text-primary">
+                            <i class="fas fa-plus-circle mr-2"></i>Создать новый алерт
                         </h2>
-                        <div class="compact-filters no-scrollbar">
-                            <button id="showActiveAlerts" class="compact-filter-btn bg-blue-900 text-blue-300 active">
-                                Активные
+                        
+                        <form id="alertForm">
+                            <input type="hidden" id="editAlertId" value="">
+                            <div class="mb-4">
+                                <label class="block text-gray-300 text-sm font-medium mb-2">Криптовалюта</label>
+                                <div class="relative">
+                                    <input 
+                                        type="text" 
+                                        id="coinSearch" 
+                                        placeholder="Поиск монеты..." 
+                                        class="w-full pl-10 pr-4 py-2 rounded-md focus:ring-primary focus:border-primary"
+                                        required
+                                    >
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i class="fas fa-search text-gray-400"></i>
+                                    </div>
+                                    <div id="marketTypeHint" class="market-type-hint"></div>
+                                </div>
+                                <div id="coinError" class="validation-message">Пожалуйста, выберите криптовалюту</div>
+                                <select id="symbol" size="5" class="w-full mt-2 px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary hidden">
+                                </select>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="block text-gray-300 text-sm font-medium mb-2">Тип алерта</label>
+                                <select id="alertType" class="w-full px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
+                                    <option value="price">Цена</option>
+                                    <option value="liquidation">Ликвидации</option>
+                                    <option value="funding">Фандинг</option>
+                                    <option value="oi">Открытый интерес</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="block text-gray-300 text-sm font-medium mb-2">Условие</label>
+                                <div class="flex">
+                                    <select id="condition" class="w-1/3 px-3 py-2 rounded-l-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
+                                        <option value=">">Выше</option>
+                                        <option value="<">Ниже</option>
+                                    </select>
+                                    <input 
+                                        type="number" 
+                                        id="value" 
+                                        class="w-2/3 px-3 py-2 border-t border-b border-r rounded-r-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary" 
+                                        placeholder="Значение"
+                                        step="any"
+                                        required
+                                    >
+                                </div>
+                                <div id="valueError" class="validation-message">Пожалуйста, укажите значение</div>
+                                <div id="currentPriceContainer" class="current-price-container hidden">
+                                    <span class="current-price-label">Текущая цена:</span>
+                                    <span id="currentPriceValue" class="current-price-value"></span>
+                                    <button type="button" onclick="applyCurrentPrice()" class="apply-price-btn" title="Применить текущую цену">
+                                        <i class="fas fa-sync-alt"></i>
+                                        <span>Применить</span>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="block text-gray-300 text-sm font-medium mb-2">Количество уведомлений</label>
+                                <select id="notificationCount" class="w-full px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
+                                    <option value="5" selected>5 раз (интервал 30 сек)</option>
+                                    <option value="1">1 раз (интервал 30 сек)</option>
+                                    <option value="2">2 раза (интервал 30 сек)</option>
+                                    <option value="3">3 раза (интервал 30 сек)</option>
+                                    <option value="4">4 раза (интервал 30 сек)</option>
+                                    <option value="0">Пока не отключу (интервал 30 сек)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <label class="block text-gray-300 text-sm font-medium mb-2">Уведомления</label>
+                                <div class="notification-methods">
+                                    <div class="notification-method">
+                                        <input id="telegram" type="checkbox" checked class="h-4 w-4 focus:ring-primary">
+                                        <label for="telegram" class="ml-2 block text-sm text-gray-300">
+                                            <i class="fab fa-telegram mr-1 text-blue-400"></i> Telegram
+                                        </label>
+                                        <button onclick="openTelegramSettings()" class="ml-2 text-sm text-blue-400 hover:text-blue-300 text-xs px-2 py-1">
+                                            Настроить
+                                        </button>
+                                        <input 
+                                            type="text" 
+                                            id="userChatId" 
+                                            placeholder="Ваш Chat ID" 
+                                            class="ml-2 px-2 py-1 text-sm rounded-md hidden"
+                                        >
+                                    </div>
+                                    <div class="notification-method">
+                                        <input id="email" type="checkbox" class="h-4 w-4 focus:ring-primary">
+                                        <label for="email" class="ml-2 block text-sm text-gray-300">
+                                            <i class="fas fa-envelope mr-1 text-gray-400"></i> Email
+                                        </label>
+                                        <input 
+                                            type="email" 
+                                            id="userEmail" 
+                                            placeholder="Ваш email" 
+                                            class="ml-2 px-2 py-1 text-sm rounded-md hidden"
+                                        >
+                                        <div id="userEmailError" class="validation-message">Неверный формат email</div>
+                                    </div>
+                                </div>
+                                <div class="mt-4">
+                                    <div class="tooltip file-input-container">
+                                        <button class="file-input-label text-xs px-3 py-1">
+                                            <i class="fas fa-file-import mr-1"></i>Импорт из TXT (только фьючерсы)
+                                        </button>
+                                        <input type="file" id="bulkImportFile" class="file-input" accept=".txt">
+                                        <span class="tooltiptext">
+                                            Формат файла:<br>
+                                            Каждая строка должна содержать:<br>
+                                            СИМВОЛ УСЛОВИЕ ЗНАЧЕНИЕ<br><br>
+                                            Пример:<br>
+                                            BTCUSDT > 50000<br>
+                                            ETHUSDT < 3000<br>
+                                            SOLUSDT > 150<br><br>
+                                            Будут добавлены только фьючерсные пары
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn-primary w-full text-white py-2 px-4 rounded-md font-medium mt-4">
+                                <i class="fas fa-bell mr-2"></i><span id="submitBtnText">Создать алерт</span>
                             </button>
-                            <button id="showTriggeredAlerts" class="compact-filter-btn bg-gray-700 text-gray-300">
-                                Сработавшие
-                            </button>
-                            <button id="showHistoryAlerts" class="compact-filter-btn bg-gray-700 text-gray-300">
-                                История
-                            </button>
-                            <button id="showAllAlerts" class="compact-filter-btn bg-gray-700 text-gray-300">
-                                Все
+                        </form>
+                    </div>
+                    
+                    <div class="card rounded-lg p-6">
+                        <div class="compact-alerts-header">
+                            <div class="flex items-center flex-1 min-w-0">
+                                <h2 class="compact-alerts-title">
+                                    <i class="fas fa-bell mr-1"></i>Алерты
+                                </h2>
+                                <div class="compact-filters no-scrollbar">
+                                    <button id="showActiveAlerts" class="compact-filter-btn bg-blue-900 text-blue-300 active">
+                                        Активные
+                                    </button>
+                                    <button id="showTriggeredAlerts" class="compact-filter-btn bg-gray-700 text-gray-300">
+                                        Сработавшие
+                                    </button>
+                                    <button id="showHistoryAlerts" class="compact-filter-btn bg-gray-700 text-gray-300">
+                                        История
+                                    </button>
+                                    <button id="showAllAlerts" class="compact-filter-btn bg-gray-700 text-gray-300">
+                                        Все
+                                    </button>
+                                </div>
+                            </div>
+                            <button id="clearAlerts" class="compact-clear-btn hover:text-red-300">
+                                <i class="fas fa-trash-alt mr-1"></i>Очистить
                             </button>
                         </div>
-                    </div>
-                    <button id="clearAlerts" class="compact-clear-btn hover:text-red-300">
-                        <i class="fas fa-trash-alt mr-1"></i>Очистить
-                    </button>
-                </div>
-                
-                <div id="userAlerts" class="alerts-container space-y-4">
-                    <div class="text-center text-gray-400 py-4">
-                        У вас пока нет активных алертов
+                        
+                        <div id="userAlerts" class="alerts-container space-y-4">
+                            <div class="text-center text-gray-400 py-4">
+                                У вас пока нет активных алертов
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -954,7 +978,7 @@
         function handleRegister() {
             const email = document.getElementById('registerEmail').value.trim();
             const password = document.getElementById('registerPassword').value;
-            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword')?.value;
 
             // Валидация полей
             if (!email || !password || !confirmPassword) {
@@ -1597,7 +1621,9 @@
                 userAlerts.push(newAlert);
                 saveAppState();
                 
+                // Обновляем список алертов сразу после добавления
                 loadUserAlerts(currentAlertFilter);
+                
                 return true;
             } catch (error) {
                 console.error("Ошибка при добавлении алерта:", error);
@@ -2190,6 +2216,89 @@
             }
         }
 
+        function resetForm() {
+            const alertForm = document.getElementById('alertForm');
+            if (alertForm) {
+                alertForm.reset();
+                
+                // Дополнительные сбросы
+                const coinSearch = document.getElementById('coinSearch');
+                if (coinSearch) {
+                    coinSearch.value = '';
+                    coinSearch.focus();
+                }
+                
+                const symbolSelect = document.getElementById('symbol');
+                if (symbolSelect) {
+                    symbolSelect.innerHTML = '';
+                    symbolSelect.classList.add('hidden');
+                }
+                
+                const symbolInput = document.getElementById('symbol');
+                if (symbolInput) {
+                    symbolInput.value = '';
+                }
+                
+                const marketTypeHint = document.getElementById('marketTypeHint');
+                if (marketTypeHint) {
+                    marketTypeHint.innerHTML = '';
+                }
+                
+                const currentPriceContainer = document.getElementById('currentPriceContainer');
+                if (currentPriceContainer) {
+                    currentPriceContainer.classList.add('hidden');
+                }
+                
+                const editAlertId = document.getElementById('editAlertId');
+                if (editAlertId) {
+                    editAlertId.value = '';
+                }
+                
+                const submitBtnText = document.getElementById('submitBtnText');
+                if (submitBtnText) {
+                    submitBtnText.textContent = 'Создать алерт';
+                }
+                
+                // Сбрасываем чекбоксы уведомлений к состоянию по умолчанию
+                const telegramCheckbox = document.getElementById('telegram');
+                if (telegramCheckbox) {
+                    telegramCheckbox.checked = true;
+                }
+                
+                const emailCheckbox = document.getElementById('email');
+                if (emailCheckbox) {
+                    emailCheckbox.checked = false;
+                }
+                
+                // Скрываем дополнительные поля и очищаем их
+                const userChatIdInput = document.getElementById('userChatId');
+                if (userChatIdInput) {
+                    userChatIdInput.value = '';
+                    userChatIdInput.classList.add('hidden');
+                }
+                
+                const userEmailInput = document.getElementById('userEmail');
+                if (userEmailInput) {
+                    userEmailInput.value = '';
+                    userEmailInput.classList.add('hidden');
+                }
+                
+                // Устанавливаем значение по умолчанию для количества уведомлений
+                const notificationCountSelect = document.getElementById('notificationCount');
+                if (notificationCountSelect) {
+                    notificationCountSelect.value = '5';
+                }
+                
+                // Очищаем все ошибки валидации
+                document.querySelectorAll('.validation-message').forEach(el => {
+                    el.style.display = 'none';
+                });
+                document.querySelectorAll('.validation-error').forEach(el => {
+                    el.classList.remove('validation-error');
+                });
+            }
+        }
+
         function setupEventListeners() {
             const coinSearch = document.getElementById('coinSearch');
             if (coinSearch) {
@@ -2367,49 +2476,17 @@
                         
                         loadUserAlerts(currentAlertFilter);
                         showNotification('Успешно', `Алерт для ${symbol} обновлен`);
+                        resetForm();
                     } else {
                         // Создание нового алерта
                         const success = await addUserAlert(symbol, alertType, condition, value, notificationMethods, notificationCount, userChatId);
                         if (success) {
                             showNotification('Успешно', `Алерт для ${symbol} создан`);
-                            
-                            // Полный сброс формы
-                            this.reset();
-                            
-                            // Дополнительные очистки
-                            const symbolInput = document.getElementById('symbol');
-                            if (symbolInput) {
-                                symbolInput.value = '';
-                                symbolInput.classList.remove('hidden');
-                            }
-                            
-                            const coinSearch = document.getElementById('coinSearch');
-                            if (coinSearch) coinSearch.value = '';
-                            
-                            const hint = document.getElementById('marketTypeHint');
-                            if (hint) hint.innerHTML = '';
-                            
-                            const currentPriceContainer = document.getElementById('currentPriceContainer');
-                            if (currentPriceContainer) currentPriceContainer.classList.add('hidden');
-                            
-                            // Обновляем выпадающий список
-                            updateCoinSelect();
-                            
-                            // Устанавливаем значение по умолчанию для количества уведомлений
-                            const notificationCountSelect = document.getElementById('notificationCount');
-                            if (notificationCountSelect) {
-                                notificationCountSelect.value = '5';
-                            }
+                            resetForm();
+                            // Обновляем список алертов
+                            loadUserAlerts(currentAlertFilter);
                         }
                     }
-                    
-                    // Всегда сбрасываем editAlertId
-                    const editAlertIdInput = document.getElementById('editAlertId');
-                    if (editAlertIdInput) editAlertIdInput.value = '';
-                    
-                    // Обновляем текст кнопки
-                    const submitBtnText = document.getElementById('submitBtnText');
-                    if (submitBtnText) submitBtnText.textContent = 'Создать алерт';
                 });
             }
             
@@ -2447,63 +2524,100 @@
                 showAllAlertsBtn.addEventListener('click', () => loadUserAlerts('all'));
             }
             
-            // Обработчик для импорта алертов из файла
+            // Обработчик для импорта алертов из файла (только фьючерсы)
             const bulkImportFile = document.getElementById('bulkImportFile');
             if (bulkImportFile) {
-                bulkImportFile.addEventListener('change', function(event) {
+                bulkImportFile.addEventListener('change', async function(event) {
                     const file = event.target.files[0];
                     if (!file) return;
                     
                     const reader = new FileReader();
-                    reader.onload = function(e) {
+                    reader.onload = async function(e) {
                         const content = e.target.result;
                         const lines = content.split('\n');
+                        let importedCount = 0;
+                        let skippedCount = 0;
                         
-                        lines.forEach(line => {
-                            line = line.trim();
-                            if (!line) return;
+                        // Получаем текущие настройки уведомлений
+                        const useTelegram = document.getElementById('telegram')?.checked || false;
+                        const useEmail = document.getElementById('email')?.checked || false;
+                        const userChatId = useTelegram ? (localStorage.getItem('tg_chat_id') || document.getElementById('userChatId')?.value) : null;
+                        const userEmail = useEmail ? document.getElementById('userEmail')?.value : null;
+                        const notificationCount = document.getElementById('notificationCount')?.value || '5';
+                        const alertType = document.getElementById('alertType')?.value || 'price';
+                        
+                        const notificationMethods = [];
+                        if (useTelegram) notificationMethods.push('telegram');
+                        if (useEmail) notificationMethods.push('email');
+                        
+                        if (notificationMethods.length === 0) {
+                            showNotification('Ошибка', 'Выберите хотя бы один метод уведомлений перед импортом');
+                            return;
+                        }
+                        
+                        // Проверяем подключение к боту если Telegram выбран
+                        if (notificationMethods.includes('telegram') && !userChatId) {
+                            showBotConnectionHint();
+                            return;
+                        }
+                        
+                        for (const line of lines) {
+                            const trimmedLine = line.trim();
+                            if (!trimmedLine) continue;
                             
-                            const parts = line.split(/\s+/);
-                            if (parts.length < 3) return;
+                            const parts = trimmedLine.split(/\s+/);
+                            if (parts.length < 3) {
+                                skippedCount++;
+                                continue;
+                            }
                             
                             const symbol = parts[0].toUpperCase();
                             const condition = parts[1];
                             const value = parts[2];
                             
-                            if (condition !== '>' && condition !== '<') return;
-                            if (isNaN(parseFloat(value))) return;
-                            
-                            // Устанавливаем значения в форму
-                            const coinSearch = document.getElementById('coinSearch');
-                            const symbolInput = document.getElementById('symbol');
-                            const conditionInput = document.getElementById('condition');
-                            const valueInput = document.getElementById('value');
-                            
-                            if (coinSearch && symbolInput && conditionInput && valueInput) {
-                                coinSearch.value = symbol;
-                                symbolInput.value = symbol;
-                                conditionInput.value = condition;
-                                valueInput.value = parseFloat(value);
-                                
-                                // Скрываем выпадающий список
-                                symbolInput.classList.add('hidden');
-                                
-                                // Показываем текущую цену
-                                const marketType = getMarketTypeBySymbol(symbol);
-                                if (marketType) {
-                                    apiManager.getCurrentPrice(symbol, marketType).then(price => {
-                                        if (price !== null) {
-                                            const currentPriceContainer = document.getElementById('currentPriceContainer');
-                                            const currentPriceValue = document.getElementById('currentPriceValue');
-                                            if (currentPriceContainer && currentPriceValue) {
-                                                currentPriceValue.textContent = price;
-                                                currentPriceContainer.classList.remove('hidden');
-                                            }
-                                        }
-                                    });
-                                }
+                            if (condition !== '>' && condition !== '<') {
+                                skippedCount++;
+                                continue;
                             }
-                        });
+                            
+                            if (isNaN(parseFloat(value))) {
+                                skippedCount++;
+                                continue;
+                            }
+                            
+                            // Проверяем что символ является фьючерсным
+                            const isFutures = allFutures.some(f => f.symbol === symbol);
+                            if (!isFutures) {
+                                skippedCount++;
+                                continue;
+                            }
+                            
+                            // Добавляем алерт
+                            const success = await addUserAlert(
+                                symbol, 
+                                alertType, 
+                                condition, 
+                                parseFloat(value), 
+                                notificationMethods, 
+                                notificationCount, 
+                                userChatId
+                            );
+                            
+                            if (success) {
+                                importedCount++;
+                            } else {
+                                skippedCount++;
+                            }
+                        }
+                        
+                        showNotification('Импорт завершен', 
+                            `Успешно импортировано ${importedCount} фьючерсных алертов\n` +
+                            `Пропущено: ${skippedCount} (не фьючерсы или ошибки формата)`);
+                        
+                        loadUserAlerts(currentAlertFilter);
+                        
+                        // Сбрасываем значение input файла, чтобы можно было загрузить тот же файл снова
+                        event.target.value = '';
                     };
                     reader.readAsText(file);
                 });
@@ -2559,7 +2673,7 @@
                     updateUserUI(currentUser.email);
                 }
                 
-                // Запускаем проверку алертов каждые 2 секунд
+                // Запускаем проверку алертов каждые 2 секунды
                 setInterval(checkAlerts, 2000);
             } catch (error) {
                 console.error('Failed to initialize application:', error);
@@ -2595,6 +2709,7 @@
         window.handleRegister = handleRegister;
         window.handleLogout = handleLogout;
         window.toggleMenu = toggleMenu;
+        window.resetForm = resetForm;
     </script>
 </body>
 </html>
