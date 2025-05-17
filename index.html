@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crypto Tools - Alerts</title>
+    <title>Crypto Tools - Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -558,15 +558,272 @@
             border-color: var(--primary);
             box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
         }
+
+        /* Calculator styles */
+        .calculator-container {
+            background-color: #1E1E1E;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(33, 150, 243, 0.2);
+            margin-bottom: 20px;
+        }
+        
+        .section {
+            margin-bottom: 15px;
+            padding: 12px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+        
+        .section-title {
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--primary);
+            font-size: 1rem;
+        }
+        
+        .input-group {
+            margin-bottom: 12px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            color: #9CA3AF;
+        }
+        
+        .input-group input[type="number"],
+        .input-group input[type="text"] {
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: 6px;
+            background-color: #2D2D2D;
+            border: 1px solid #3D3D3D;
+            color: white;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .input-group input[type="range"] {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            background: #3D3D3D;
+            border-radius: 3px;
+            outline: none;
+            margin: 10px 0;
+        }
+        
+        .input-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+        }
+        
+        .input-group input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+        }
+        
+        .direction-buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            background: #2A2A2A;
+            padding: 5px;
+            border-radius: 10px;
+        }
+
+        .direction-btn {
+            flex: 1;
+            padding: 10px 0;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.85rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .long {
+            background: transparent;
+            color: #A5D6A7;
+        }
+
+        .short {
+            background: transparent;
+            color: #EF9A9A;
+        }
+
+        .direction-btn.active {
+            color: white;
+        }
+
+        .long.active {
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+        }
+
+        .short.active {
+            background: linear-gradient(135deg, #F44336 0%, #C62828 100%);
+        }
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding: 8px;
+            background-color: rgba(255, 255, 255, 0.03);
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .result-value {
+            font-weight: 500;
+        }
+        
+        .profit {
+            color: var(--success-color);
+        }
+        
+        .loss {
+            color: var(--accent-red);
+        }
+        
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .slider-value {
+            min-width: 30px;
+            text-align: right;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .preview-value {
+            color: var(--warning-color);
+            font-size: 0.8rem;
+            margin-top: 5px;
+            padding: 4px;
+            background-color: rgba(255, 160, 0, 0.1);
+            border-radius: 4px;
+        }
+        
+        .leverage-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .leverage-value {
+            min-width: 40px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--primary);
+            background-color: rgba(33, 150, 243, 0.1);
+            padding: 4px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .leverage-warning {
+            color: var(--danger-color);
+            font-size: 0.75rem;
+            margin-top: 5px;
+            padding: 4px;
+            background-color: rgba(207, 102, 121, 0.1);
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .export-btn {
+            width: 100%;
+            padding: 10px 15px;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .export-btn:hover {
+            background: #1976D2;
+        }
+        
+        .main-header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--accent-color);
+            font-weight: 600;
+            font-size: 2rem;
+        }
+        
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0;
+        }
+
+        /* Новые стили для нескольких тейк-профитов */
+        .take-profit-levels {
+            margin-top: 10px;
+        }
+
+        .take-profit-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            padding: 5px;
+            background-color: rgba(0, 255, 0, 0.05);
+            border-radius: 3px;
+        }
+
+        .take-profit-ratio {
+            color: var(--success-color);
+            font-weight: 500;
+        }
+
+        .take-profit-price {
+            color: var(--success-color);
+        }
+
+        .take-profit-value {
+            color: var(--success-color);
+        }
+
+        @media (max-width: 1024px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                padding: 0 10px;
+            }
+        }
     </style>
 </head>
 <body class="bg-dark">
-    <nav class="shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav class="shadow-sm w-full">
+        <div class="w-full px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
                 <div class="flex items-center">
-                    <i class="fas fa-bell text-primary text-xl mr-2"></i>
-                    <span class="text-xl font-bold text-light">Crypto Alerts</span>
+                    <i class="fas fa-chart-line text-primary text-xl mr-2"></i>
+                    <span class="text-xl font-bold text-light">Crypto Tools</span>
                 </div>
                 <div class="flex items-center space-x-4">
                     <div class="menu-container">
@@ -574,11 +831,14 @@
                             <i class="fas fa-bars mr-2"></i>Меню
                         </button>
                         <div class="menu-content" id="menuContent">
-                           <a href="index.html" class="menu-item">
-                             <i class="fas fa-bell mr-2"></i>Алерты
+                            <a href="#" class="menu-item" onclick="showHome()">
+                                <i class="fas fa-home mr-2"></i>Главная
+                            </a>
+                            <a href="alerts.html" class="menu-item">
+                                <i class="fas fa-bell mr-2"></i>Алерты
                             </a>
                             <a href="calculator.html" class="menu-item">
-                              <i class="fas fa-calculator mr-2"></i>Калькулятор
+                                <i class="fas fa-calculator mr-2"></i>Калькулятор
                             </a>
                             <a href="widget.html" class="menu-item">
                                 <i class="fas fa-chart-line mr-2"></i>Виджет
@@ -608,8 +868,8 @@
         </div>
     </nav>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="grid grid-cols-1 gap-8">
+    <div class="w-full px-4 py-8">
+        <div class="main-container">
             <!-- Alerts Section -->
             <div class="card rounded-lg p-6">
                 <h2 class="text-xl font-bold mb-6 text-primary">
@@ -652,8 +912,8 @@
                         <label class="block text-gray-300 text-sm font-medium mb-2">Условие</label>
                         <div class="flex">
                             <select id="condition" class="w-1/3 px-3 py-2 rounded-l-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
-                                <option value=">">Выше</option>
-                                <option value="<">Ниже</option>
+                                <option value=">">Выше (+)</option>
+                                <option value="<">Ниже (-)</option>
                             </select>
                             <input 
                                 type="number" 
@@ -722,7 +982,7 @@
                         <div class="mt-4">
                             <div class="tooltip file-input-container">
                                 <button class="file-input-label text-xs px-3 py-1">
-                                    <i class="fas fa-file-import mr-1"></i>Импорт из TXT
+                                    <i class="fas fa-file-import mr-1"></i>Импорт из TXT (только фьючерсы)
                                 </button>
                                 <input type="file" id="bulkImportFile" class="file-input" accept=".txt">
                                 <span class="tooltiptext">
@@ -730,9 +990,13 @@
                                     Каждая строка должна содержать:<br>
                                     СИМВОЛ УСЛОВИЕ ЗНАЧЕНИЕ<br><br>
                                     Пример:<br>
-                                    BTCUSDT > 50000<br>
-                                    ETHUSDT < 3000<br>
-                                    SOLUSDT > 150
+                                    BTCUSDT + 50000 (цена выше 50000)<br>
+                                    ETHUSDT - 3000 (цена ниже 3000)<br>
+                                    SOLUSDT + 150 (цена выше 150)<br><br>
+                                    Условия:<br>
+                                    + означает "выше" (>)<br>
+                                    - означает "ниже" (<)<br><br>
+                                    Будут добавлены только фьючерсные пары
                                 </span>
                             </div>
                         </div>
@@ -774,6 +1038,119 @@
                     <div class="text-center text-gray-400 py-4">
                         У вас пока нет активных алертов
                     </div>
+                </div>
+            </div>
+
+            <!-- Calculator Section -->
+            <div class="calculator-container risk-calculator">
+                <h1>Калькулятор рисков</h1>
+                
+                <div class="section">
+                    <div class="section-title">Параметры сделки</div>
+                    
+                    <div class="direction-buttons">
+                        <button id="longBtn" class="direction-btn long active">Лонг</button>
+                        <button id="shortBtn" class="direction-btn short">Шорт</button>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="entryPrice">Цена входа (USDT)</label>
+                        <input type="number" id="entryPrice" min="0" step="0.00000001" value="100.00">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="leverage">Кредитное плечо</label>
+                        <div class="leverage-container">
+                            <input type="range" id="leverage" min="1" max="100" value="10">
+                            <span class="leverage-value" id="leverageValue">10x</span>
+                        </div>
+                        <div class="leverage-warning" id="leverageWarning">
+                            Высокое плечо увеличивает риск ликвидации!
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="atr">ATR (USDT)</label>
+                        <input type="number" id="atr" min="0" step="0.00000001" value="5.00">
+                        <div class="preview-value">
+                            Размер ATR: <span id="atrValue">5.00 USDT</span>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="riskPercent">Риск стоп-лосс (% от ATR)</label>
+                        <div class="slider-container">
+                            <input type="range" id="riskPercent" min="1" max="100" value="10">
+                            <span class="slider-value" id="riskPercentValue">10</span>%
+                        </div>
+                        <div class="preview-value">
+                            Стоп-лосс: минус <span id="previewAtrPercent">0.50 USDT</span> (<span id="previewAtrPercentValue">10%</span> от ATR)
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="riskAmount">Риск на сделку (USDT)</label>
+                        <input type="number" id="riskAmount" min="0" step="0.00000001" value="100.00">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="rewardRatio1">Соотношение тейк-профита (1:X)</label>
+                        <div class="slider-container">
+                            <input type="range" id="rewardRatio1" min="1" max="20" value="3">
+                            <span class="slider-value" id="rewardRatio1Value">3</span>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="rewardRatio2">Дополнительный тейк-профит (1:X)</label>
+                        <div class="slider-container">
+                            <input type="range" id="rewardRatio2" min="1" max="20" value="5">
+                            <span class="slider-value" id="rewardRatio2Value">5</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <div class="section-title">Результаты</div>
+                    
+                    <div class="result-item">
+                        <span>Цена входа:</span>
+                        <span class="result-value" id="entryPriceResult">100.00 USDT</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span>Размер позиции:</span>
+                        <span class="result-value" id="positionSize">200.0000</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span>Стоп-лосс:</span>
+                        <span class="result-value loss" id="stopLoss">99.50 USDT</span>
+                    </div>
+                    
+                    <div class="take-profit-levels" id="takeProfitLevels">
+                        <!-- Здесь будут динамически добавляться уровни тейк-профита -->
+                    </div>
+                    
+                    <div class="result-item">
+                        <span>Цена ликвидации:</span>
+                        <span class="result-value loss" id="liquidationPrice">95.00 USDT</span>
+                    </div>
+                </div>
+                
+                <button class="export-btn" id="exportTextBtn">Экспорт в текст</button>
+            </div>
+            
+            <!-- Average Calculator -->
+            <div class="calculator-container average-calculator">
+                <h1>Калькулятор среднего</h1>
+                <div class="section">
+                    <div class="input-group">
+                        <label for="numbersInput">Введите числа через пробел:</label>
+                        <input type="text" id="numbersInput" placeholder="5 10 15 20 0.0000012">
+                    </div>
+                    <button onclick="calculateAverage()" style="width: 100%; padding: 10px; background: var(--accent-color); border: none; border-radius: 5px; color: white; font-weight: 600;">Рассчитать</button>
+                    <div id="result" style="margin-top: 15px;"></div>
                 </div>
             </div>
         </div>
@@ -954,7 +1331,7 @@
         function handleRegister() {
             const email = document.getElementById('registerEmail').value.trim();
             const password = document.getElementById('registerPassword').value;
-            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword')?.value;
 
             // Валидация полей
             if (!email || !password || !confirmPassword) {
@@ -1597,7 +1974,9 @@
                 userAlerts.push(newAlert);
                 saveAppState();
                 
+                // Обновляем список алертов сразу после добавления
                 loadUserAlerts(currentAlertFilter);
+                
                 return true;
             } catch (error) {
                 console.error("Ошибка при добавлении алерта:", error);
@@ -1695,7 +2074,7 @@
                                         <div>
                                             <h3 class="font-medium text-light">${alert.symbol}</h3>
                                             <div class="alert-price">
-                                                <span>${alert.condition} ${alert.value}</span>
+                                                <span>${alert.condition === '>' ? '+' : '-'} ${alert.value}</span>
                                                 <i class="fas ${isUp ? 'fa-caret-up price-up' : 'fa-caret-down price-down'} alert-direction"></i>
                                                 ${isHistory ? '<span class="history-badge">История</span>' : ''}
                                             </div>
@@ -1801,8 +2180,8 @@
                         <label class="block text-gray-300 text-sm font-medium mb-2">Условие</label>
                         <div class="flex">
                             <select id="editCondition" class="w-1/3 px-3 py-2 rounded-l-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
-                                <option value=">" ${alert.condition === '>' ? 'selected' : ''}>Выше</option>
-                                <option value="<" ${alert.condition === '<' ? 'selected' : ''}>Ниже</option>
+                                <option value=">" ${alert.condition === '>' ? 'selected' : ''}>Выше (+)</option>
+                                <option value="<" ${alert.condition === '<' ? 'selected' : ''}>Ниже (-)</option>
                             </select>
                             <input 
                                 type="number" 
@@ -2042,7 +2421,7 @@
                         const lastNotification = alertCooldowns[cooldownKey] || 0;
                         
                         if (now - lastNotification > 30000) { // 30 секунд кд
-                            const message = `🚨 Алерт сработал!\nСимвол: ${alert.symbol}\nУсловие: ${alert.condition} ${alert.value}\nТекущая цена: ${price}`;
+                            const message = `🚨 Алерт сработал!\nСимвол: ${alert.symbol}\nУсловие: ${alert.condition === '>' ? '+' : '-'} ${alert.value}\nТекущая цена: ${price}`;
                             
                             if (alert.notificationMethods.includes('telegram') && alert.chatId) {
                                 await sendTelegramNotification(message, alert.chatId);
@@ -2061,7 +2440,7 @@
                             saveTriggeredAlert(alert);
                             
                             // Показываем уведомление в интерфейсе
-                            showNotification('Алерт сработал', `Символ: ${alert.symbol}\nУсловие: ${alert.condition} ${alert.value}\nТекущая цена: ${price}`);
+                            showNotification('Алерт сработал', `Символ: ${alert.symbol}\nУсловие: ${alert.condition === '>' ? '+' : '-'} ${alert.value}\nТекущая цена: ${price}`);
                             
                             // Сохраняем изменения
                             saveAppState();
@@ -2142,10 +2521,16 @@
             }
         }
 
+        function showHome() {
+            toggleMenu();
+            // Перенаправляем на главную страницу
+            window.location.href = 'index.html';
+        }
+
         function showCalculator() {
             toggleMenu();
             // Перенаправляем на страницу калькулятора
-            window.location.href = 'index.html';
+            window.location.href = 'calculator.html';
         }
 
         function showAlerts() {
@@ -2187,6 +2572,89 @@
             const modal = document.getElementById('registerModal');
             if (modal) {
                 modal.classList.remove('active');
+            }
+        }
+
+        function resetForm() {
+            const alertForm = document.getElementById('alertForm');
+            if (alertForm) {
+                alertForm.reset();
+                
+                // Дополнительные сбросы
+                const coinSearch = document.getElementById('coinSearch');
+                if (coinSearch) {
+                    coinSearch.value = '';
+                    coinSearch.focus();
+                }
+                
+                const symbolSelect = document.getElementById('symbol');
+                if (symbolSelect) {
+                    symbolSelect.innerHTML = '';
+                    symbolSelect.classList.add('hidden');
+                }
+                
+                const symbolInput = document.getElementById('symbol');
+                if (symbolInput) {
+                    symbolInput.value = '';
+                }
+                
+                const marketTypeHint = document.getElementById('marketTypeHint');
+                if (marketTypeHint) {
+                    marketTypeHint.innerHTML = '';
+                }
+                
+                const currentPriceContainer = document.getElementById('currentPriceContainer');
+                if (currentPriceContainer) {
+                    currentPriceContainer.classList.add('hidden');
+                }
+                
+                const editAlertId = document.getElementById('editAlertId');
+                if (editAlertId) {
+                    editAlertId.value = '';
+                }
+                
+                const submitBtnText = document.getElementById('submitBtnText');
+                if (submitBtnText) {
+                    submitBtnText.textContent = 'Создать алерт';
+                }
+                
+                // Сбрасываем чекбоксы уведомлений к состоянию по умолчанию
+                const telegramCheckbox = document.getElementById('telegram');
+                if (telegramCheckbox) {
+                    telegramCheckbox.checked = true;
+                }
+                
+                const emailCheckbox = document.getElementById('email');
+                if (emailCheckbox) {
+                    emailCheckbox.checked = false;
+                }
+                
+                // Скрываем дополнительные поля и очищаем их
+                const userChatIdInput = document.getElementById('userChatId');
+                if (userChatIdInput) {
+                    userChatIdInput.value = '';
+                    userChatIdInput.classList.add('hidden');
+                }
+                
+                const userEmailInput = document.getElementById('userEmail');
+                if (userEmailInput) {
+                    userEmailInput.value = '';
+                    userEmailInput.classList.add('hidden');
+                }
+                
+                // Устанавливаем значение по умолчанию для количества уведомлений
+                const notificationCountSelect = document.getElementById('notificationCount');
+                if (notificationCountSelect) {
+                    notificationCountSelect.value = '5';
+                }
+                
+                // Очищаем все ошибки валидации
+                document.querySelectorAll('.validation-message').forEach(el => {
+                    el.style.display = 'none';
+                });
+                document.querySelectorAll('.validation-error').forEach(el => {
+                    el.classList.remove('validation-error');
+                });
             }
         }
 
@@ -2367,49 +2835,17 @@
                         
                         loadUserAlerts(currentAlertFilter);
                         showNotification('Успешно', `Алерт для ${symbol} обновлен`);
+                        resetForm();
                     } else {
                         // Создание нового алерта
                         const success = await addUserAlert(symbol, alertType, condition, value, notificationMethods, notificationCount, userChatId);
                         if (success) {
                             showNotification('Успешно', `Алерт для ${symbol} создан`);
-                            
-                            // Полный сброс формы
-                            this.reset();
-                            
-                            // Дополнительные очистки
-                            const symbolInput = document.getElementById('symbol');
-                            if (symbolInput) {
-                                symbolInput.value = '';
-                                symbolInput.classList.remove('hidden');
-                            }
-                            
-                            const coinSearch = document.getElementById('coinSearch');
-                            if (coinSearch) coinSearch.value = '';
-                            
-                            const hint = document.getElementById('marketTypeHint');
-                            if (hint) hint.innerHTML = '';
-                            
-                            const currentPriceContainer = document.getElementById('currentPriceContainer');
-                            if (currentPriceContainer) currentPriceContainer.classList.add('hidden');
-                            
-                            // Обновляем выпадающий список
-                            updateCoinSelect();
-                            
-                            // Устанавливаем значение по умолчанию для количества уведомлений
-                            const notificationCountSelect = document.getElementById('notificationCount');
-                            if (notificationCountSelect) {
-                                notificationCountSelect.value = '5';
-                            }
+                            resetForm();
+                            // Обновляем список алертов
+                            loadUserAlerts(currentAlertFilter);
                         }
                     }
-                    
-                    // Всегда сбрасываем editAlertId
-                    const editAlertIdInput = document.getElementById('editAlertId');
-                    if (editAlertIdInput) editAlertIdInput.value = '';
-                    
-                    // Обновляем текст кнопки
-                    const submitBtnText = document.getElementById('submitBtnText');
-                    if (submitBtnText) submitBtnText.textContent = 'Создать алерт';
                 });
             }
             
@@ -2447,63 +2883,106 @@
                 showAllAlertsBtn.addEventListener('click', () => loadUserAlerts('all'));
             }
             
-            // Обработчик для импорта алертов из файла
+            // Обработчик для импорта алертов из файла (только фьючерсы)
             const bulkImportFile = document.getElementById('bulkImportFile');
             if (bulkImportFile) {
-                bulkImportFile.addEventListener('change', function(event) {
+                bulkImportFile.addEventListener('change', async function(event) {
                     const file = event.target.files[0];
                     if (!file) return;
                     
                     const reader = new FileReader();
-                    reader.onload = function(e) {
+                    reader.onload = async function(e) {
                         const content = e.target.result;
                         const lines = content.split('\n');
+                        let importedCount = 0;
+                        let skippedCount = 0;
                         
-                        lines.forEach(line => {
-                            line = line.trim();
-                            if (!line) return;
+                        // Получаем текущие настройки уведомлений
+                        const useTelegram = document.getElementById('telegram')?.checked || false;
+                        const useEmail = document.getElementById('email')?.checked || false;
+                        const userChatId = useTelegram ? (localStorage.getItem('tg_chat_id') || document.getElementById('userChatId')?.value) : null;
+                        const userEmail = useEmail ? document.getElementById('userEmail')?.value : null;
+                        const notificationCount = document.getElementById('notificationCount')?.value || '5';
+                        const alertType = document.getElementById('alertType')?.value || 'price';
+                        
+                        const notificationMethods = [];
+                        if (useTelegram) notificationMethods.push('telegram');
+                        if (useEmail) notificationMethods.push('email');
+                        
+                        if (notificationMethods.length === 0) {
+                            showNotification('Ошибка', 'Выберите хотя бы один метод уведомлений перед импортом');
+                            return;
+                        }
+                        
+                        // Проверяем подключение к боту если Telegram выбран
+                        if (notificationMethods.includes('telegram') && !userChatId) {
+                            showBotConnectionHint();
+                            return;
+                        }
+                        
+                        for (const line of lines) {
+                            const trimmedLine = line.trim();
+                            if (!trimmedLine) continue;
                             
-                            const parts = line.split(/\s+/);
-                            if (parts.length < 3) return;
+                            const parts = trimmedLine.split(/\s+/);
+                            if (parts.length < 3) {
+                                skippedCount++;
+                                continue;
+                            }
                             
                             const symbol = parts[0].toUpperCase();
-                            const condition = parts[1];
+                            const conditionSymbol = parts[1];
                             const value = parts[2];
                             
-                            if (condition !== '>' && condition !== '<') return;
-                            if (isNaN(parseFloat(value))) return;
-                            
-                            // Устанавливаем значения в форму
-                            const coinSearch = document.getElementById('coinSearch');
-                            const symbolInput = document.getElementById('symbol');
-                            const conditionInput = document.getElementById('condition');
-                            const valueInput = document.getElementById('value');
-                            
-                            if (coinSearch && symbolInput && conditionInput && valueInput) {
-                                coinSearch.value = symbol;
-                                symbolInput.value = symbol;
-                                conditionInput.value = condition;
-                                valueInput.value = parseFloat(value);
-                                
-                                // Скрываем выпадающий список
-                                symbolInput.classList.add('hidden');
-                                
-                                // Показываем текущую цену
-                                const marketType = getMarketTypeBySymbol(symbol);
-                                if (marketType) {
-                                    apiManager.getCurrentPrice(symbol, marketType).then(price => {
-                                        if (price !== null) {
-                                            const currentPriceContainer = document.getElementById('currentPriceContainer');
-                                            const currentPriceValue = document.getElementById('currentPriceValue');
-                                            if (currentPriceContainer && currentPriceValue) {
-                                                currentPriceValue.textContent = price;
-                                                currentPriceContainer.classList.remove('hidden');
-                                            }
-                                        }
-                                    });
-                                }
+                            // Преобразуем символ условия в соответствующий оператор
+                            let condition;
+                            if (conditionSymbol === '+') {
+                                condition = '>';
+                            } else if (conditionSymbol === '-') {
+                                condition = '<';
+                            } else {
+                                skippedCount++;
+                                continue;
                             }
-                        });
+                            
+                            if (isNaN(parseFloat(value))) {
+                                skippedCount++;
+                                continue;
+                            }
+                            
+                            // Проверяем что символ является фьючерсным
+                            const isFutures = allFutures.some(f => f.symbol === symbol);
+                            if (!isFutures) {
+                                skippedCount++;
+                                continue;
+                            }
+                            
+                            // Добавляем алерт
+                            const success = await addUserAlert(
+                                symbol, 
+                                alertType, 
+                                condition, 
+                                parseFloat(value), 
+                                notificationMethods, 
+                                notificationCount, 
+                                userChatId
+                            );
+                            
+                            if (success) {
+                                importedCount++;
+                            } else {
+                                skippedCount++;
+                            }
+                        }
+                        
+                        showNotification('Импорт завершен', 
+                            `Успешно импортировано ${importedCount} фьючерсных алертов\n` +
+                            `Пропущено: ${skippedCount} (не фьючерсы или ошибки формата)`);
+                        
+                        loadUserAlerts(currentAlertFilter);
+                        
+                        // Сбрасываем значение input файла, чтобы можно было загрузить тот же файл снова
+                        event.target.value = '';
                     };
                     reader.readAsText(file);
                 });
@@ -2526,6 +3005,303 @@
                     menuContent.classList.remove('show');
                 }
             });
+
+            // Calculator Event Listeners
+            const longBtn = document.getElementById('longBtn');
+            const shortBtn = document.getElementById('shortBtn');
+            const entryPriceInput = document.getElementById('entryPrice');
+            const entryPriceResult = document.getElementById('entryPriceResult');
+            const leverageInput = document.getElementById('leverage');
+            const leverageValue = document.getElementById('leverageValue');
+            const leverageWarning = document.getElementById('leverageWarning');
+            const atrInput = document.getElementById('atr');
+            const riskPercentInput = document.getElementById('riskPercent');
+            const riskPercentValue = document.getElementById('riskPercentValue');
+            const riskAmountInput = document.getElementById('riskAmount');
+            const rewardRatio1Input = document.getElementById('rewardRatio1');
+            const rewardRatio1Value = document.getElementById('rewardRatio1Value');
+            const rewardRatio2Input = document.getElementById('rewardRatio2');
+            const rewardRatio2Value = document.getElementById('rewardRatio2Value');
+            const atrValueSpan = document.getElementById('atrValue');
+            const previewAtrPercent = document.getElementById('previewAtrPercent');
+            const previewAtrPercentValue = document.getElementById('previewAtrPercentValue');
+            
+            // Элементы результатов
+            const positionSizeSpan = document.getElementById('positionSize');
+            const stopLossSpan = document.getElementById('stopLoss');
+            const takeProfitLevelsDiv = document.getElementById('takeProfitLevels');
+            const liquidationPriceSpan = document.getElementById('liquidationPrice');
+            
+            // Переменные состояния
+            let isLong = true;
+            
+            // Инициализация калькулятора
+            function initCalculator() {
+                // Установка плеча по умолчанию на 10
+                leverageInput.value = 10;
+                leverageValue.textContent = '10x';
+                
+                updateSliderValues();
+                updateAtrPreview();
+                calculateRisk();
+                
+                // Назначение обработчиков событий
+                longBtn.addEventListener('click', () => {
+                    isLong = true;
+                    longBtn.classList.add('active');
+                    shortBtn.classList.remove('active');
+                    calculateRisk();
+                });
+                
+                shortBtn.addEventListener('click', () => {
+                    isLong = false;
+                    shortBtn.classList.add('active');
+                    longBtn.classList.remove('active');
+                    calculateRisk();
+                });
+                
+                entryPriceInput.addEventListener('input', calculateRisk);
+                leverageInput.addEventListener('input', () => {
+                    leverageValue.textContent = leverageInput.value + 'x';
+                    if (leverageInput.value > 10) {
+                        leverageWarning.style.display = 'block';
+                    } else {
+                        leverageWarning.style.display = 'none';
+                    }
+                    calculateRisk();
+                });
+                atrInput.addEventListener('input', () => {
+                    updateAtrPreview();
+                    calculateRisk();
+                });
+                riskPercentInput.addEventListener('input', () => {
+                    updateSliderValues();
+                    updateAtrPreview();
+                    calculateRisk();
+                });
+                riskAmountInput.addEventListener('input', calculateRisk);
+                rewardRatio1Input.addEventListener('input', () => {
+                    updateSliderValues();
+                    calculateRisk();
+                });
+                rewardRatio2Input.addEventListener('input', () => {
+                    updateSliderValues();
+                    calculateRisk();
+                });
+                
+                // Инициализация кнопки экспорта
+                document.getElementById('exportTextBtn').addEventListener('click', exportToText);
+            }
+            
+            // Обновление значений слайдеров
+            function updateSliderValues() {
+                riskPercentValue.textContent = riskPercentInput.value;
+                rewardRatio1Value.textContent = rewardRatio1Input.value;
+                rewardRatio2Value.textContent = rewardRatio2Input.value;
+            }
+            
+            // Предварительный просмотр ATR
+            function updateAtrPreview() {
+                const atr = parseFloat(atrInput.value) || 0;
+                const riskPercent = parseFloat(riskPercentInput.value) / 100;
+                
+                // Отображаем точное значение ATR без округления
+                atrValueSpan.textContent = atr + ' USDT';
+                previewAtrPercent.textContent = (atr * riskPercent) + ' USDT';
+            }
+            
+            // Расчет цены ликвидации
+            function calculateLiquidationPrice(entryPrice, leverage, isLong) {
+                if (isLong) {
+                    return entryPrice * (1 - (1 / leverage));
+                } else {
+                    return entryPrice * (1 + (1 / leverage));
+                }
+            }
+            
+            // Основная функция расчета
+            function calculateRisk() {
+                const entryPrice = parseFloat(entryPriceInput.value) || 0;
+                const leverage = parseFloat(leverageInput.value) || 1;
+                const atr = parseFloat(atrInput.value) || 0;
+                const riskPercent = parseFloat(riskPercentInput.value) / 100;
+                const riskAmount = parseFloat(riskAmountInput.value) || 0;
+                const rewardRatio1 = parseFloat(rewardRatio1Input.value) || 3;
+                const rewardRatio2 = parseFloat(rewardRatio2Input.value) || 5;
+                
+                // Расчет стоп-лосса
+                let stopLossPrice;
+                if (isLong) {
+                    stopLossPrice = entryPrice - (atr * riskPercent);
+                } else {
+                    stopLossPrice = entryPrice + (atr * riskPercent);
+                }
+                
+                // Расчет размера позиции (без учета плеча)
+                const priceDifference = Math.abs(entryPrice - stopLossPrice);
+                const positionSize = priceDifference > 0 ? (riskAmount / priceDifference) : 0;
+                
+                // Расчет цены ликвидации
+                const liquidationPrice = calculateLiquidationPrice(entryPrice, leverage, isLong);
+                
+                // Обновление интерфейса
+                entryPriceResult.textContent = `${entryPrice} USDT`;
+                positionSizeSpan.textContent = positionSize.toFixed(8);
+                stopLossSpan.textContent = `${stopLossPrice.toFixed(8)} USDT`;
+                liquidationPriceSpan.textContent = `${liquidationPrice.toFixed(8)} USDT`;
+                
+                // Генерация уровней тейк-профита
+                generateTakeProfitLevels(entryPrice, stopLossPrice, isLong, rewardRatio1, rewardRatio2, positionSize);
+            }
+            
+            // Генерация уровней тейк-профита
+            function generateTakeProfitLevels(entryPrice, stopLossPrice, isLong, ratio1, ratio2, positionSize) {
+                takeProfitLevelsDiv.innerHTML = '';
+                
+                // Создаем массив уровней тейк-профита
+                const levels = [ratio1, ratio2];
+                
+                levels.forEach(ratio => {
+                    let takeProfitPrice;
+                    if (isLong) {
+                        takeProfitPrice = entryPrice + (entryPrice - stopLossPrice) * ratio;
+                    } else {
+                        takeProfitPrice = entryPrice - (stopLossPrice - entryPrice) * ratio;
+                    }
+                    
+                    const profit = positionSize * Math.abs(takeProfitPrice - entryPrice);
+                    
+                    const levelDiv = document.createElement('div');
+                    levelDiv.className = 'take-profit-item';
+                    levelDiv.innerHTML = `
+                        <span class="take-profit-ratio">Тейк-профит (1:${ratio.toFixed(1)}):</span>
+                        <span class="take-profit-price">${takeProfitPrice.toFixed(8)} USDT</span>
+                        <span class="take-profit-value">+${profit.toFixed(8)} USDT</span>
+                    `;
+                    takeProfitLevelsDiv.appendChild(levelDiv);
+                });
+            }
+            
+            // Экспорт в текстовый файл
+            function exportToText() {
+                const entryPrice = parseFloat(entryPriceInput.value) || 0;
+                const leverage = parseFloat(leverageInput.value) || 1;
+                const atr = parseFloat(atrInput.value) || 0;
+                const riskPercent = parseFloat(riskPercentInput.value);
+                const riskAmount = parseFloat(riskAmountInput.value) || 0;
+                const rewardRatio1 = parseFloat(rewardRatio1Input.value) || 3;
+                const rewardRatio2 = parseFloat(rewardRatio2Input.value) || 5;
+                
+                const content = `
+Калькулятор рисков - Результаты
+===============================
+Дата: ${new Date().toLocaleString()}
+Направление: ${isLong ? 'Лонг' : 'Шорт'}
+
+Параметры сделки:
+-----------------
+Цена входа: ${entryPrice} USDT
+Кредитное плечо: ${leverage}x
+ATR: ${atr} USDT
+Риск стоп-лосс: ${riskPercent}% от ATR
+Риск на сделку: ${riskAmount} USDT
+Соотношение тейк-профита: 1:${rewardRatio1} и 1:${rewardRatio2}
+
+Результаты:
+-----------
+Цена входа: ${entryPrice} USDT
+Размер позиции: ${positionSizeSpan.textContent}
+Стоп-лосс: ${stopLossSpan.textContent}
+
+Уровни тейк-профита:
+${Array.from(takeProfitLevelsDiv.children).map(el => 
+    el.textContent.trim().replace(/\s+/g, ' ')
+).join('\n')}
+
+Цена ликвидации: ${liquidationPriceSpan.textContent}
+                `;
+                
+                const blob = new Blob([content], {type: 'text/plain'});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'расчет_рисков.txt';
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+
+            // Инициализация калькулятора
+            initCalculator();
+        }
+
+        // Калькулятор среднего
+        function calculateAverage() {
+            const input = document.getElementById('numbersInput').value.trim();
+            const resultDiv = document.getElementById('result');
+            
+            if (!input) {
+                resultDiv.innerHTML = '<p style="color: #F44336;">Введите числа!</p>';
+                return;
+            }
+
+            let numbers;
+            try {
+                // Разбиваем строку на числа, учитывая как точку, так и запятую в качестве разделителя
+                numbers = input.split(' ')
+                    .map(num => num.replace(',', '.')) // заменяем запятые на точки
+                    .filter(num => num !== '') // удаляем пустые строки
+                    .map(num => {
+                        // Преобразуем строку в число
+                        const parsed = parseFloat(num);
+                        if (isNaN(parsed)) {
+                            throw new Error();
+                        }
+                        return parsed;
+                    });
+                
+                if (numbers.length === 0) {
+                    throw new Error();
+                }
+            } catch {
+                resultDiv.innerHTML = '<p style="color: #F44336;">Ошибка: вводите только числа, разделённые пробелами!</p>';
+                return;
+            }
+
+            const sum = numbers.reduce((sum, num) => sum + num, 0);
+            const count = numbers.length;
+            const mean = sum / count;
+            const deviations = numbers.map(num => num - mean);
+
+            // Функция для форматирования чисел - показывает до 8 знаков после запятой, если нужно
+            const formatNumber = (num) => {
+                if (Math.abs(num) < 0.0001 || Math.abs(num) > 1000000) {
+                    return num.toExponential(6);
+                }
+                // Проверяем, есть ли дробная часть
+                if (num % 1 !== 0) {
+                    // Округляем до 8 знаков после запятой, если нужно
+                    const str = num.toString();
+                    const decimalIndex = str.indexOf('.');
+                    if (decimalIndex !== -1 && str.length - decimalIndex > 8) {
+                        return num.toFixed(8);
+                    }
+                }
+                return num.toString();
+            };
+
+            resultDiv.innerHTML = `
+                <div style="background: rgba(30,30,30,0.5); padding: 10px; border-radius: 5px;">
+                    <p><strong>Чисел:</strong> ${count}</p>
+                    <p><strong>Сумма:</strong> ${formatNumber(sum)}</p>
+                    <p><strong>Среднее:</strong> ${formatNumber(mean)}</p>
+                    <p><strong>Отклонения:</strong></p>
+                    <ul style="padding-left: 20px;">
+                        ${numbers.map((num, i) => 
+                            `<li>${formatNumber(num)} - ${formatNumber(mean)} = ${formatNumber(deviations[i])}</li>`
+                        ).join('')}
+                    </ul>
+                </div>
+            `;
         }
 
         // Инициализация приложения
@@ -2559,7 +3335,7 @@
                     updateUserUI(currentUser.email);
                 }
                 
-                // Запускаем проверку алертов каждые 2 секунд
+                // Запускаем проверку алертов каждые 2 секунды
                 setInterval(checkAlerts, 2000);
             } catch (error) {
                 console.error('Failed to initialize application:', error);
@@ -2587,6 +3363,7 @@
         window.showCalculator = showCalculator;
         window.showAlerts = showAlerts;
         window.showWidget = showWidget;
+        window.showHome = showHome;
         window.showLoginForm = showLoginForm;
         window.closeLoginModal = closeLoginModal;
         window.showRegisterForm = showRegisterForm;
@@ -2595,6 +3372,8 @@
         window.handleRegister = handleRegister;
         window.handleLogout = handleLogout;
         window.toggleMenu = toggleMenu;
+        window.resetForm = resetForm;
+        window.calculateAverage = calculateAverage;
     </script>
 </body>
 </html>
