@@ -30,23 +30,6 @@
             font-family: 'JetBrains Mono', monospace;
             background-color: var(--dark);
             color: var(--light);
-            height: 100vh;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .main-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-        
-        .content-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 1rem;
         }
         
         .alert-card {
@@ -186,7 +169,7 @@
         }
         
         .alerts-container {
-            max-height: 100%;
+            max-height: 500px;
             overflow-y: auto;
         }
         
@@ -578,225 +561,222 @@
     </style>
 </head>
 <body class="bg-dark">
-    <div class="main-container">
-        <nav class="shadow-sm">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between h-16 items-center">
-                    <div class="flex items-center">
-                        <i class="fas fa-bell text-primary text-xl mr-2"></i>
-                        <span class="text-xl font-bold text-light">Crypto Alerts</span>
-                    </div>
-                    <div class="flex items-center space-x-4">
-                        <div class="menu-container">
-                            <button class="menu-button" id="menuButton">
-                                <i class="fas fa-bars mr-2"></i>Меню
-                            </button>
-                            <div class="menu-content" id="menuContent">
-                               <a href="index.html" class="menu-item">
-                                    <i class="fas fa-home mr-2"></i>Главная
-                            </a>
-                                 <i class="fas fa-bell mr-2"></i>Алерты
-                                </a>
-                                <a href="calculator.html" class="menu-item">
-                                  <i class="fas fa-calculator mr-2"></i>Калькулятор
-                                </a>
-                                <a href="widget.html" class="menu-item">
-                                    <i class="fas fa-chart-line mr-2"></i>Виджет
-                                </a>
-                                <div class="menu-divider"></div>
-                                <a href="#" class="menu-item" onclick="showLoginForm()" id="loginMenuItem">
-                                    <i class="fas fa-sign-in-alt mr-2"></i>Вход
-                                </a>
-                                <a href="#" class="menu-item" onclick="showRegisterForm()" id="registerMenuItem">
-                                    <i class="fas fa-user-plus mr-2"></i>Регистрация
-                                </a>
-                                <a href="#" class="menu-item hidden" onclick="handleLogout()" id="logoutMenuItem">
-                                    <i class="fas fa-sign-out-alt mr-2"></i>Выход
-                                </a>
-                            </div>
-                        </div>
-                        <div id="connectionStatus" class="connection-status">
-                            <div class="status-dot status-connecting"></div>
-                            <span>Подключение к Binance...</span>
-                        </div>
-                        <button id="userProfileBtn" class="hidden items-center text-gray-300 hover:text-white">
-                            <img id="userAvatar" class="w-8 h-8 rounded-full mr-2" src="https://via.placeholder.com/32/2D2D2D/6B7280?text=U" alt="User">
-                            <span id="userName">Гость</span>
+    <nav class="shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center">
+                    <i class="fas fa-bell text-primary text-xl mr-2"></i>
+                    <span class="text-xl font-bold text-light">Crypto Alerts</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="menu-container">
+                        <button class="menu-button" id="menuButton">
+                            <i class="fas fa-bars mr-2"></i>Меню
                         </button>
+                        <div class="menu-content" id="menuContent">
+                           <a href="index.html" class="menu-item">
+                             <i class="fas fa-home mr-2"></i>Главная
+                            </a>
+                           <a href="alerts.html" class="menu-item">
+                             <i class="fas fa-bell mr-2"></i>Алерты
+                            </a>
+                            <a href="calculator.html" class="menu-item">
+                              <i class="fas fa-calculator mr-2"></i>Калькулятор
+                            </a>
+                            <a href="widget.html" class="menu-item">
+                                <i class="fas fa-chart-line mr-2"></i>Виджет
+                            </a>
+                            <div class="menu-divider"></div>
+                            <a href="#" class="menu-item" onclick="showLoginForm()" id="loginMenuItem">
+                                <i class="fas fa-sign-in-alt mr-2"></i>Вход
+                            </a>
+                            <a href="#" class="menu-item" onclick="showRegisterForm()" id="registerMenuItem">
+                                <i class="fas fa-user-plus mr-2"></i>Регистрация
+                            </a>
+                            <a href="#" class="menu-item hidden" onclick="handleLogout()" id="logoutMenuItem">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Выход
+                            </a>
+                        </div>
                     </div>
+                    <div id="connectionStatus" class="connection-status">
+                        <div class="status-dot status-connecting"></div>
+                        <span>Подключение к Binance...</span>
+                    </div>
+                    <button id="userProfileBtn" class="hidden items-center text-gray-300 hover:text-white">
+                        <img id="userAvatar" class="w-8 h-8 rounded-full mr-2" src="https://via.placeholder.com/32/2D2D2D/6B7280?text=U" alt="User">
+                        <span id="userName">Гость</span>
+                    </button>
                 </div>
             </div>
-        </nav>
+        </div>
+    </nav>
 
-        <div class="content-container">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <div class="grid grid-cols-1 gap-8">
-                    <!-- Alerts Section -->
-                    <div class="card rounded-lg p-6">
-                        <h2 class="text-xl font-bold mb-6 text-primary">
-                            <i class="fas fa-plus-circle mr-2"></i>Создать новый алерт
-                        </h2>
-                        
-                        <form id="alertForm">
-                            <input type="hidden" id="editAlertId" value="">
-                            <div class="mb-4">
-                                <label class="block text-gray-300 text-sm font-medium mb-2">Криптовалюта</label>
-                                <div class="relative">
-                                    <input 
-                                        type="text" 
-                                        id="coinSearch" 
-                                        placeholder="Поиск монеты..." 
-                                        class="w-full pl-10 pr-4 py-2 rounded-md focus:ring-primary focus:border-primary"
-                                        required
-                                    >
-                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <i class="fas fa-search text-gray-400"></i>
-                                    </div>
-                                    <div id="marketTypeHint" class="market-type-hint"></div>
-                                </div>
-                                <div id="coinError" class="validation-message">Пожалуйста, выберите криптовалюту</div>
-                                <select id="symbol" size="5" class="w-full mt-2 px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary hidden">
-                                </select>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 gap-8">
+            <!-- Alerts Section -->
+            <div class="card rounded-lg p-6">
+                <h2 class="text-xl font-bold mb-6 text-primary">
+                    <i class="fas fa-plus-circle mr-2"></i>Создать новый алерт
+                </h2>
+                
+                <form id="alertForm">
+                    <input type="hidden" id="editAlertId" value="">
+                    <div class="mb-4">
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Криптовалюта</label>
+                        <div class="relative">
+                            <input 
+                                type="text" 
+                                id="coinSearch" 
+                                placeholder="Поиск монеты..." 
+                                class="w-full pl-10 pr-4 py-2 rounded-md focus:ring-primary focus:border-primary"
+                                required
+                            >
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-search text-gray-400"></i>
                             </div>
-                            
-                            <div class="mb-4">
-                                <label class="block text-gray-300 text-sm font-medium mb-2">Тип алерта</label>
-                                <select id="alertType" class="w-full px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
-                                    <option value="price">Цена</option>
-                                    <option value="liquidation">Ликвидации</option>
-                                    <option value="funding">Фандинг</option>
-                                    <option value="oi">Открытый интерес</option>
-                                </select>
-                            </div>
-                            
-                            <div class="mb-4">
-                                <label class="block text-gray-300 text-sm font-medium mb-2">Условие</label>
-                                <div class="flex">
-                                    <select id="condition" class="w-1/3 px-3 py-2 rounded-l-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
-                                        <option value=">">Выше</option>
-                                        <option value="<">Ниже</option>
-                                    </select>
-                                    <input 
-                                        type="number" 
-                                        id="value" 
-                                        class="w-2/3 px-3 py-2 border-t border-b border-r rounded-r-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary" 
-                                        placeholder="Значение"
-                                        step="any"
-                                        required
-                                    >
-                                </div>
-                                <div id="valueError" class="validation-message">Пожалуйста, укажите значение</div>
-                                <div id="currentPriceContainer" class="current-price-container hidden">
-                                    <span class="current-price-label">Текущая цена:</span>
-                                    <span id="currentPriceValue" class="current-price-value"></span>
-                                    <button type="button" onclick="applyCurrentPrice()" class="apply-price-btn" title="Применить текущую цену">
-                                        <i class="fas fa-sync-alt"></i>
-                                        <span>Применить</span>
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <div class="mb-4">
-                                <label class="block text-gray-300 text-sm font-medium mb-2">Количество уведомлений</label>
-                                <select id="notificationCount" class="w-full px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
-                                    <option value="5" selected>5 раз (интервал 30 сек)</option>
-                                    <option value="1">1 раз (интервал 30 сек)</option>
-                                    <option value="2">2 раза (интервал 30 сек)</option>
-                                    <option value="3">3 раза (интервал 30 сек)</option>
-                                    <option value="4">4 раза (интервал 30 сек)</option>
-                                    <option value="0">Пока не отключу (интервал 30 сек)</option>
-                                </select>
-                            </div>
-                            
-                            <div class="mb-6">
-                                <label class="block text-gray-300 text-sm font-medium mb-2">Уведомления</label>
-                                <div class="notification-methods">
-                                    <div class="notification-method">
-                                        <input id="telegram" type="checkbox" checked class="h-4 w-4 focus:ring-primary">
-                                        <label for="telegram" class="ml-2 block text-sm text-gray-300">
-                                            <i class="fab fa-telegram mr-1 text-blue-400"></i> Telegram
-                                        </label>
-                                        <button onclick="openTelegramSettings()" class="ml-2 text-sm text-blue-400 hover:text-blue-300 text-xs px-2 py-1">
-                                            Настроить
-                                        </button>
-                                        <input 
-                                            type="text" 
-                                            id="userChatId" 
-                                            placeholder="Ваш Chat ID" 
-                                            class="ml-2 px-2 py-1 text-sm rounded-md hidden"
-                                        >
-                                    </div>
-                                    <div class="notification-method">
-                                        <input id="email" type="checkbox" class="h-4 w-4 focus:ring-primary">
-                                        <label for="email" class="ml-2 block text-sm text-gray-300">
-                                            <i class="fas fa-envelope mr-1 text-gray-400"></i> Email
-                                        </label>
-                                        <input 
-                                            type="email" 
-                                            id="userEmail" 
-                                            placeholder="Ваш email" 
-                                            class="ml-2 px-2 py-1 text-sm rounded-md hidden"
-                                        >
-                                        <div id="userEmailError" class="validation-message">Неверный формат email</div>
-                                    </div>
-                                </div>
-                                <div class="mt-4">
-                                    <div class="tooltip file-input-container">
-                                        <button class="file-input-label text-xs px-3 py-1">
-                                            <i class="fas fa-file-import mr-1"></i>Импорт из TXT (только фьючерсы)
-                                        </button>
-                                        <input type="file" id="bulkImportFile" class="file-input" accept=".txt">
-                                        <span class="tooltiptext">
-                                            Формат файла:<br>
-                                            Каждая строка должна содержать:<br>
-                                            СИМВОЛ УСЛОВИЕ ЗНАЧЕНИЕ<br><br>
-                                            Пример:<br>
-                                            BTCUSDT > 50000<br>
-                                            ETHUSDT < 3000<br>
-                                            SOLUSDT > 150<br><br>
-                                            Будут добавлены только фьючерсные пары
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <button type="submit" class="btn-primary w-full text-white py-2 px-4 rounded-md font-medium mt-4">
-                                <i class="fas fa-bell mr-2"></i><span id="submitBtnText">Создать алерт</span>
-                            </button>
-                        </form>
+                            <div id="marketTypeHint" class="market-type-hint"></div>
+                        </div>
+                        <div id="coinError" class="validation-message">Пожалуйста, выберите криптовалюту</div>
+                        <select id="symbol" size="5" class="w-full mt-2 px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary hidden">
+                        </select>
                     </div>
                     
-                    <div class="card rounded-lg p-6">
-                        <div class="compact-alerts-header">
-                            <div class="flex items-center flex-1 min-w-0">
-                                <h2 class="compact-alerts-title">
-                                    <i class="fas fa-bell mr-1"></i>Алерты
-                                </h2>
-                                <div class="compact-filters no-scrollbar">
-                                    <button id="showActiveAlerts" class="compact-filter-btn bg-blue-900 text-blue-300 active">
-                                        Активные
-                                    </button>
-                                    <button id="showTriggeredAlerts" class="compact-filter-btn bg-gray-700 text-gray-300">
-                                        Сработавшие
-                                    </button>
-                                    <button id="showHistoryAlerts" class="compact-filter-btn bg-gray-700 text-gray-300">
-                                        История
-                                    </button>
-                                    <button id="showAllAlerts" class="compact-filter-btn bg-gray-700 text-gray-300">
-                                        Все
-                                    </button>
-                                </div>
-                            </div>
-                            <button id="clearAlerts" class="compact-clear-btn hover:text-red-300">
-                                <i class="fas fa-trash-alt mr-1"></i>Очистить
+                    <div class="mb-4">
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Тип алерта</label>
+                        <select id="alertType" class="w-full px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
+                            <option value="price">Цена</option>
+                            <option value="liquidation">Ликвидации</option>
+                            <option value="funding">Фандинг</option>
+                            <option value="oi">Открытый интерес</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Условие</label>
+                        <div class="flex">
+                            <select id="condition" class="w-1/3 px-3 py-2 rounded-l-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
+                                <option value=">">Выше</option>
+                                <option value="<">Ниже</option>
+                            </select>
+                            <input 
+                                type="number" 
+                                id="value" 
+                                class="w-2/3 px-3 py-2 border-t border-b border-r rounded-r-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary" 
+                                placeholder="Значение"
+                                step="any"
+                                required
+                            >
+                        </div>
+                        <div id="valueError" class="validation-message">Пожалуйста, укажите значение</div>
+                        <div id="currentPriceContainer" class="current-price-container hidden">
+                            <span class="current-price-label">Текущая цена:</span>
+                            <span id="currentPriceValue" class="current-price-value"></span>
+                            <button type="button" onclick="applyCurrentPrice()" class="apply-price-btn" title="Применить текущую цену">
+                                <i class="fas fa-sync-alt"></i>
+                                <span>Применить</span>
                             </button>
                         </div>
-                        
-                        <div id="userAlerts" class="alerts-container space-y-4">
-                            <div class="text-center text-gray-400 py-4">
-                                У вас пока нет активных алертов
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Количество уведомлений</label>
+                        <select id="notificationCount" class="w-full px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
+                            <option value="5" selected>5 раз (интервал 30 сек)</option>
+                            <option value="1">1 раз (интервал 30 сек)</option>
+                            <option value="2">2 раза (интервал 30 сек)</option>
+                            <option value="3">3 раза (интервал 30 сек)</option>
+                            <option value="4">4 раза (интервал 30 сек)</option>
+                            <option value="0">Пока не отключу (интервал 30 сек)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label class="block text-gray-300 text-sm font-medium mb-2">Уведомления</label>
+                        <div class="notification-methods">
+                            <div class="notification-method">
+                                <input id="telegram" type="checkbox" checked class="h-4 w-4 focus:ring-primary">
+                                <label for="telegram" class="ml-2 block text-sm text-gray-300">
+                                    <i class="fab fa-telegram mr-1 text-blue-400"></i> Telegram
+                                </label>
+                                <button onclick="openTelegramSettings()" class="ml-2 text-sm text-blue-400 hover:text-blue-300 text-xs px-2 py-1">
+                                    Настроить
+                                </button>
+                                <input 
+                                    type="text" 
+                                    id="userChatId" 
+                                    placeholder="Ваш Chat ID" 
+                                    class="ml-2 px-2 py-1 text-sm rounded-md hidden"
+                                >
+                            </div>
+                            <div class="notification-method">
+                                <input id="email" type="checkbox" class="h-4 w-4 focus:ring-primary">
+                                <label for="email" class="ml-2 block text-sm text-gray-300">
+                                    <i class="fas fa-envelope mr-1 text-gray-400"></i> Email
+                                </label>
+                                <input 
+                                    type="email" 
+                                    id="userEmail" 
+                                    placeholder="Ваш email" 
+                                    class="ml-2 px-2 py-1 text-sm rounded-md hidden"
+                                >
+                                <div id="userEmailError" class="validation-message">Неверный формат email</div>
                             </div>
                         </div>
+                        <div class="mt-4">
+                            <div class="tooltip file-input-container">
+                                <button class="file-input-label text-xs px-3 py-1">
+                                    <i class="fas fa-file-import mr-1"></i>Импорт из TXT (только фьючерсы)
+                                </button>
+                                <input type="file" id="bulkImportFile" class="file-input" accept=".txt">
+                                <span class="tooltiptext">
+                                    Формат файла:<br>
+                                    Каждая строка должна содержать:<br>
+                                    СИМВОЛ УСЛОВИЕ ЗНАЧЕНИЕ<br><br>
+                                    Пример:<br>
+                                    BTCUSDT > 50000<br>
+                                    ETHUSDT < 3000<br>
+                                    SOLUSDT > 150<br><br>
+                                    Будут добавлены только фьючерсные пары
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary w-full text-white py-2 px-4 rounded-md font-medium mt-4">
+                        <i class="fas fa-bell mr-2"></i><span id="submitBtnText">Создать алерт</span>
+                    </button>
+                </form>
+            </div>
+            
+            <div class="card rounded-lg p-6">
+                <div class="compact-alerts-header">
+                    <div class="flex items-center flex-1 min-w-0">
+                        <h2 class="compact-alerts-title">
+                            <i class="fas fa-bell mr-1"></i>Алерты
+                        </h2>
+                        <div class="compact-filters no-scrollbar">
+                            <button id="showActiveAlerts" class="compact-filter-btn bg-blue-900 text-blue-300 active">
+                                Активные
+                            </button>
+                            <button id="showTriggeredAlerts" class="compact-filter-btn bg-gray-700 text-gray-300">
+                                Сработавшие
+                            </button>
+                            <button id="showHistoryAlerts" class="compact-filter-btn bg-gray-700 text-gray-300">
+                                История
+                            </button>
+                            <button id="showAllAlerts" class="compact-filter-btn bg-gray-700 text-gray-300">
+                                Все
+                            </button>
+                        </div>
+                    </div>
+                    <button id="clearAlerts" class="compact-clear-btn hover:text-red-300">
+                        <i class="fas fa-trash-alt mr-1"></i>Очистить
+                    </button>
+                </div>
+                
+                <div id="userAlerts" class="alerts-container space-y-4">
+                    <div class="text-center text-gray-400 py-4">
+                        У вас пока нет активных алертов
                     </div>
                 </div>
             </div>
@@ -2171,7 +2151,7 @@
         function showCalculator() {
             toggleMenu();
             // Перенаправляем на страницу калькулятора
-            window.location.href = 'index.html';
+            window.location.href = 'calculator.html';
         }
 
         function showAlerts() {
@@ -2184,6 +2164,12 @@
             toggleMenu();
             // Перенаправляем на страницу виджета
             window.location.href = 'widget.html';
+        }
+
+        function showMainPage() {
+            toggleMenu();
+            // Перенаправляем на главную страницу
+            window.location.href = 'index.html';
         }
 
         function showLoginForm() {
@@ -2701,6 +2687,7 @@
         window.showCalculator = showCalculator;
         window.showAlerts = showAlerts;
         window.showWidget = showWidget;
+        window.showMainPage = showMainPage;
         window.showLoginForm = showLoginForm;
         window.closeLoginModal = closeLoginModal;
         window.showRegisterForm = showRegisterForm;
