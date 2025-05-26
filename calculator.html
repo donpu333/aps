@@ -401,6 +401,42 @@
         .take-profit-value {
             color: var(--success-color);
         }
+
+        /* Стили для переключателя способа ввода стоп-лосса */
+        .stop-method-selector {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+            background: #2A2A2A;
+            padding: 5px;
+            border-radius: 10px;
+        }
+
+        .stop-method-btn {
+            flex: 1;
+            padding: 8px 0;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.8rem;
+            cursor: pointer;
+            background-color: transparent;
+            color: #9CA3AF;
+        }
+
+        .stop-method-btn.active {
+            background-color: rgba(33, 150, 243, 0.2);
+            color: var(--primary);
+        }
+
+        /* Скрываем неактивные методы ввода */
+        .stop-input-group {
+            display: none;
+        }
+
+        .stop-input-group.active {
+            display: block;
+        }
     </style>
 </head>
 <body class="bg-dark">
@@ -480,22 +516,42 @@
                         </div>
                     </div>
                     
-                    <div class="input-group">
-                        <label for="atr">ATR (USDT)</label>
-                        <input type="number" id="atr" min="0" step="0.00000001" value="5.00">
-                        <div class="preview-value">
-                            Размер ATR: <span id="atrValue">5.00 USDT</span>
+                    <!-- Переключатель способа ввода стоп-лосса -->
+                    <div class="stop-method-selector">
+                        <button class="stop-method-btn active" data-method="atr">По ATR</button>
+                        <button class="stop-method-btn" data-method="price">По цене</button>
+                    </div>
+                    
+                    <!-- Группа ввода по ATR -->
+                    <div class="stop-input-group active" id="atr-group">
+                        <div class="input-group">
+                            <label for="atr">ATR (USDT)</label>
+                            <input type="number" id="atr" min="0" step="0.00000001" value="5.00">
+                            <div class="preview-value">
+                                Размер ATR: <span id="atrValue">5.00 USDT</span>
+                            </div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="riskPercent">Риск стоп-лосс (% от ATR)</label>
+                            <div class="slider-container">
+                                <input type="range" id="riskPercent" min="1" max="100" value="10">
+                                <span class="slider-value" id="riskPercentValue">10</span>%
+                            </div>
+                            <div class="preview-value">
+                                Стоп-лосс: минус <span id="previewAtrPercent">0.50 USDT</span> (<span id="previewAtrPercentValue">10%</span> от ATR)
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="input-group">
-                        <label for="riskPercent">Риск стоп-лосс (% от ATR)</label>
-                        <div class="slider-container">
-                            <input type="range" id="riskPercent" min="1" max="100" value="10">
-                            <span class="slider-value" id="riskPercentValue">10</span>%
-                        </div>
-                        <div class="preview-value">
-                            Стоп-лосс: минус <span id="previewAtrPercent">0.50 USDT</span> (<span id="previewAtrPercentValue">10%</span> от ATR)
+                    <!-- Группа ввода по цене -->
+                    <div class="stop-input-group" id="price-group">
+                        <div class="input-group">
+                            <label for="stopLossPrice">Цена стоп-лосса (USDT)</label>
+                            <input type="number" id="stopLossPrice" min="0" step="0.00000001">
+                            <div class="preview-value">
+                                Разница: <span id="priceDifference">0.00 USDT</span>
+                            </div>
                         </div>
                     </div>
                     
@@ -757,6 +813,8 @@
             const atrValueSpan = document.getElementById('atrValue');
             const previewAtrPercent = document.getElementById('previewAtrPercent');
             const previewAtrPercentValue = document.getElementById('previewAtrPercentValue');
+            const stopLossPriceInput = document.getElementById('stopLossPrice');
+            const priceDifferenceSpan = document.getElementById('priceDifference');
             
             // Элементы результатов
             const positionSizeSpan = document.getElementById('positionSize');
@@ -764,8 +822,14 @@
             const takeProfitLevelsDiv = document.getElementById('takeProfitLevels');
             const liquidationPriceSpan = document.getElementById('liquidationPrice');
             
+            // Переключатели метода ввода стоп-лосса
+            const stopMethodButtons = document.querySelectorAll('.stop-method-btn');
+            const atrGroup = document.getElementById('atr-group');
+            const priceGroup = document.getElementById('price-group');
+            
             // Переменные состояния
             let isLong = true;
+            let stopMethod = 'atr'; // 'atr' или 'price'
             
             // Инициализация
             function init() {
@@ -821,6 +885,43 @@
                     calculateRisk();
                 });
                 
+                // Обработчики для переключателя метода ввода стоп-лосса
+                stopMethodButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        stopMethod = button.dataset.method;
+                        
+                        // Обновляем активные кнопки и группы ввода
+                        stopMethodButtons.forEach(btn => btn.classList.remove('active'));
+                        button.classList.add('active');
+                        
+                        atrGroup.classList.remove('active');
+                        priceGroup.classList.remove('active');
+                        
+                        if (stopMethod === 'atr') {
+                            atrGroup.classList.add('active');
+                        } else {
+                            priceGroup.classList.add('active');
+                        }
+                        
+                        calculateRisk();
+                    });
+                });
+                
+                // Обработчик для прямого ввода цены стоп-лосса
+                stopLossPriceInput.addEventListener('input', () => {
+                    const entryPrice = parseFloat(entryPriceInput.value) || 0;
+                    const stopLossPrice = parseFloat(stopLossPriceInput.value) || 0;
+                    
+                    if (entryPrice > 0 && stopLossPrice > 0) {
+                        const difference = Math.abs(entryPrice - stopLossPrice);
+                        priceDifferenceSpan.textContent = difference.toFixed(8) + ' USDT';
+                    } else {
+                        priceDifferenceSpan.textContent = '0.00 USDT';
+                    }
+                    
+                    calculateRisk();
+                });
+                
                 // Инициализация кнопки экспорта
                 document.getElementById('exportTextBtn').addEventListener('click', exportToText);
             }
@@ -860,13 +961,40 @@
                 const riskAmount = parseFloat(riskAmountInput.value) || 0;
                 const rewardRatio1 = parseFloat(rewardRatio1Input.value) || 3;
                 const rewardRatio2 = parseFloat(rewardRatio2Input.value) || 5;
+                const stopLossPriceDirect = parseFloat(stopLossPriceInput.value) || 0;
                 
-                // Расчет стоп-лосса
+                // Расчет стоп-лосса в зависимости от выбранного метода
                 let stopLossPrice;
-                if (isLong) {
-                    stopLossPrice = entryPrice - (atr * riskPercent);
+                if (stopMethod === 'atr') {
+                    if (isLong) {
+                        stopLossPrice = entryPrice - (atr * riskPercent);
+                    } else {
+                        stopLossPrice = entryPrice + (atr * riskPercent);
+                    }
                 } else {
-                    stopLossPrice = entryPrice + (atr * riskPercent);
+                    // Проверяем корректность введенной цены стоп-лосса
+                    if (stopLossPriceDirect > 0) {
+                        if ((isLong && stopLossPriceDirect < entryPrice) || 
+                            (!isLong && stopLossPriceDirect > entryPrice)) {
+                            stopLossPrice = stopLossPriceDirect;
+                        } else {
+                            // Некорректная цена стоп-лосса - используем расчет через ATR
+                            if (isLong) {
+                                stopLossPrice = entryPrice - (atr * riskPercent);
+                            } else {
+                                stopLossPrice = entryPrice + (atr * riskPercent);
+                            }
+                            // Обновляем поле ввода
+                            stopLossPriceInput.value = stopLossPrice.toFixed(8);
+                        }
+                    } else {
+                        // Если цена стоп-лосса не введена, используем расчет через ATR
+                        if (isLong) {
+                            stopLossPrice = entryPrice - (atr * riskPercent);
+                        } else {
+                            stopLossPrice = entryPrice + (atr * riskPercent);
+                        }
+                    }
                 }
                 
                 // Расчет размера позиции (без учета плеча)
@@ -923,19 +1051,20 @@
                 const riskAmount = parseFloat(riskAmountInput.value) || 0;
                 const rewardRatio1 = parseFloat(rewardRatio1Input.value) || 3;
                 const rewardRatio2 = parseFloat(rewardRatio2Input.value) || 5;
+                const stopLossPriceDirect = parseFloat(stopLossPriceInput.value) || 0;
                 
                 const content = `
 Калькулятор рисков - Результаты
 ===============================
 Дата: ${new Date().toLocaleString()}
 Направление: ${isLong ? 'Лонг' : 'Шорт'}
+Метод ввода стоп-лосса: ${stopMethod === 'atr' ? 'По ATR' : 'По цене'}
 
 Параметры сделки:
 -----------------
 Цена входа: ${entryPrice} USDT
 Кредитное плечо: ${leverage}x
-ATR: ${atr} USDT
-Риск стоп-лосс: ${riskPercent}% от ATR
+${stopMethod === 'atr' ? `ATR: ${atr} USDT\nРиск стоп-лосс: ${riskPercent}% от ATR` : `Цена стоп-лосса: ${stopLossPriceDirect} USDT`}
 Риск на сделку: ${riskAmount} USDT
 Соотношение тейк-профита: 1:${rewardRatio1} и 1:${rewardRatio2}
 
