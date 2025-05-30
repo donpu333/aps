@@ -661,11 +661,25 @@
                                 <i class="fas fa-chart-line mr-2"></i>Виджет
                             </a>
                             <div class="menu-divider"></div>
+                            <a href="#" class="menu-item" onclick="showLoginForm()" id="loginMenuItem">
+                                <i class="fas fa-sign-in-alt mr-2"></i>Вход
+                            </a>
+                            <a href="#" class="menu-item" onclick="showRegisterForm()" id="registerMenuItem">
+                                <i class="fas fa-user-plus mr-2"></i>Регистрация
+                            </a>
+                            <a href="#" class="menu-item hidden" onclick="handleLogout()" id="logoutMenuItem">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Выход
+                            </a>
+                            <div class="menu-divider"></div>
                             <a href="#" class="menu-item" onclick="showTelegramSettings()">
                                 <i class="fab fa-telegram mr-2"></i>Настройки Telegram
                             </a>
                         </div>
                     </div>
+                    <button id="userProfileBtn" class="hidden items-center text-gray-300 hover:text-white">
+                        <img id="userAvatar" class="w-8 h-8 rounded-full mr-2" src="https://via.placeholder.com/32/2D2D2D/6B7280?text=U" alt="User">
+                        <span id="userName">Гость</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -686,11 +700,11 @@
                     </div>
                     
                     <!-- Выбор типа сделки -->
-                    <div class="trade-type-selector">
-                        <button class="trade-type-btn long-breakout active" data-type="long-breakout">Лонг (Пробой)</button>
-                        <button class="trade-type-btn long-fakeout" data-type="long-fakeout">Лонг (Ложный пробой)</button>
-                        <button class="trade-type-btn short-breakout" data-type="short-breakout">Шорт (Пробой)</button>
-                        <button class="trade-type-btn short-fakeout" data-type="short-fakeout">Шорт (Ложный пробой)</button>
+                    <div class="trade-type-selector" id="tradeTypeSelector" style="display: none;">
+                        <button class="trade-type-btn long-breakout active" data-type="long-breakout">Лонг Пробой</button>
+                        <button class="trade-type-btn long-fakeout" data-type="long-fakeout">Лонг Ложный пробой</button>
+                        <button class="trade-type-btn short-breakout" data-type="short-breakout">Шорт Пробой</button>
+                        <button class="trade-type-btn short-fakeout" data-type="short-fakeout">Шорт Ложный пробой</button>
                     </div>
                     
                     <div class="input-group">
@@ -823,6 +837,60 @@
         </div>
     </div>
 
+    <!-- Login Modal -->
+    <div id="loginModal" class="fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-80 flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-dark rounded-lg p-6 w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-primary">Вход в аккаунт</h3>
+                <button onclick="closeLoginModal()" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="mb-4">
+                <div class="input-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" placeholder="Ваш email">
+                </div>
+                <div class="input-group">
+                    <label for="loginPassword">Пароль</label>
+                    <input type="password" id="loginPassword" placeholder="Ваш пароль">
+                </div>
+                <button onclick="handleLogin()" class="btn-primary w-full text-white py-2 px-4 rounded-md font-medium mt-4">
+                    Войти
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-80 flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-dark rounded-lg p-6 w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-primary">Регистрация</h3>
+                <button onclick="closeRegisterModal()" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="mb-4">
+                <div class="input-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" placeholder="Ваш email">
+                </div>
+                <div class="input-group">
+                    <label for="registerPassword">Пароль</label>
+                    <input type="password" id="registerPassword" placeholder="Придумайте пароль">
+                </div>
+                <div class="input-group">
+                    <label for="registerConfirmPassword">Подтвердите пароль</label>
+                    <input type="password" id="registerConfirmPassword" placeholder="Повторите пароль">
+                </div>
+                <button onclick="handleRegister()" class="btn-primary w-full text-white py-2 px-4 rounded-md font-medium mt-4">
+                    Зарегистрироваться
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Telegram Settings Modal -->
     <div id="telegramSettingsModal" class="export-modal">
         <div class="export-modal-content">
@@ -835,7 +903,7 @@
                 
                 <div class="telegram-settings-form">
                     <label for="telegramBotToken">Токен бота</label>
-                    <input type="text" id="telegramBotToken" placeholder="123456789:ABCdefGHIJKlmNoPQRsTUVwxyZ" value="8044055704:AAGk8cQFayPqYCscLlEB3qGRj0Uw_NTpe30">
+                    <input type="text" id="telegramBotToken" placeholder="123456789:ABCdefGHIJKlmNoPQRsTUVwxyZ">
                     
                     <label for="telegramChatId">ID чата</label>
                     <input type="text" id="telegramChatId" placeholder="1720793889">
@@ -858,38 +926,136 @@
         let stopMethod = 'atr';
         let tradeType = 'long-breakout';
         
-        // Telegram settings
-        let telegramSettings = {
-            botToken: "8044055704:AAGk8cQFayPqYCscLlEB3qGRj0Uw_NTpe30",
-            chatId: ""
-        };
-
-        // Функция для показа уведомлений
-        function showNotification(message, type = 'info') {
-            const notification = document.getElementById('notification');
-            notification.textContent = message;
-            notification.style.display = 'block';
-            
-            // Устанавливаем цвет в зависимости от типа уведомления
-            if (type === 'error') {
-                notification.style.backgroundColor = '#F44336';
-            } else if (type === 'success') {
-                notification.style.backgroundColor = '#4CAF50';
-            } else {
-                notification.style.backgroundColor = '#2196F3';
-            }
-            
-            // Скрываем уведомление через 3 секунды
-            setTimeout(() => {
-                notification.style.display = 'none';
-            }, 3000);
+        // Функции для работы с пользователями
+        function isValidEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
         }
 
-        // Telegram functions
+        function handleRegister() {
+            const email = document.getElementById('registerEmail').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+
+            // Валидация полей
+            if (!email || !password || !confirmPassword) {
+                showNotification('Все поля обязательны для заполнения', 'error');
+                return;
+            }
+
+            if (!isValidEmail(email)) {
+                showNotification('Введите корректный email', 'error');
+                return;
+            }
+
+            if (password.length < 8) {
+                showNotification('Пароль должен содержать минимум 8 символов', 'error');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showNotification('Пароли не совпадают', 'error');
+                return;
+            }
+
+            // Проверяем, есть ли уже такой пользователь
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const userExists = users.some(user => user.email === email);
+            
+            if (userExists) {
+                showNotification('Пользователь с таким email уже зарегистрирован', 'error');
+                return;
+            }
+
+            // Создаем нового пользователя
+            const newUser = {
+                email: email,
+                password: btoa(password),
+                createdAt: new Date().toISOString(),
+                alerts: [],
+                telegramSettings: {
+                    botToken: '',
+                    chatId: ''
+                }
+            };
+
+            // Сохраняем пользователя
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+            localStorage.setItem('currentUser', JSON.stringify({ email: email }));
+
+            showNotification('Регистрация прошла успешно!', 'success');
+            closeRegisterModal();
+            
+            // Обновляем интерфейс для зарегистрированного пользователя
+            updateUserUI(email);
+        }
+
+        function handleLogin() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            if (!email || !password) {
+                showNotification('Введите email и пароль', 'error');
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const user = users.find(u => u.email === email && atob(u.password) === password);
+
+            if (!user) {
+                showNotification('Неверный email или пароль', 'error');
+                return;
+            }
+
+            localStorage.setItem('currentUser', JSON.stringify({ email: email }));
+            showNotification('Вход выполнен успешно!', 'success');
+            closeLoginModal();
+            updateUserUI(email);
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('currentUser');
+            showNotification('Вы успешно вышли из системы', 'success');
+            updateUserUI(null);
+            toggleMenu();
+        }
+
+        function updateUserUI(email) {
+            const userProfileBtn = document.getElementById('userProfileBtn');
+            const userName = document.getElementById('userName');
+            const loginMenuItem = document.getElementById('loginMenuItem');
+            const registerMenuItem = document.getElementById('registerMenuItem');
+            const logoutMenuItem = document.getElementById('logoutMenuItem');
+
+            if (email) {
+                // Пользователь авторизован
+                if (userProfileBtn) userProfileBtn.classList.remove('hidden');
+                if (userName) userName.textContent = email.split('@')[0];
+                if (loginMenuItem) loginMenuItem.classList.add('hidden');
+                if (registerMenuItem) registerMenuItem.classList.add('hidden');
+                if (logoutMenuItem) logoutMenuItem.classList.remove('hidden');
+            } else {
+                // Гость
+                if (userProfileBtn) userProfileBtn.classList.add('hidden');
+                if (loginMenuItem) loginMenuItem.classList.remove('hidden');
+                if (registerMenuItem) registerMenuItem.classList.remove('hidden');
+                if (logoutMenuItem) logoutMenuItem.classList.add('hidden');
+            }
+        }
+
+        // Функции для работы с Telegram
         function showTelegramSettings() {
             toggleMenu();
-            document.getElementById('telegramBotToken').value = telegramSettings.botToken;
-            document.getElementById('telegramChatId').value = telegramSettings.chatId;
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const user = users.find(u => u.email === currentUser?.email);
+            
+            if (user) {
+                document.getElementById('telegramBotToken').value = user.telegramSettings?.botToken || '';
+                document.getElementById('telegramChatId').value = user.telegramSettings?.chatId || '';
+            }
+            
             document.getElementById('telegramSettingsModal').classList.add('active');
         }
 
@@ -898,15 +1064,44 @@
         }
 
         function saveTelegramSettings() {
-            telegramSettings.botToken = document.getElementById('telegramBotToken').value.trim();
-            telegramSettings.chatId = document.getElementById('telegramChatId').value.trim();
+            const botToken = document.getElementById('telegramBotToken').value.trim();
+            const chatId = document.getElementById('telegramChatId').value.trim();
             
-            if (!telegramSettings.botToken || !telegramSettings.chatId) {
+            if (!botToken || !chatId) {
                 showNotification('Заполните все поля', 'error');
                 return;
             }
 
-            showNotification('Настройки Telegram сохранены', 'success');
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser || !currentUser.email) {
+                showNotification('Пользователь не авторизован', 'error');
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const userIndex = users.findIndex(u => u.email === currentUser.email);
+            
+            if (userIndex !== -1) {
+                if (!users[userIndex].telegramSettings) {
+                    users[userIndex].telegramSettings = {};
+                }
+                
+                users[userIndex].telegramSettings.botToken = botToken;
+                users[userIndex].telegramSettings.chatId = chatId;
+                
+                localStorage.setItem('users', JSON.stringify(users));
+                localStorage.setItem('currentUser', JSON.stringify({
+                    ...currentUser,
+                    telegramSettings: {
+                        botToken: botToken,
+                        chatId: chatId
+                    }
+                }));
+                
+                showNotification('Настройки Telegram сохранены', 'success');
+            } else {
+                showNotification('Пользователь не найден', 'error');
+            }
         }
 
         async function testTelegramConnection() {
@@ -944,15 +1139,19 @@
         }
 
         async function sendToTelegram() {
-            const botToken = telegramSettings.botToken;
-            const chatId = telegramSettings.chatId;
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const user = users.find(u => u.email === currentUser?.email);
             
-            if (!botToken || !chatId) {
-                showNotification('Укажите ID чата в настройках Telegram', 'error');
+            if (!user || !user.telegramSettings?.botToken || !user.telegramSettings?.chatId) {
+                showNotification('Настройте Telegram в меню "Настройки Telegram"', 'error');
                 showTelegramSettings();
                 return;
             }
 
+            const botToken = user.telegramSettings.botToken;
+            const chatId = user.telegramSettings.chatId;
+            
             const entryPrice = parseFloat(document.getElementById('entryPrice').value) || 0;
             const leverage = parseFloat(document.getElementById('leverage').value) || 1;
             const riskAmount = parseFloat(document.getElementById('riskAmount').value) || 0;
@@ -960,10 +1159,10 @@
             // Получаем название типа сделки
             let tradeTypeName = '';
             switch(tradeType) {
-                case 'long-breakout': tradeTypeName = 'Лонг (Пробой)'; break;
-                case 'long-fakeout': tradeTypeName = 'Лонг (Ложный пробой)'; break;
-                case 'short-breakout': tradeTypeName = 'Шорт (Пробой)'; break;
-                case 'short-fakeout': tradeTypeName = 'Шорт (Ложный пробой)'; break;
+                case 'long-breakout': tradeTypeName = 'Лонг Пробой'; break;
+                case 'long-fakeout': tradeTypeName = 'Лонг Ложный пробой'; break;
+                case 'short-breakout': tradeTypeName = 'Шорт Пробой'; break;
+                case 'short-fakeout': tradeTypeName = 'Шорт Ложный пробой'; break;
             }
             
             // Формируем текст сообщения
@@ -1011,6 +1210,27 @@ ${Array.from(document.getElementById('takeProfitLevels').children).map(el =>
             } catch (error) {
                 showNotification('Ошибка соединения: ' + error.message, 'error');
             }
+        }
+
+        // Функция для показа уведомлений
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.display = 'block';
+            
+            // Устанавливаем цвет в зависимости от типа уведомления
+            if (type === 'error') {
+                notification.style.backgroundColor = '#F44336';
+            } else if (type === 'success') {
+                notification.style.backgroundColor = '#4CAF50';
+            } else {
+                notification.style.backgroundColor = '#2196F3';
+            }
+            
+            // Скрываем уведомление через 3 секунды
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
         }
 
         // Risk Calculator Functions
@@ -1082,7 +1302,7 @@ ${Array.from(document.getElementById('takeProfitLevels').children).map(el =>
                     calculateRisk();
                 });
                 
-                // Обработчики для кнопки типа сделки
+                // Обработчики для кнопок типа сделки
                 tradeTypeButtons.forEach(button => {
                     button.addEventListener('click', () => {
                         tradeType = button.dataset.type;
@@ -1164,10 +1384,19 @@ ${Array.from(document.getElementById('takeProfitLevels').children).map(el =>
                 // Инициализация кнопки экспорта
                 document.getElementById('exportTextBtn').addEventListener('click', exportToText);
                 document.getElementById('exportTelegramBtn').addEventListener('click', sendToTelegram);
+                
+                // Проверяем авторизацию пользователя
+                const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+                if (currentUser && currentUser.email) {
+                    updateUserUI(currentUser.email);
+                }
             }
             
             // Обновление кнопок типа сделки в зависимости от направления
             function updateTradeTypeButtons() {
+                const tradeTypeSelector = document.getElementById('tradeTypeSelector');
+                tradeTypeSelector.style.display = 'flex';
+                
                 const longBreakoutBtn = document.querySelector('.trade-type-btn.long-breakout');
                 const longFakeoutBtn = document.querySelector('.trade-type-btn.long-fakeout');
                 const shortBreakoutBtn = document.querySelector('.trade-type-btn.short-breakout');
@@ -1328,10 +1557,10 @@ ${Array.from(document.getElementById('takeProfitLevels').children).map(el =>
                 // Получаем название типа сделки
                 let tradeTypeName = '';
                 switch(tradeType) {
-                    case 'long-breakout': tradeTypeName = 'Лонг (Пробой)'; break;
-                    case 'long-fakeout': tradeTypeName = 'Лонг (Ложный пробой)'; break;
-                    case 'short-breakout': tradeTypeName = 'Шорт (Пробой)'; break;
-                    case 'short-fakeout': tradeTypeName = 'Шорт (Ложный пробой)'; break;
+                    case 'long-breakout': tradeTypeName = 'Лонг Пробой'; break;
+                    case 'long-fakeout': tradeTypeName = 'Лонг Ложный пробой'; break;
+                    case 'short-breakout': tradeTypeName = 'Шорт Пробой'; break;
+                    case 'short-fakeout': tradeTypeName = 'Шорт Ложный пробой'; break;
                 }
                 
                 const content = `
@@ -1455,8 +1684,56 @@ ${Array.from(takeProfitLevelsDiv.children).map(el =>
             }
         }
 
+        function showCalculator() {
+            toggleMenu();
+            // Перенаправляем на страницу калькулятора
+            window.location.href = 'index.html';
+        }
+
+        function showAlerts() {
+            toggleMenu();
+            // Перенаправляем на страницу алертов
+            window.location.href = 'alerts.html';
+        }
+
+        function showLoginForm() {
+            toggleMenu();
+            const modal = document.getElementById('loginModal');
+            if (modal) {
+                modal.classList.add('opacity-100', 'pointer-events-auto');
+            }
+        }
+
+        function closeLoginModal() {
+            const modal = document.getElementById('loginModal');
+            if (modal) {
+                modal.classList.remove('opacity-100', 'pointer-events-auto');
+            }
+        }
+
+        function showRegisterForm() {
+            toggleMenu();
+            const modal = document.getElementById('registerModal');
+            if (modal) {
+                modal.classList.add('opacity-100', 'pointer-events-auto');
+            }
+        }
+
+        function closeRegisterModal() {
+            const modal = document.getElementById('registerModal');
+            if (modal) {
+                modal.classList.remove('opacity-100', 'pointer-events-auto');
+            }
+        }
+
         // Инициализация при загрузке страницы
         document.addEventListener('DOMContentLoaded', function() {
+            // Проверяем авторизацию пользователя
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (currentUser && currentUser.email) {
+                updateUserUI(currentUser.email);
+            }
+            
             // Обработчик для меню
             const menuButton = document.getElementById('menuButton');
             if (menuButton) {
@@ -1476,6 +1753,15 @@ ${Array.from(takeProfitLevelsDiv.children).map(el =>
             });
         });
 
+        window.showCalculator = showCalculator;
+        window.showAlerts = showAlerts;
+        window.showLoginForm = showLoginForm;
+        window.closeLoginModal = closeLoginModal;
+        window.showRegisterForm = showRegisterForm;
+        window.closeRegisterModal = closeRegisterModal;
+        window.handleLogin = handleLogin;
+        window.handleRegister = handleRegister;
+        window.handleLogout = handleLogout;
         window.toggleMenu = toggleMenu;
         window.calculateAverage = calculateAverage;
         window.showTelegramSettings = showTelegramSettings;
