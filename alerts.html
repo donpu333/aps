@@ -43,6 +43,16 @@
             box-shadow: 0 10px 15px -3px rgba(33, 150, 243, 0.2);
         }
         
+        .alert-card.triggered {
+            animation: pulse-alert 2s infinite;
+        }
+        
+        @keyframes pulse-alert {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
         .btn-primary {
             background-color: var(--primary);
             transition: all 0.3s ease;
@@ -558,6 +568,37 @@
             border-color: var(--primary);
             box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
         }
+        
+        /* Export button styles */
+        .export-btn {
+            background-color: var(--accent-green);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            margin-left: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .export-btn:hover {
+            background-color: #1B5E20;
+        }
+        
+        .reactivate-btn {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            margin-left: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .reactivate-btn:hover {
+            background-color: var(--secondary);
+        }
     </style>
 </head>
 <body class="bg-dark">
@@ -940,7 +981,7 @@
         };
 
         // Конфигурация Telegram - ваш токен бота
-        const TG_BOT_TOKEN = atob('ODA0NDA1NTcwNDpBQUVmdjMwQXE2bXBXQTc2NlphSHRYZWgxUnV6Y3ktRmR0MA==');
+        const TG_BOT_TOKEN = '8044055704:AAGk8cQFayPqYCscLlEB3qGRj0Uw_NTpe30';
 
         let allFutures = [];
         let allSpot = [];
@@ -948,6 +989,7 @@
         let currentAlertFilter = 'active';
         let alertCooldowns = {};
         let apiManager;
+        let activeTriggeredAlerts = {};
         
         // Функции для работы с пользователями
         function isValidEmail(email) {
@@ -1691,9 +1733,10 @@
                 const isTriggered = alert.triggered || filter === 'history';
                 const isUp = alert.condition === '>';
                 const isHistory = filter === 'history';
+                const isActiveTriggered = activeTriggeredAlerts[alert.id] && !isHistory;
                 
                 html += `
-                    <div id="alert-${alert.id}" class="alert-card rounded-md p-4 shadow-sm">
+                    <div id="alert-${alert.id}" class="alert-card rounded-md p-4 shadow-sm ${isActiveTriggered ? 'triggered' : ''}">
                         <div class="flex justify-between items-start">
                             <div class="flex items-center">
                                 <div class="flex-1">
@@ -1726,6 +1769,16 @@
                                     <i class="fas fa-edit"></i>
                                 </button>
                                 ` : ''}
+                                ` : ''}
+                                ${isTriggered && !isHistory ? `
+                                <button onclick="reactivateAlert(${alert.id})" class="reactivate-btn">
+                                    <i class="fas fa-redo"></i> Активировать
+                                </button>
+                                ` : ''}
+                                ${!isHistory && !isTriggered ? `
+                                <button onclick="exportAlertToTelegram(${alert.id})" class="export-btn">
+                                    <i class="fab fa-telegram"></i> Экспорт
+                                </button>
                                 ` : ''}
                             </div>
                         </div>
@@ -1766,6 +1819,37 @@
             if (!alert) return;
             
             openEditModal(alert);
+        }
+        
+        function reactivateAlert(alertId) {
+            const alert = userAlerts.find(a => a.id === alertId);
+            if (!alert) return;
+            
+            alert.triggered = false;
+            alert.triggeredCount = 0;
+            saveAppState();
+            loadUserAlerts(currentAlertFilter);
+            showNotification('Успешно', 'Алерт снова активен');
+        }
+        
+        async function exportAlertToTelegram(alertId) {
+            const alert = userAlerts.find(a => a.id === alertId);
+            if (!alert) return;
+            
+            const chatId = localStorage.getItem('tg_chat_id');
+            if (!chatId) {
+                showBotConnectionHint();
+                return;
+            }
+            
+            const message = `📌 Новый алерт:\nСимвол: ${alert.symbol}\nТип: ${alert.type}\nУсловие: ${alert.condition} ${alert.value}\nУведомлений: ${alert.notificationCount === 0 ? '∞' : alert.notificationCount}`;
+            
+            const success = await sendTelegramNotification(message, chatId);
+            if (success) {
+                showNotification('Успешно', 'Алерт экспортирован в Telegram');
+            } else {
+                showNotification('Ошибка', 'Не удалось отправить алерт в Telegram');
+            }
         }
 
         function openEditModal(alert) {
@@ -2057,6 +2141,15 @@
                             alert.triggeredCount++;
                             alertCooldowns[cooldownKey] = now;
                             
+                            // Добавляем в активные сработавшие алерты для анимации
+                            activeTriggeredAlerts[alert.id] = true;
+                            
+                            // Через 5 секунд убираем анимацию
+                            setTimeout(() => {
+                                delete activeTriggeredAlerts[alert.id];
+                                loadUserAlerts(currentAlertFilter);
+                            }, 5000);
+                            
                             // Проверяем лимит уведомлений
                             if (alert.notificationCount > 0 && alert.triggeredCount >= alert.notificationCount) {
                                 alert.triggered = true;
@@ -2071,14 +2164,15 @@
                             
                             // Сохраняем изменения
                             saveAppState();
+                            
+                            // Обновляем интерфейс
+                            loadUserAlerts(currentAlertFilter);
                         }
                     }
                 } catch (error) {
                     console.error(`Ошибка проверки алерта ${alert.symbol}:`, error);
                 }
             }
-            
-            loadUserAlerts(currentAlertFilter);
         }
         
         // Telegram settings functions
@@ -2697,6 +2791,8 @@
         window.handleLogout = handleLogout;
         window.toggleMenu = toggleMenu;
         window.resetForm = resetForm;
+        window.reactivateAlert = reactivateAlert;
+        window.exportAlertToTelegram = exportAlertToTelegram;
     </script>
 </body>
 </html>
