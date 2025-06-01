@@ -810,9 +810,14 @@
                             </button>
                         </div>
                     </div>
-                    <button id="clearAlerts" class="compact-clear-btn hover:text-red-300">
-                        <i class="fas fa-trash-alt mr-1"></i>Очистить
-                    </button>
+                    <div class="flex items-center">
+                        <button id="exportAllAlerts" class="export-btn mr-2">
+                            <i class="fab fa-telegram mr-1"></i>Экспорт всех
+                        </button>
+                        <button id="clearAlerts" class="compact-clear-btn hover:text-red-300">
+                            <i class="fas fa-trash-alt mr-1"></i>Очистить
+                        </button>
+                    </div>
                 </div>
                 
                 <div id="userAlerts" class="alerts-container space-y-4">
@@ -1336,6 +1341,40 @@
             } catch (error) {
                 console.error('Ошибка отправки сообщения:', error);
                 return false;
+            }
+        }
+
+        // Функция для экспорта всех активных алертов в Telegram
+        async function exportAllActiveAlerts() {
+            const chatId = localStorage.getItem('tg_chat_id');
+            if (!chatId) {
+                showBotConnectionHint();
+                return;
+            }
+
+            const activeAlerts = userAlerts.filter(alert => !alert.triggered);
+            if (activeAlerts.length === 0) {
+                showNotification('Ошибка', 'Нет активных алертов для экспорта');
+                return;
+            }
+
+            // Формируем сообщение
+            let message = '📋 Список активных алертов:\n\n';
+            activeAlerts.forEach((alert, index) => {
+                message += `${index + 1}. ${alert.symbol} ${alert.condition} ${alert.value}\n`;
+                message += `Тип: ${alert.type} | Уведомлений: ${alert.notificationCount === 0 ? '∞' : alert.notificationCount}\n\n`;
+            });
+
+            try {
+                const success = await sendTelegramNotification(message, chatId);
+                if (success) {
+                    showNotification('Успешно', 'Все активные алерты экспортированы в Telegram');
+                } else {
+                    showNotification('Ошибка', 'Не удалось отправить алерты в Telegram');
+                }
+            } catch (error) {
+                console.error('Ошибка при экспорте алертов:', error);
+                showNotification('Ошибка', 'Произошла ошибка при экспорте');
             }
         }
 
@@ -2575,6 +2614,11 @@
                 clearAlertsBtn.addEventListener('click', clearAllAlerts);
             }
             
+            const exportAllAlertsBtn = document.getElementById('exportAllAlerts');
+            if (exportAllAlertsBtn) {
+                exportAllAlertsBtn.addEventListener('click', exportAllActiveAlerts);
+            }
+            
             const closeNotificationBtn = document.getElementById('closeNotification');
             if (closeNotificationBtn) {
                 closeNotificationBtn.addEventListener('click', function() {
@@ -2793,6 +2837,7 @@
         window.resetForm = resetForm;
         window.reactivateAlert = reactivateAlert;
         window.exportAlertToTelegram = exportAlertToTelegram;
+        window.exportAllActiveAlerts = exportAllActiveAlerts;
     </script>
 </body>
 </html>
