@@ -116,12 +116,12 @@
 
         nav {
             background-color: #1E1E1E;
-            border-bottom: 1px solid #2D2D2D;
+            border-bottom: 1px solid #2D2D3D;
         }
 
         footer {
             background-color: #1E1E1E;
-            border-top: 1px solid #2D2D2D;
+            border-top: 1px solid #2D2D3D;
         }
 
         .connection-status {
@@ -1165,8 +1165,8 @@
                         <label class="block text-gray-300 text-sm font-medium mb-2">Условие</label>
                         <div class="flex">
                             <select id="condition" class="w-1/3 px-3 py-2 rounded-l-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
-                                <option value=">">Выше (+)</option>
-                                <option value="<">Ниже (-)</option>
+                                <option value="+">Выше (+)</option>
+                                <option value="-">Ниже (-)</option>
                             </select>
                             <input
                                 type="number"
@@ -1247,8 +1247,8 @@
                                     ETHUSDT - 3000 (цена ниже 3000)<br>
                                     SOLUSDT + 150 (цена выше 150)<br><br>
                                     Условия:<br>
-                                    + означает "выше" (>)<br>
-                                    - означает "ниже" (<)<br><br>
+                                    + означает "выше" (+)<br>
+                                    - означает "ниже" (-)<br><br>
                                     Будут добавлены только фьючерсные пары
                                 </span>
                             </div>
@@ -2390,7 +2390,7 @@
             filteredAlerts.forEach(alert => {
                 const date = new Date(alert.triggeredAt || alert.createdAt);
                 const isTriggered = alert.triggered || filter === 'history';
-                const isUp = alert.condition === '>';
+                const isUp = alert.condition === '+';
                 const isHistory = filter === 'history';
                 const isActiveTriggered = activeTriggeredAlerts[alert.id] && !isHistory;
 
@@ -2550,8 +2550,8 @@
                         <label class="block text-gray-300 text-sm font-medium mb-2">Условие</label>
                         <div class="flex">
                             <select id="editCondition" class="w-1/3 px-3 py-2 rounded-l-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
-                                <option value=">" ${alert.condition === '>' ? 'selected' : ''}>Выше</option>
-                                <option value="<" ${alert.condition === '<' ? 'selected' : ''}>Ниже</option>
+                                <option value="+" ${alert.condition === '+' ? 'selected' : ''}>Выше (+)</option>
+                                <option value="-" ${alert.condition === '-' ? 'selected' : ''}>Ниже (-)</option>
                             </select>
                             <input
                                 type="number"
@@ -3319,7 +3319,7 @@
                             const condition = parts[1];
                             const value = parts[2];
 
-                            if (condition !== '>' && condition !== '<') {
+                            if (condition !== '+' && condition !== '-') {
                                 skippedCount++;
                                 continue;
                             }
