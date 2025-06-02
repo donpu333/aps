@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* Стили остаются без изменений */
         :root {
             --primary: #2196F3;
             --secondary: #1976D2;
@@ -2784,7 +2785,8 @@
                     const price = await apiManager.getCurrentPrice(alert.symbol, alert.marketType);
                     if (price === null) continue;
 
-                    const conditionMet = eval(`${price} ${alert.condition} ${alert.value}`);
+                    // Проверяем условие срабатывания алерта
+                    const conditionMet = checkAlertCondition(alert, price);
 
                     if (conditionMet) {
                         const cooldownKey = `${alert.symbol}_${alert.condition}_${alert.value}`;
@@ -2832,6 +2834,33 @@
                     console.error(`Ошибка проверки алерта ${alert.symbol}:`, error);
                 }
             }
+        }
+
+        function checkAlertCondition(alert, currentPrice) {
+            const condition = alert.condition;
+            const value = alert.value;
+
+            switch (alert.type) {
+                case 'price':
+                    if (condition === '+') {
+                        return currentPrice >= value;
+                    } else if (condition === '-') {
+                        return currentPrice <= value;
+                    }
+                    break;
+                case 'liquidation':
+                    // Логика для проверки ликвидаций
+                    break;
+                case 'funding':
+                    // Логика для проверки фандинга
+                    break;
+                case 'oi':
+                    // Логика для проверки открытого интереса
+                    break;
+                default:
+                    return false;
+            }
+            return false;
         }
 
         // Telegram settings functions
