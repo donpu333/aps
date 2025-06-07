@@ -117,12 +117,12 @@
 
         nav {
             background-color: #1E1E1E;
-            border-bottom: 1px solid #2D2D3D;
+            border-bottom: 1px solid #2D3D3D;
         }
 
         footer {
             background-color: #1E1E1E;
-            border-top: 1px solid #2D2D3D;
+            border-top: 1px solid #2D3D3D;
         }
 
         .connection-status {
@@ -1413,6 +1413,11 @@
                     <div class="result-item">
                         <span>Стоп-лосс:</span>
                         <span class="result-value loss" id="stopLoss">99.50 USDT</span>
+                    </div>
+
+                    <div class="result-item">
+                        <span>ATR:</span>
+                        <span class="result-value" id="atrResult">5.00 USDT</span>
                     </div>
 
                     <div class="take-profit-levels" id="takeProfitLevels">
@@ -3439,6 +3444,7 @@
             // Элементы результатов
             const positionSizeSpan = document.getElementById('positionSize');
             const stopLossSpan = document.getElementById('stopLoss');
+            const atrResultSpan = document.getElementById('atrResult');
             const takeProfitLevelsDiv = document.getElementById('takeProfitLevels');
             const liquidationPriceSpan = document.getElementById('liquidationPrice');
 
@@ -3679,12 +3685,30 @@
 
                 // Обновление интерфейса
                 entryPriceResult.textContent = `${entryPrice} USDT`;
-                positionSizeSpan.textContent = positionSize.toFixed(8);
-                stopLossSpan.textContent = `${stopLossPrice.toFixed(8)} USDT`;
-                liquidationPriceSpan.textContent = `${liquidationPrice.toFixed(8)} USDT`;
+                positionSizeSpan.textContent = formatNumber(positionSize);
+                stopLossSpan.textContent = `${formatNumber(stopLossPrice)} USDT`;
+                atrResultSpan.textContent = `${atr} USDT`;
+                liquidationPriceSpan.textContent = `${formatNumber(liquidationPrice)} USDT`;
 
                 // Генерация уровней тейк-профита
                 generateTakeProfitLevels(entryPrice, stopLossPrice, isLong, rewardRatio1, rewardRatio2, positionSize);
+            }
+
+            // Форматирование числа
+            function formatNumber(num) {
+                if (Math.abs(num) < 0.0001 || Math.abs(num) > 1000000) {
+                    return num.toExponential(6);
+                }
+                // Проверяем, есть ли дробная часть
+                if (num % 1 !== 0) {
+                    // Округляем до 8 знаков после запятой, если нужно
+                    const str = num.toString();
+                    const decimalIndex = str.indexOf('.');
+                    if (decimalIndex !== -1 && str.length - decimalIndex > 8) {
+                        return num.toFixed(8).replace(/(\.?0+)$/, '');
+                    }
+                }
+                return num.toString();
             }
 
             // Генерация уровней тейк-профита
@@ -3707,9 +3731,9 @@
                     const levelDiv = document.createElement('div');
                     levelDiv.className = 'take-profit-item';
                     levelDiv.innerHTML = `
-                        <span class="take-profit-ratio">Тейк-профит (1:${ratio.toFixed(1)}):</span>
-                        <span class="take-profit-price">${takeProfitPrice.toFixed(8)} USDT</span>
-                        <span class="take-profit-value">+${profit.toFixed(8)} USDT</span>
+                        <span class="take-profit-ratio">Тейк-профит (1:${ratio}):</span>
+                        <span class="take-profit-price">${formatNumber(takeProfitPrice)} USDT</span>
+                        <span class="take-profit-value">+${formatNumber(profit)} USDT</span>
                     `;
                     takeProfitLevelsDiv.appendChild(levelDiv);
                 });
@@ -3756,6 +3780,7 @@ ${stopMethod === 'atr' ? `ATR: ${atr} USDT\nРиск стоп-лосс: ${riskPe
 Цена входа: ${entryPrice} USDT
 Размер позиции: ${positionSizeSpan.textContent}
 Стоп-лосс: ${stopLossSpan.textContent}
+ATR: ${atrResultSpan.textContent}
 
 Уровни тейк-профита:
 ${Array.from(takeProfitLevelsDiv.children).map(el =>
@@ -3902,7 +3927,7 @@ ${Array.from(document.getElementById('takeProfitLevels').children).map(el =>
                     const str = num.toString();
                     const decimalIndex = str.indexOf('.');
                     if (decimalIndex !== -1 && str.length - decimalIndex > 8) {
-                        return num.toFixed(8);
+                        return num.toFixed(8).replace(/(\.?0+)$/, '');
                     }
                 }
                 return num.toString();
