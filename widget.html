@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Финансовые виджеты</title>
+    <title>Crypto Tools - Виджеты и Предпосылки</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
-            background-color: #121212; /* Тёмный фон страницы */
-            color: #e0e0e0; /* Светлый текст для контраста */
+            background-color: #121212;
+            color: #e0e0e0;
             margin: 0;
-            padding: 20px;
+            padding: 0;
             font-family: Arial, sans-serif;
         }
         
@@ -24,16 +24,14 @@
         }
         
         .widget-box {
-            background-color: #1e1e1e; /* Тёмный фон для контейнеров виджетов */
+            background-color: #1e1e1e;
             border-radius: 8px;
             padding: 15px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
         }
         
-        h1 {
-            text-align: center;
+        h1, h2 {
             color: #ffffff;
-            margin-bottom: 30px;
         }
 
         /* Menu styles */
@@ -148,6 +146,81 @@
             50% { opacity: 0.5; }
             100% { opacity: 1; }
         }
+        
+        /* Premises styles */
+        .button-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .premise-button {
+            background-color: #1E88E5;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .premise-button:hover {
+            background-color: #1565C0;
+        }
+        
+        .text-display {
+            background-color: #1e1e1e;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-line;
+            display: none;
+            margin-top: 15px;
+            border: 1px solid #333;
+        }
+        
+        .action-btn {
+            background-color: #4CAF50;
+            padding: 8px 15px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        
+        .action-btn:hover {
+            background-color: #45a049;
+        }
+        
+        .export-btn {
+            background-color: #2196F3;
+        }
+        
+        .export-btn:hover {
+            background-color: #0b7dda;
+        }
+        
+        .action-buttons-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        #statusMessage {
+            margin-top: 15px;
+            color: #4CAF50;
+            display: none;
+        }
+        
+        .premises-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
     </style>
 </head>
 <body>
@@ -156,7 +229,7 @@
             <div class="flex justify-between h-16 items-center">
                 <div class="flex items-center">
                     <i class="fas fa-chart-line text-blue-400 text-xl mr-2"></i>
-                    <span class="text-xl font-bold text-light">Crypto Tools - Виджеты</span>
+                    <span class="text-xl font-bold text-light">Crypto Tools</span>
                 </div>
                 <div class="flex items-center space-x-4">
                     <div class="menu-container">
@@ -195,7 +268,7 @@
     </nav>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1>Финансовые индикаторы</h1>
+        <h1 class="text-center text-2xl font-bold mb-8">Финансовые инструменты</h1>
         
         <div class="widget-container">
             <!-- Экономический календарь -->
@@ -218,6 +291,54 @@
                 </div>
             </div>
             
+            <!-- Premises Section -->
+            <div class="widget-box">
+                <h2 class="text-xl font-bold mb-4">Предпосылки</h2>
+                
+                <div class="button-container">
+                    <button class="premise-button" onclick="toggleText('breakthrough')">Пробой</button>
+                    <button class="premise-button" onclick="toggleText('falseBreakthrough')">Ложный пробой</button>
+                </div>
+                
+                <div id="breakthroughText" class="text-display">
+                    Пробой
+                    📊Предпосылки
+                    ✅ Ближний ретест
+                    ✅ Нет реакции на ЛП
+                    ✅ Накопление 
+                    ✅ Закрытие в близи уровня до 5% 
+                    ✅ После сильного движения нет отката
+                    ✅ Есть в переди свободная зона?
+                    ✅ Выкупной бар(или Продажный)
+                    ✅ Проторговка в близи уровня(на коротком таймфрейми)
+                    ✅ Подходит поджатием
+                    ✅ Понижающие хаи или лои(или повышающие)
+                    ✅ Затухание волатильности
+                </div>
+                
+                <div id="falseBreakthroughText" class="text-display">
+                    Ложный пробой
+                    📊Предпосылки
+                    ✅ Дальний ретест
+                    ✅ Подход на больших барах 
+                    ✅ Выход повышеные обьемы перед уровням на 1ч 4ч
+                    ✅ Экстремум
+                    ✅ В переди заражоная зона
+                    ✅ Длинное без откатное движение
+                    ✅ Закрытие в дали от уровня мин от 10% 
+                    ✅ Нет накопления
+                    ✅ Резкий подход на лок таймфрейме
+                    ✅ Повышеная волатильность
+                </div>
+                
+                <div id="actionButtons" class="action-buttons-container">
+                    <button id="copyBtn" class="action-btn" onclick="copyText()">Копировать текст</button>
+                    <button id="exportBtn" class="action-btn export-btn" onclick="exportToTelegram()">Отправить в Telegram</button>
+                </div>
+                
+                <div id="statusMessage"></div>
+            </div>
+            
             <!-- Индекс страха и жадности -->
             <div class="widget-box">
                 <script async src="https://static.coinstats.app/widgets/v5/cs-widget.js"></script>
@@ -225,7 +346,7 @@
                     type="fear-and-greed"
                     theme="темный"
                     direction="горизонтальный"
-                    background="rgba(0,0,0,0)" /* Прозрачный фон, чтобы сливаться с нашим тёмным контейнером */
+                    background="rgba(0,0,0,0)"
                     is-market-sentiment-visible="true"
                     is-last-updated-visible="true"
                     title-color="rgba(197,197,206,1)"
@@ -256,6 +377,97 @@
 
         function showRegisterForm() {
             alert('Функция регистрации в разработке');
+        }
+
+        // Premises functions
+        let currentVisibleText = null;
+        const botToken = '8044055704:AAGk8cQFayPqYCscLlEB3qGRj0Uw_NTpe30';
+        const chatId = '1720793889';
+        
+        function toggleText(type) {
+            const breakthroughText = document.getElementById('breakthroughText');
+            const falseBreakthroughText = document.getElementById('falseBreakthroughText');
+            const actionButtons = document.getElementById('actionButtons');
+            
+            // Hide all texts first
+            breakthroughText.style.display = 'none';
+            falseBreakthroughText.style.display = 'none';
+            
+            if (currentVisibleText === type) {
+                // If clicking the same button, hide everything
+                currentVisibleText = null;
+                actionButtons.style.display = 'none';
+            } else {
+                // Show the selected text
+                if (type === 'breakthrough') {
+                    breakthroughText.style.display = 'block';
+                    currentVisibleText = 'breakthrough';
+                } else if (type === 'falseBreakthrough') {
+                    falseBreakthroughText.style.display = 'block';
+                    currentVisibleText = 'falseBreakthrough';
+                }
+                actionButtons.style.display = 'flex';
+            }
+        }
+        
+        function copyText() {
+            let textToCopy = '';
+            if (currentVisibleText === 'breakthrough') {
+                textToCopy = document.getElementById('breakthroughText').innerText;
+            } else if (currentVisibleText === 'falseBreakthrough') {
+                textToCopy = document.getElementById('falseBreakthroughText').innerText;
+            }
+            
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => {
+                    showStatus('Текст скопирован! Теперь вы можете вставить его в Telegram.', 3000);
+                })
+                .catch(err => {
+                    showStatus('Не удалось скопировать текст: ' + err, 5000);
+                });
+        }
+        
+        function exportToTelegram() {
+            let textToSend = '';
+            if (currentVisibleText === 'breakthrough') {
+                textToSend = document.getElementById('breakthroughText').innerText;
+            } else if (currentVisibleText === 'falseBreakthrough') {
+                textToSend = document.getElementById('falseBreakthroughText').innerText;
+            }
+            
+            const statusElement = document.getElementById('statusMessage');
+            
+            fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: textToSend
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    showStatus('Сообщение успешно отправлено в Telegram!', 3000);
+                } else {
+                    showStatus('Ошибка при отправке: ' + data.description, 5000);
+                }
+            })
+            .catch(error => {
+                showStatus('Ошибка: ' + error.message, 5000);
+            });
+        }
+        
+        function showStatus(message, duration) {
+            const statusElement = document.getElementById('statusMessage');
+            statusElement.textContent = message;
+            statusElement.style.display = 'block';
+            
+            setTimeout(() => {
+                statusElement.style.display = 'none';
+            }, duration);
         }
 
         // Инициализация меню
