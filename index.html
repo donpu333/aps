@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Стили остаются без изменений */
         :root {
             --primary: #2196F3;
             --secondary: #1976D2;
@@ -204,16 +203,19 @@
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
+
         .no-scrollbar {
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
+
         .compact-alerts-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1rem;
         }
+
         .compact-alerts-title {
             font-size: 1.25rem;
             font-weight: bold;
@@ -221,24 +223,28 @@
             white-space: nowrap;
             margin-right: 0.5rem;
         }
+
         .compact-filters {
             display: flex;
             gap: 0.25rem;
             overflow-x: auto;
             flex: 1;
         }
+
         .compact-filter-btn {
             padding: 0.25rem 0.5rem;
             font-size: 0.75rem;
             border-radius: 0.375rem;
             white-space: nowrap;
         }
+
         .compact-clear-btn {
             font-size: 0.75rem;
             color: var(--accent-red);
             white-space: nowrap;
             margin-left: 0.5rem;
         }
+
         .edit-modal {
             position: fixed;
             top: 0;
@@ -254,10 +260,12 @@
             pointer-events: none;
             transition: opacity 0.3s ease;
         }
+
         .edit-modal.active {
             opacity: 1;
             pointer-events: all;
         }
+
         .edit-modal-content {
             background-color: #1E1E1E;
             border-radius: 8px;
@@ -377,15 +385,27 @@
         }
 
         @keyframes pulse-green {
-            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
-            70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+            0% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+            }
         }
 
         @keyframes pulse-red {
-            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
-            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+            0% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
         }
 
         /* Tooltip styles */
@@ -467,7 +487,7 @@
             right: 0;
             background-color: #1E1E1E;
             min-width: 200px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
             z-index: 1;
             border-radius: 4px;
             border: 1px solid #3D3D3D;
@@ -1069,6 +1089,100 @@
             z-index: 1100;
             display: none;
         }
+
+        /* Предпосылки styles */
+        .button-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .button-container button {
+            background-color: #1E88E5;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .button-container button:hover {
+            background-color: #1565C0;
+        }
+
+        .text-display {
+            background-color: #1e1e1e;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-line;
+            display: none;
+            margin-top: 15px;
+            border: 1px solid #333;
+        }
+
+        .action-btn {
+            background-color: #4CAF50;
+            padding: 8px 15px;
+            margin-right: 10px;
+        }
+
+        .action-btn:hover {
+            background-color: #45a049;
+        }
+
+        .export-btn {
+            background-color: #2196F3;
+        }
+
+        .export-btn:hover {
+            background-color: #0b7dda;
+        }
+
+        .action-buttons-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .checkbox-item input {
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .status-message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .success {
+            background-color: #2E7D32;
+            color: white;
+        }
+
+        .error {
+            background-color: #C62828;
+            color: white;
+        }
+
+        .item-text {
+            margin-left: 5px;
+        }
+
+        /* Average Calculator styles */
+        .average-calculator {
+            padding: 15px;
+        }
     </style>
 </head>
 <body class="bg-dark">
@@ -1135,26 +1249,23 @@
                     <div class="mb-4">
                         <label class="block text-gray-300 text-sm font-medium mb-2">Криптовалюта</label>
                         <div class="relative">
-                            <input
-                                type="text"
-                                id="coinSearch"
-                                placeholder="Поиск монеты..."
-                                class="w-full pl-10 pr-4 py-2 rounded-md focus:ring-primary focus:border-primary"
-                                required
-                            >
+                            <input type="text" id="coinSearch" placeholder="Поиск монеты..."
+                                class="w-full pl-10 pr-4 py-2 rounded-md focus:ring-primary focus:border-primary" required>
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <i class="fas fa-search text-gray-400"></i>
                             </div>
                             <div id="marketTypeHint" class="market-type-hint"></div>
                         </div>
                         <div id="coinError" class="validation-message">Пожалуйста, выберите криптовалюту</div>
-                        <select id="symbol" size="5" class="w-full mt-2 px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary hidden">
+                        <select id="symbol" size="5"
+                            class="w-full mt-2 px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary hidden">
                         </select>
                     </div>
 
                     <div class="mb-4">
                         <label class="block text-gray-300 text-sm font-medium mb-2">Тип алерта</label>
-                        <select id="alertType" class="w-full px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
+                        <select id="alertType"
+                            class="w-full px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
                             <option value="price">Цена</option>
                             <option value="liquidation">Ликвидации</option>
                             <option value="funding">Фандинг</option>
@@ -1165,24 +1276,21 @@
                     <div class="mb-4">
                         <label class="block text-gray-300 text-sm font-medium mb-2">Условие</label>
                         <div class="flex">
-                            <select id="condition" class="w-1/3 px-3 py-2 rounded-l-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
+                            <select id="condition"
+                                class="w-1/3 px-3 py-2 rounded-l-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
                                 <option value="+">Выше (+)</option>
                                 <option value="-">Ниже (-)</option>
                             </select>
-                            <input
-                                type="number"
-                                id="value"
+                            <input type="number" id="value"
                                 class="w-2/3 px-3 py-2 border-t border-b border-r rounded-r-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
-                                placeholder="Значение"
-                                step="any"
-                                required
-                            >
+                                placeholder="Значение" step="any" required>
                         </div>
                         <div id="valueError" class="validation-message">Пожалуйста, укажите значение</div>
                         <div id="currentPriceContainer" class="current-price-container hidden">
                             <span class="current-price-label">Текущая цена:</span>
                             <span id="currentPriceValue" class="current-price-value"></span>
-                            <button type="button" onclick="applyCurrentPrice()" class="apply-price-btn" title="Применить текущую цену">
+                            <button type="button" onclick="applyCurrentPrice()" class="apply-price-btn"
+                                title="Применить текущую цену">
                                 <i class="fas fa-sync-alt"></i>
                                 <span>Применить</span>
                             </button>
@@ -1191,7 +1299,8 @@
 
                     <div class="mb-4">
                         <label class="block text-gray-300 text-sm font-medium mb-2">Количество уведомлений</label>
-                        <select id="notificationCount" class="w-full px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
+                        <select id="notificationCount"
+                            class="w-full px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
                             <option value="5" selected>5 раз (интервал 30 сек)</option>
                             <option value="1">1 раз (интервал 30 сек)</option>
                             <option value="2">2 раза (интервал 30 сек)</option>
@@ -1209,27 +1318,20 @@
                                 <label for="telegram" class="ml-2 block text-sm text-gray-300">
                                     <i class="fab fa-telegram mr-1 text-blue-400"></i> Telegram
                                 </label>
-                                <button onclick="openTelegramSettings()" class="ml-2 text-sm text-blue-400 hover:text-blue-300 text-xs px-2 py-1">
+                                <button onclick="openTelegramSettings()"
+                                    class="ml-2 text-sm text-blue-400 hover:text-blue-300 text-xs px-2 py-1">
                                     Настроить
                                 </button>
-                                <input
-                                    type="text"
-                                    id="userChatId"
-                                    placeholder="Ваш Chat ID"
-                                    class="ml-2 px-2 py-1 text-sm rounded-md hidden"
-                                >
+                                <input type="text" id="userChatId" placeholder="Ваш Chat ID"
+                                    class="ml-2 px-2 py-1 text-sm rounded-md hidden">
                             </div>
                             <div class="notification-method">
                                 <input id="email" type="checkbox" class="h-4 w-4 focus:ring-primary">
                                 <label for="email" class="ml-2 block text-sm text-gray-300">
                                     <i class="fas fa-envelope mr-1 text-gray-400"></i> Email
                                 </label>
-                                <input
-                                    type="email"
-                                    id="userEmail"
-                                    placeholder="Ваш email"
-                                    class="ml-2 px-2 py-1 text-sm rounded-md hidden"
-                                >
+                                <input type="email" id="userEmail" placeholder="Ваш email"
+                                    class="ml-2 px-2 py-1 text-sm rounded-md hidden">
                                 <div id="userEmailError" class="validation-message">Неверный формат email</div>
                             </div>
                         </div>
@@ -1359,7 +1461,8 @@
                                 <span class="slider-value" id="riskPercentValue">10</span>%
                             </div>
                             <div class="preview-value">
-                                Стоп-лосс: минус <span id="previewAtrPercent">0.50 USDT</span> (<span id="previewAtrPercentValue">10%</span> от ATR)
+                                Стоп-лосс: минус <span id="previewAtrPercent">0.50 USDT</span> (<span
+                                    id="previewAtrPercentValue">10%</span> от ATR)
                             </div>
                         </div>
                     </div>
@@ -1440,6 +1543,77 @@
                 </div>
             </div>
 
+            <!-- Предпосылки Section -->
+            <div class="calculator-container">
+                <h2>Предпосылки</h2>
+
+                <div class="button-container">
+                    <button onclick="toggleText('breakthrough')">Пробой</button>
+                    <button onclick="toggleText('falseBreakthrough')">Ложный пробой</button>
+                </div>
+
+                <div id="breakthroughText" class="text-display">
+                    <h3>Пробой</h3>
+
+                    <p>📊Предпосылки</p>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Ближний ретест</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Нет реакции на ЛП</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Накопление</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Закрытие вблизи уровня до 5%</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">После сильного движения нет отката</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Впереди свободная зона</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Выкупной бар(или Продажный)</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Проторговка вблизи уровня(на коротком таймфрейме)</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Подходит поджатием</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Понижающие хаи или лои(или повышающие)</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Затухание волатильности</span></div>
+                </div>
+
+                <div id="falseBreakthroughText" class="text-display">
+                    <h3>Ложный пробой</h3>
+
+                    <p>📊Предпосылки</p>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Дальний ретест</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Подход на больших барах</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Выход повышенные объемы перед уровням на 1ч 4ч</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Экстремум</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Впереди зараженная зона</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Длинное безоткатное движение</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Закрытие вдали от уровня мин от 10%</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Нет накопления</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Резкий подход на лок таймфрейме</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Повышенная волатильность</span></div>
+                </div>
+
+                <div id="actionButtons" class="action-buttons-container">
+                    <button id="copyBtn" class="action-btn" onclick="copySelectedText()">Копировать выбранное</button>
+                    <button id="exportBtn" class="action-btn export-btn" onclick="exportSelectedToTelegram()">Отправить в Telegram</button>
+                </div>
+
+                <div id="statusMessage" class="status-message"></div>
+            </div>
+
             <!-- Average Calculator -->
             <div class="calculator-container average-calculator">
                 <h1>Калькулятор среднего</h1>
@@ -1448,14 +1622,17 @@
                         <label for="numbersInput">Введите числа через пробел:</label>
                         <input type="text" id="numbersInput" placeholder="5 10 15 20 0.0000012">
                     </div>
-                    <button onclick="calculateAverage()" style="width: 100%; padding: 10px; background: var(--accent-color); border: none; border-radius: 5px; color: white; font-weight: 600;">Рассчитать</button>
+                    <button onclick="calculateAverage()"
+                        style="width: 100%; padding: 10px; background: var(--accent-color); border: none; border-radius: 5px; color: white; font-weight: 600;">Рассчитать</button>
                     <div id="result" style="margin-top: 15px;"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="notificationModal" class="fixed bottom-4 right-4 w-80 rounded-lg shadow-lg border-l-4 border-accent-green hidden" style="background-color: #1E1E1E;">
+    <div id="notificationModal"
+        class="fixed bottom-4 right-4 w-80 rounded-lg shadow-lg border-l-4 border-accent-green hidden"
+        style="background-color: #1E1E1E;">
         <div class="p-4">
             <div class="flex justify-between items-start">
                 <div class="flex-1">
@@ -1490,7 +1667,6 @@
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-
             <div class="mb-4">
                 <p class="text-gray-300 mb-4">Для получения уведомлений в Telegram вам нужно подписаться на нашего бота:</p>
 
@@ -1504,22 +1680,20 @@
 
                 <div class="flex justify-center mb-4">
                     <div class="bg-white p-2">
-                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://t.me/CryptoAlert88_bot" alt="QR Code">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://t.me/CryptoAlert88_bot"
+                            alt="QR Code">
                     </div>
                 </div>
 
                 <div class="mb-4">
                     <label class="block text-gray-300 text-sm font-medium mb-2">Ваш Chat ID</label>
-                    <input
-                        type="text"
-                        id="telegramChatId"
-                        placeholder="Ваш Chat ID"
+                    <input type="text" id="telegramChatId" placeholder="Ваш Chat ID"
                         class="w-full px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
-                        value=""
-                    >
+                        value="">
                 </div>
 
-                <button onclick="saveTelegramSettings()" class="btn-primary w-full text-white py-2 px-4 rounded-md font-medium text-sm">
+                <button onclick="saveTelegramSettings()"
+                    class="btn-primary w-full text-white py-2 px-4 rounded-md font-medium text-sm">
                     Сохранить настройки
                 </button>
             </div>
@@ -1537,7 +1711,8 @@
             </div>
             <div class="mb-4">
                 <p class="text-gray-300 mb-4">Для создания алертов необходимо подключиться к Telegram боту.</p>
-                <button onclick="openTelegramSettings()" class="btn-primary w-full text-white py-2 px-4 rounded-md font-medium">
+                <button onclick="openTelegramSettings()"
+                    class="btn-primary w-full text-white py-2 px-4 rounded-md font-medium">
                     <i class="fab fa-telegram mr-2"></i>Подключить бота
                 </button>
             </div>
@@ -1545,7 +1720,8 @@
     </div>
 
     <!-- Login Modal -->
-    <div id="loginModal" class="fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-80 flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-300">
+    <div id="loginModal"
+        class="fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-80 flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-300">
         <div class="bg-dark rounded-lg p-6 w-full max-w-md">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-xl font-bold text-primary">Вход в аккаунт</h3>
@@ -1562,7 +1738,8 @@
                     <label for="loginPassword">Пароль</label>
                     <input type="password" id="loginPassword" placeholder="Ваш пароль">
                 </div>
-                <button onclick="handleLogin()" class="btn-primary w-full text-white py-2 px-4 rounded-md font-medium mt-4">
+                <button onclick="handleLogin()"
+                    class="btn-primary w-full text-white py-2 px-4 rounded-md font-medium mt-4">
                     Войти
                 </button>
             </div>
@@ -1570,7 +1747,8 @@
     </div>
 
     <!-- Register Modal -->
-    <div id="registerModal" class="fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-80 flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-300">
+    <div id="registerModal"
+        class="fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-80 flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-300">
         <div class="bg-dark rounded-lg p-6 w-full max-w-md">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-xl font-bold text-primary">Регистрация</h3>
@@ -1591,7 +1769,8 @@
                     <label for="registerConfirmPassword">Подтвердите пароль</label>
                     <input type="password" id="registerConfirmPassword" placeholder="Повторите пароль">
                 </div>
-                <button onclick="handleRegister()" class="btn-primary w-full text-white py-2 px-4 rounded-md font-medium mt-4">
+                <button onclick="handleRegister()"
+                    class="btn-primary w-full text-white py-2 px-4 rounded-md font-medium mt-4">
                     Зарегистрироваться
                 </button>
             </div>
@@ -2351,7 +2530,7 @@
                     return;
                 }
             } else {
-                switch(filter) {
+                switch (filter) {
                     case 'active':
                         filteredAlerts = userAlerts.filter(alert => !alert.triggered);
                         break;
@@ -2365,7 +2544,7 @@
 
                 if (filteredAlerts.length === 0) {
                     let message = '';
-                    switch(filter) {
+                    switch (filter) {
                         case 'active':
                             message = 'У вас пока нет активных алертов';
                             break;
@@ -2647,7 +2826,7 @@
             // Назначаем обработчики событий для чекбоксов
             const telegramCheckbox = document.getElementById('editTelegram');
             if (telegramCheckbox) {
-                telegramCheckbox.addEventListener('change', function() {
+                telegramCheckbox.addEventListener('change', function () {
                     const userChatId = document.getElementById('editUserChatId');
                     if (!userChatId) return;
 
@@ -2665,7 +2844,7 @@
 
             const emailCheckbox = document.getElementById('editEmail');
             if (emailCheckbox) {
-                emailCheckbox.addEventListener('change', function() {
+                emailCheckbox.addEventListener('change', function () {
                     const userEmail = document.getElementById('editUserEmail');
                     if (!userEmail) return;
 
@@ -2684,7 +2863,7 @@
             // Назначаем обработчик отправки формы
             const editForm = document.getElementById('editAlertForm');
             if (editForm) {
-                editForm.addEventListener('submit', function(e) {
+                editForm.addEventListener('submit', function (e) {
                     e.preventDefault();
                     handleEditSubmit(alert.id);
                 });
@@ -3075,7 +3254,7 @@
         function setupEventListeners() {
             const coinSearch = document.getElementById('coinSearch');
             if (coinSearch) {
-                coinSearch.addEventListener('input', function() {
+                coinSearch.addEventListener('input', function () {
                     updateCoinSelect();
 
                     const symbol = this.value.trim().toUpperCase();
@@ -3099,7 +3278,7 @@
 
             const symbolSelect = document.getElementById('symbol');
             if (symbolSelect) {
-                symbolSelect.addEventListener('change', function() {
+                symbolSelect.addEventListener('change', function () {
                     const symbol = this.value;
                     const selectedOption = this.options[this.selectedIndex];
                     const marketType = selectedOption.getAttribute('data-market-type');
@@ -3133,7 +3312,7 @@
 
             const telegramCheckbox = document.getElementById('telegram');
             if (telegramCheckbox) {
-                telegramCheckbox.addEventListener('change', function() {
+                telegramCheckbox.addEventListener('change', function () {
                     const userChatId = document.getElementById('userChatId');
                     if (!userChatId) return;
 
@@ -3155,7 +3334,7 @@
 
             const emailCheckbox = document.getElementById('email');
             if (emailCheckbox) {
-                emailCheckbox.addEventListener('change', function() {
+                emailCheckbox.addEventListener('change', function () {
                     const userEmail = document.getElementById('userEmail');
                     if (!userEmail) return;
 
@@ -3174,7 +3353,7 @@
 
             const alertForm = document.getElementById('alertForm');
             if (alertForm) {
-                alertForm.addEventListener('submit', async function(e) {
+                alertForm.addEventListener('submit', async function (e) {
                     e.preventDefault();
 
                     // Добавляем проверку подключения к боту
@@ -3275,7 +3454,7 @@
 
             const closeNotificationBtn = document.getElementById('closeNotification');
             if (closeNotificationBtn) {
-                closeNotificationBtn.addEventListener('click', function() {
+                closeNotificationBtn.addEventListener('click', function () {
                     const notificationModal = document.getElementById('notificationModal');
                     if (notificationModal) notificationModal.classList.add('hidden');
                 });
@@ -3305,12 +3484,12 @@
             // Обработчик для импорта алертов из файла (только фьючерсы)
             const bulkImportFile = document.getElementById('bulkImportFile');
             if (bulkImportFile) {
-                bulkImportFile.addEventListener('change', async function(event) {
+                bulkImportFile.addEventListener('change', async function (event) {
                     const file = event.target.files[0];
                     if (!file) return;
 
                     const reader = new FileReader();
-                    reader.onload = async function(e) {
+                    reader.onload = async function (e) {
                         const content = e.target.result;
                         const lines = content.split('\n');
                         let importedCount = 0;
@@ -3408,7 +3587,7 @@
             }
 
             // Закрываем меню при клике вне его
-            window.addEventListener('click', function(event) {
+            window.addEventListener('click', function (event) {
                 const menuContent = document.getElementById('menuContent');
                 const menuButton = document.getElementById('menuButton');
 
@@ -3744,7 +3923,7 @@
                 const entryPrice = parseFloat(entryPriceInput.value) || 0;
                 const leverage = parseFloat(leverageInput.value) || 1;
                 const atr = parseFloat(atrInput.value) || 0;
-                const riskPercent = parseFloat(riskPercentInput.value);
+                const riskPercent = parseFloat(riskPercentInput.value) || 0;
                 const riskAmount = parseFloat(riskAmountInput.value) || 0;
                 const rewardRatio1 = parseFloat(rewardRatio1Input.value) || 3;
                 const rewardRatio2 = parseFloat(rewardRatio2Input.value) || 5;
@@ -3752,11 +3931,19 @@
 
                 // Получаем название типа сделки
                 let tradeTypeName = '';
-                switch(tradeType) {
-                    case 'long-breakout': tradeTypeName = 'Лонг Пробой'; break;
-                    case 'long-fakeout': tradeTypeName = 'Лонг Ложный пробой'; break;
-                    case 'short-breakout': tradeTypeName = 'Шорт Пробой'; break;
-                    case 'short-fakeout': tradeTypeName = 'Шорт Ложный пробой'; break;
+                switch (tradeType) {
+                    case 'long-breakout':
+                        tradeTypeName = 'Лонг Пробой';
+                        break;
+                    case 'long-fakeout':
+                        tradeTypeName = 'Лонг Ложный пробой';
+                        break;
+                    case 'short-breakout':
+                        tradeTypeName = 'Шорт Пробой';
+                        break;
+                    case 'short-fakeout':
+                        tradeTypeName = 'Шорт Ложный пробой';
+                        break;
                 }
 
                 const content = `
@@ -3781,17 +3968,16 @@ ATR: ${atr} USDT
 Цена входа: ${entryPrice} USDT
 Размер позиции: ${positionSizeSpan.textContent}
 Стоп-лосс: ${stopLossSpan.textContent}
-ATR: ${atrResultSpan.textContent}
 
 Уровни тейк-профита:
 ${Array.from(takeProfitLevelsDiv.children).map(el =>
-    el.textContent.trim().replace(/\s+/g, ' ')
+    '• ' + el.textContent.trim().replace(/\s+/g, ' ')
 ).join('\n')}
 
 Цена ликвидации: ${liquidationPriceSpan.textContent}
                 `;
 
-                const blob = new Blob([content], {type: 'text/plain'});
+                const blob = new Blob([content], { type: 'text/plain' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
@@ -3802,30 +3988,30 @@ ${Array.from(takeProfitLevelsDiv.children).map(el =>
 
             // Функция для отправки в Telegram
             async function sendToTelegram() {
-                const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-                const users = JSON.parse(localStorage.getItem('users') || '[]');
-                const user = users.find(u => u.email === currentUser?.email);
-
-                if (!user || !user.telegramSettings?.botToken || !user.telegramSettings?.chatId) {
-                    showNotification('Настройте Telegram в меню "Настройки Telegram"', 'error');
-                    showTelegramSettings();
-                    return;
-                }
-
-                const botToken = user.telegramSettings.botToken;
-                const chatId = user.telegramSettings.chatId;
+                const botToken = '8044055704:AAGk8cQFayPqYCscLlEB3qGRj0Uw_NTpe30';
+                const chatId = '1720793889';
 
                 const entryPrice = parseFloat(document.getElementById('entryPrice').value) || 0;
                 const leverage = parseFloat(document.getElementById('leverage').value) || 1;
+                const atr = parseFloat(document.getElementById('atr').value) || 0;
+                const riskPercent = parseFloat(document.getElementById('riskPercent').value) || 0;
                 const riskAmount = parseFloat(document.getElementById('riskAmount').value) || 0;
 
                 // Получаем название типа сделки
                 let tradeTypeName = '';
-                switch(tradeType) {
-                    case 'long-breakout': tradeTypeName = 'Лонг Пробой'; break;
-                    case 'long-fakeout': tradeTypeName = 'Лонг Ложный пробой'; break;
-                    case 'short-breakout': tradeTypeName = 'Шорт Пробой'; break;
-                    case 'short-fakeout': tradeTypeName = 'Шорт Ложный пробой'; break;
+                switch (tradeType) {
+                    case 'long-breakout':
+                        tradeTypeName = 'Лонг Пробой';
+                        break;
+                    case 'long-fakeout':
+                        tradeTypeName = 'Лонг Ложный пробой';
+                        break;
+                    case 'short-breakout':
+                        tradeTypeName = 'Шорт Пробой';
+                        break;
+                    case 'short-fakeout':
+                        tradeTypeName = 'Шорт Ложный пробой';
+                        break;
                 }
 
                 // Формируем текст сообщения
@@ -3835,6 +4021,8 @@ ${Array.from(takeProfitLevelsDiv.children).map(el =>
 *Направление:* ${isLong ? 'Лонг' : 'Шорт'} (${tradeTypeName})
 *Цена входа:* ${entryPrice} USDT
 *Плечо:* ${leverage}x
+*ATR:* ${atr} USDT
+*Риск стоп-лосс:* ${riskPercent}%
 *Риск на сделку:* ${riskAmount} USDT
 
 *Размер позиции:* ${document.getElementById('positionSize').textContent}
@@ -3942,11 +4130,142 @@ ${Array.from(document.getElementById('takeProfitLevels').children).map(el =>
                     <p><strong>Отклонения:</strong></p>
                     <ul style="padding-left: 20px;">
                         ${numbers.map((num, i) =>
-                            `<li>${formatNumber(num)} - ${formatNumber(mean)} = ${formatNumber(deviations[i])}</li>`
-                        ).join('')}
+                `<li>${formatNumber(num)} - ${formatNumber(mean)} = ${formatNumber(deviations[i])}</li>`
+            ).join('')}
                     </ul>
                 </div>
             `;
+        }
+
+        // Предпосылки functions
+        let currentVisibleText = null;
+        const botToken = '8044055704:AAGk8cQFayPqYCscLlEB3qGRj0Uw_NTpe30';
+        const chatId = '1720793889';
+
+        function toggleText(type) {
+            const breakthroughText = document.getElementById('breakthroughText');
+            const falseBreakthroughText = document.getElementById('falseBreakthroughText');
+            const actionButtons = document.getElementById('actionButtons');
+
+            // Hide all texts first
+            breakthroughText.style.display = 'none';
+            falseBreakthroughText.style.display = 'none';
+
+            if (currentVisibleText === type) {
+                // If clicking the same button, hide everything
+                currentVisibleText = null;
+                actionButtons.style.display = 'none';
+            } else {
+                // Show the selected text
+                if (type === 'breakthrough') {
+                    breakthroughText.style.display = 'block';
+                    currentVisibleText = 'breakthrough';
+                } else if (type === 'falseBreakthrough') {
+                    falseBreakthroughText.style.display = 'block';
+                    currentVisibleText = 'falseBreakthrough';
+                }
+                actionButtons.style.display = 'flex';
+            }
+        }
+
+        function getSelectedItems() {
+            let selectedItems = [];
+            let container;
+
+            if (currentVisibleText === 'breakthrough') {
+                container = document.getElementById('breakthroughText');
+            } else if (currentVisibleText === 'falseBreakthrough') {
+                container = document.getElementById('falseBreakthroughText');
+            } else {
+                return [];
+            }
+
+            const checkboxes = container.querySelectorAll('input[type="checkbox"]:checked');
+            checkboxes.forEach((checkbox, index) => {
+                const itemText = checkbox.nextElementSibling.textContent.trim();
+                selectedItems.push(`${index + 1}. ${itemText}`);
+            });
+
+            return selectedItems;
+        }
+
+        function copySelectedText() {
+            const selectedItems = getSelectedItems();
+
+            if (selectedItems.length === 0) {
+                showStatus('Выберите хотя бы один пункт для копирования', 3000, 'error');
+                return;
+            }
+
+            let textToCopy = '';
+            if (currentVisibleText === 'breakthrough') {
+                textToCopy = 'Пробой\n📊Предпосылки\n';
+            } else if (currentVisibleText === 'falseBreakthrough') {
+                textToCopy = 'Ложный пробой\n📊Предпосылки\n';
+            }
+
+            textToCopy += selectedItems.join('\n');
+
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => {
+                    showStatus('Выбранные пункты скопированы!', 3000, 'success');
+                })
+                .catch(err => {
+                    showStatus('Не удалось скопировать текст: ' + err, 5000, 'error');
+                });
+        }
+
+        function exportSelectedToTelegram() {
+            const selectedItems = getSelectedItems();
+
+            if (selectedItems.length === 0) {
+                showStatus('Выберите хотя бы один пункт для отправки', 3000, 'error');
+                return;
+            }
+
+            let textToSend = '';
+            if (currentVisibleText === 'breakthrough') {
+                textToSend = 'Пробой\n📊Предпосылки\n';
+            } else if (currentVisibleText === 'falseBreakthrough') {
+                textToSend = 'Ложный пробой\n📊Предпосылки\n';
+            } else {
+                textToSend = '📊Предпосылки\n';
+            }
+
+            textToSend += selectedItems.join('\n');
+
+            fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: textToSend
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    showStatus('Выбранные пункты успешно отправлены в Telegram!', 3000, 'success');
+                } else {
+                    showStatus('Ошибка при отправке: ' + data.description, 5000, 'error');
+                }
+            })
+            .catch(error => {
+                showStatus('Ошибка: ' + error.message, 5000, 'error');
+            });
+        }
+
+        function showStatus(message, duration, type) {
+            const statusElement = document.getElementById('statusMessage');
+            statusElement.textContent = message;
+            statusElement.className = 'status-message ' + type;
+            statusElement.style.display = 'block';
+
+            setTimeout(() => {
+                statusElement.style.display = 'none';
+            }, duration);
         }
 
         // Инициализация приложения
