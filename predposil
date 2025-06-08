@@ -11,13 +11,14 @@
             font-family: Arial, sans-serif;
             padding: 20px;
         }
-        
+
         .button-container {
             display: flex;
             gap: 15px;
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
-        
+
         button {
             background-color: #1E88E5;
             color: white;
@@ -28,11 +29,11 @@
             font-size: 16px;
             transition: background-color 0.3s;
         }
-        
+
         button:hover {
             background-color: #1565C0;
         }
-        
+
         .text-display {
             background-color: #1e1e1e;
             padding: 15px;
@@ -42,60 +43,60 @@
             margin-top: 15px;
             border: 1px solid #333;
         }
-        
+
         .action-btn {
             background-color: #4CAF50;
             padding: 8px 15px;
             margin-right: 10px;
         }
-        
+
         .action-btn:hover {
             background-color: #45a049;
         }
-        
+
         .export-btn {
             background-color: #2196F3;
         }
-        
+
         .export-btn:hover {
             background-color: #0b7dda;
         }
-        
+
         .action-buttons-container {
             display: flex;
             gap: 10px;
             margin-top: 15px;
             display: none;
         }
-        
+
         .checkbox-item {
             display: flex;
             align-items: center;
             margin-bottom: 8px;
         }
-        
+
         .checkbox-item input {
             margin-right: 10px;
             cursor: pointer;
         }
-        
+
         .status-message {
             margin-top: 15px;
             padding: 10px;
             border-radius: 5px;
             display: none;
         }
-        
+
         .success {
             background-color: #2E7D32;
             color: white;
         }
-        
+
         .error {
             background-color: #C62828;
             color: white;
         }
-        
+
         .item-text {
             margin-left: 5px;
         }
@@ -103,142 +104,138 @@
 </head>
 <body>
     <h2>Предпосылки</h2>
-    
+
     <div class="button-container">
         <button onclick="toggleText('breakthrough')">Пробой</button>
         <button onclick="toggleText('falseBreakthrough')">Ложный пробой</button>
+        <button style="background-color: #C62828;" onclick="toggleText('breakthroughMinuses')">Пробой минусы</button>
+        <button style="background-color: #C62828;" onclick="toggleText('falseBreakthroughMinuses')">Ложный пробой минусы</button>
     </div>
-    
+
     <div id="breakthroughText" class="text-display">
         <h3>Пробой</h3>
-
         <p>📊Предпосылки</p>
-
         <div class="checkbox-item"><input type="checkbox"><span class="item-text">Ближний ретест</span></div>
-
         <div class="checkbox-item"><input type="checkbox"><span class="item-text">Нет реакции на ЛП</span></div>
-
         <div class="checkbox-item"><input type="checkbox"><span class="item-text">Накопление</span></div>
-
         <div class="checkbox-item"><input type="checkbox"><span class="item-text">Закрытие вблизи уровня до 5%</span></div>
-
         <div class="checkbox-item"><input type="checkbox"><span class="item-text">После сильного движения нет отката</span></div>
-
         <div class="checkbox-item"><input type="checkbox"><span class="item-text">Впереди свободная зона</span></div>
-
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Выкупной бар(или Продажный)</span></div>
-
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Проторговка вблизи уровня(на коротком таймфрейме)</span></div>
-
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Подходит поджатием</span></div>
-
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Понижающие хаи или лои(или повышающие)</span></div>
-
+        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Выкупной бар</span></div>
+        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Продажный бар</span></div>
+        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Проторговка вблизи уровня на 1D</span></div>
+        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Проторговка вблизи уровня на коротком таймфрейме 1ч/4ч</span></div>
+        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Подходит поджатием на 1D</span></div>
+        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Подходит поджатием на 1ч/4ч</span></div>
+        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Понижающие хаи и лои</span></div>
+        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Повышающие хаи и лои</span></div>
         <div class="checkbox-item"><input type="checkbox"><span class="item-text">Затухание волатильности</span></div>
     </div>
-    
+
     <div id="falseBreakthroughText" class="text-display">
         <h3>Ложный пробой</h3>
-
         <p>📊Предпосылки</p>
-
         <div class="checkbox-item"><input type="checkbox"><span class="item-text">Дальний ретест</span></div>
-
         <div class="checkbox-item"><input type="checkbox"><span class="item-text">Подход на больших барах</span></div>
-
         <div class="checkbox-item"><input type="checkbox"><span class="item-text">Выход повышенные объемы перед уровням на 1ч 4ч</span></div>
-
         <div class="checkbox-item"><input type="checkbox"><span class="item-text">Экстремум</span></div>
-
         <div class="checkbox-item"><input type="checkbox"><span class="item-text">Впереди зараженная зона</span></div>
-
         <div class="checkbox-item"><input type="checkbox"><span class="item-text">Длинное безоткатное движение</span></div>
-
         <div class="checkbox-item"><input type="checkbox"><span class="item-text">Закрытие вдали от уровня мин от 10%</span></div>
-
         <div class="checkbox-item"><input type="checkbox"><span class="item-text">Нет накопления</span></div>
-
         <div class="checkbox-item"><input type="checkbox"><span class="item-text">Резкий подход на лок таймфрейме</span></div>
-
         <div class="checkbox-item"><input type="checkbox"><span class="item-text">Повышенная волатильность</span></div>
     </div>
-    
+
+    <div id="breakthroughMinusesText" class="text-display">
+        <h3>Пробой минусы</h3>
+        <p>⛔️ Минусы</p>
+        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Повышенная волатильность</span></div>
+        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Зараженная зона на 1D</span></div>
+        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Зараженная зона на лок.ТФ</span></div>
+        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Глубокий ЛП</span></div>
+        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Резкий подход на лок ТФ</span></div>
+        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Далеко закрылись от уровня</span></div>
+        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Пройдено больше половины ATR</span></div>
+        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Накопление на 1ч далеко от уровня</span></div>
+        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Выравнивание баров на лок.ТФ</span></div>
+        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Слабое накопление на 1D</span></div>
+        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Слабое накопление на лок.ТФ</span></div>
+        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Уровень часто прошивается на лок.ТФ</span></div>
+    </div>
+
+    <div id="falseBreakthroughMinusesText" class="text-display">
+        <h3>Ложный пробой минусы</h3>
+        <p>⛔️ Минусы</p>
+        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Повышенная волатильность</span></div>
+        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Зараженная зона на 1D</span></div>
+        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Зараженная зона на лок.ТФ</span></div>
+    </div>
+
     <div id="actionButtons" class="action-buttons-container">
         <button id="copyBtn" class="action-btn" onclick="copySelectedText()">Копировать выбранное</button>
         <button id="exportBtn" class="action-btn export-btn" onclick="exportSelectedToTelegram()">Отправить в Telegram</button>
     </div>
-    
+
     <div id="statusMessage" class="status-message"></div>
-    
+
     <script>
         let currentVisibleText = null;
         const botToken = '8044055704:AAGk8cQFayPqYCscLlEB3qGRj0Uw_NTpe30';
         const chatId = '1720793889';
-        
+
         function toggleText(type) {
-            const breakthroughText = document.getElementById('breakthroughText');
-            const falseBreakthroughText = document.getElementById('falseBreakthroughText');
-            const actionButtons = document.getElementById('actionButtons');
-            
-            // Hide all texts first
-            breakthroughText.style.display = 'none';
-            falseBreakthroughText.style.display = 'none';
-            
+            // Hide all text displays
+            document.querySelectorAll('.text-display').forEach(el => el.style.display = 'none');
+
             if (currentVisibleText === type) {
                 // If clicking the same button, hide everything
                 currentVisibleText = null;
-                actionButtons.style.display = 'none';
+                document.getElementById('actionButtons').style.display = 'none';
             } else {
                 // Show the selected text
-                if (type === 'breakthrough') {
-                    breakthroughText.style.display = 'block';
-                    currentVisibleText = 'breakthrough';
-                } else if (type === 'falseBreakthrough') {
-                    falseBreakthroughText.style.display = 'block';
-                    currentVisibleText = 'falseBreakthrough';
-                }
-                actionButtons.style.display = 'flex';
+                document.getElementById(`${type}Text`).style.display = 'block';
+                currentVisibleText = type;
+                document.getElementById('actionButtons').style.display = 'flex';
             }
         }
-        
+
         function getSelectedItems() {
             let selectedItems = [];
-            let container;
-            
-            if (currentVisibleText === 'breakthrough') {
-                container = document.getElementById('breakthroughText');
-            } else if (currentVisibleText === 'falseBreakthrough') {
-                container = document.getElementById('falseBreakthroughText');
-            } else {
-                return [];
-            }
-            
+            let container = document.getElementById(`${currentVisibleText}Text`);
+
+            if (!container) return [];
+
             const checkboxes = container.querySelectorAll('input[type="checkbox"]:checked');
             checkboxes.forEach((checkbox, index) => {
                 const itemText = checkbox.nextElementSibling.textContent.trim();
                 selectedItems.push(`${index + 1}. ${itemText}`);
             });
-            
+
             return selectedItems;
         }
-        
+
         function copySelectedText() {
             const selectedItems = getSelectedItems();
-            
+
             if (selectedItems.length === 0) {
                 showStatus('Выберите хотя бы один пункт для копирования', 3000, 'error');
                 return;
             }
-            
+
             let textToCopy = '';
             if (currentVisibleText === 'breakthrough') {
                 textToCopy = 'Пробой\n📊Предпосылки\n';
             } else if (currentVisibleText === 'falseBreakthrough') {
                 textToCopy = 'Ложный пробой\n📊Предпосылки\n';
+            } else if (currentVisibleText === 'breakthroughMinuses') {
+                textToCopy = 'Пробой минусы\n⛔️ Минусы\n';
+            } else if (currentVisibleText === 'falseBreakthroughMinuses') {
+                textToCopy = 'Ложный пробой минусы\n⛔️ Минусы\n';
             }
-            
+
             textToCopy += selectedItems.join('\n');
-            
+
             navigator.clipboard.writeText(textToCopy)
                 .then(() => {
                     showStatus('Выбранные пункты скопированы!', 3000, 'success');
@@ -247,26 +244,28 @@
                     showStatus('Не удалось скопировать текст: ' + err, 5000, 'error');
                 });
         }
-        
+
         function exportSelectedToTelegram() {
             const selectedItems = getSelectedItems();
-            
+
             if (selectedItems.length === 0) {
                 showStatus('Выберите хотя бы один пункт для отправки', 3000, 'error');
                 return;
             }
-            
+
             let textToSend = '';
             if (currentVisibleText === 'breakthrough') {
                 textToSend = 'Пробой\n📊Предпосылки\n';
             } else if (currentVisibleText === 'falseBreakthrough') {
                 textToSend = 'Ложный пробой\n📊Предпосылки\n';
-            } else {
-                textToSend = '📊Предпосылки\n';
+            } else if (currentVisibleText === 'breakthroughMinuses') {
+                textToSend = 'Пробой минусы\n⛔️ Минусы\n';
+            } else if (currentVisibleText === 'falseBreakthroughMinuses') {
+                textToSend = 'Ложный пробой минусы\n⛔️ Минусы\n';
             }
-            
+
             textToSend += selectedItems.join('\n');
-            
+
             fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                 method: 'POST',
                 headers: {
@@ -289,13 +288,13 @@
                 showStatus('Ошибка: ' + error.message, 5000, 'error');
             });
         }
-        
+
         function showStatus(message, duration, type) {
             const statusElement = document.getElementById('statusMessage');
             statusElement.textContent = message;
             statusElement.className = 'status-message ' + type;
             statusElement.style.display = 'block';
-            
+
             setTimeout(() => {
                 statusElement.style.display = 'none';
             }, duration);
