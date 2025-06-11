@@ -1182,7 +1182,7 @@
 Направление: ${isLong ? 'Лонг' : 'Шорт'} (${tradeTypeName})
 Цена входа: ${entryPrice} USDT
 Плечо: ${leverage}x
-${stopMethod === 'atr' ? `ATR: ${atr} USDT\nРиск стоп-лосс: ${riskPercent}% от ATR` : ''}
+${stopMethod === 'atr' ? `ATR: ${atr} USDT\nРиск стоп-лосс: ${riskPercent}% от ATR` : `Стоп-лосс: ${document.getElementById('stopLossPrice').value} USDT`}
 Риск на сделку: ${riskAmount} USDT
 Метод расчета стоп-лосса: ${stopMethodName}
 
