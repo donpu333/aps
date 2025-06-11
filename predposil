@@ -175,6 +175,7 @@
     <div id="actionButtons" class="action-buttons-container">
         <button id="copyBtn" class="action-btn" onclick="copySelectedText()">Копировать выбранное</button>
         <button id="exportBtn" class="action-btn export-btn" onclick="exportSelectedToTelegram()">Отправить в Telegram</button>
+        <button id="resetBtn" class="action-btn" onclick="resetCheckboxes()" style="background-color: #FF9800;">Сбросить выбор</button>
     </div>
 
     <div id="statusMessage" class="status-message"></div>
@@ -185,15 +186,12 @@
         const chatId = '1720793889';
 
         function toggleText(type) {
-            // Hide all text displays
             document.querySelectorAll('.text-display').forEach(el => el.style.display = 'none');
 
             if (currentVisibleText === type) {
-                // If clicking the same button, hide everything
                 currentVisibleText = null;
                 document.getElementById('actionButtons').style.display = 'none';
             } else {
-                // Show the selected text
                 document.getElementById(`${type}Text`).style.display = 'block';
                 currentVisibleText = type;
                 document.getElementById('actionButtons').style.display = 'flex';
@@ -287,6 +285,16 @@
             .catch(error => {
                 showStatus('Ошибка: ' + error.message, 5000, 'error');
             });
+        }
+
+        function resetCheckboxes() {
+            const container = document.getElementById(`${currentVisibleText}Text`);
+            if (container) {
+                container.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                showStatus('Выбор сброшен!', 2000, 'success');
+            }
         }
 
         function showStatus(message, duration, type) {
