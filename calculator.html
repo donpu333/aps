@@ -796,6 +796,11 @@
                         <span class="result-value loss" id="stopLoss">99.5 USDT</span>
                     </div>
 
+                    <div class="result-item">
+                        <span>ATR:</span>
+                        <span class="result-value" id="atrResult">5.00 USDT</span>
+                    </div>
+
                     <div class="take-profit-levels" id="takeProfitLevels">
                         <!-- Уровни тейк-профита будут добавлены динамически -->
                     </div>
@@ -1273,6 +1278,7 @@ ${Array.from(document.getElementById('takeProfitLevels').children).map(el => {
             const stopLossSpan = document.getElementById('stopLoss');
             const takeProfitLevelsDiv = document.getElementById('takeProfitLevels');
             const liquidationPriceSpan = document.getElementById('liquidationPrice');
+            const atrResultSpan = document.getElementById('atrResult');
 
             // Переключатели метода ввода стоп-лосса
             const stopMethodButtons = document.querySelectorAll('.stop-method-btn');
@@ -1453,6 +1459,7 @@ ${Array.from(document.getElementById('takeProfitLevels').children).map(el => {
                 // Отображаем точное значение ATR без округления
                 atrValueSpan.textContent = formatNumber(atr) + ' USDT';
                 previewAtrPercent.textContent = formatNumber(atr * riskPercent) + ' USDT';
+                atrResultSpan.textContent = formatNumber(atr) + ' USDT';
             }
 
             // Расчет цены ликвидации
@@ -1546,7 +1553,7 @@ ${Array.from(document.getElementById('takeProfitLevels').children).map(el => {
                     const levelDiv = document.createElement('div');
                     levelDiv.className = 'take-profit-item';
                     levelDiv.innerHTML = `
-                        <span class="take-profit-ratio">Тейк-профит (1:${ratio.toFixed(1)}):</span>
+                        <span class="take-profit-ratio">Тейк-профит 1к${ratio}</span>
                         <span class="take-profit-price">${formatNumber(takeProfitPrice)} USDT</span>
                         <span class="take-profit-value">+${formatNumber(profit)} USDT</span>
                     `;
