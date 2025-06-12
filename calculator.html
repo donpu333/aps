@@ -736,11 +736,11 @@
                         <div class="input-group">
                             <label for="riskPercent">Риск стоп-лосс (% от ATR)</label>
                             <div class="slider-container">
-                                <input type="range" id="riskPercent" min="1" max="100" value="10">
-                                <span class="slider-value" id="riskPercentValue">10</span>%
+                                <input type="range" id="riskPercent" min="1" max="100" value="27">
+                                <span class="slider-value" id="riskPercentValue">27</span>%
                             </div>
                             <div class="preview-value">
-                                Стоп-лосс: минус <span id="previewAtrPercent">0.50 USDT</span> (<span id="previewAtrPercentValue">10%</span> от ATR)
+                                Стоп-лосс: минус <span id="previewAtrPercent">1.35 USDT</span> (<span id="previewAtrPercentValue">27%</span> от ATR)
                             </div>
                         </div>
                     </div>
@@ -793,7 +793,7 @@
 
                     <div class="result-item">
                         <span>Стоп-лосс:</span>
-                        <span class="result-value loss" id="stopLoss">99.5 USDT</span>
+                        <span class="result-value loss" id="stopLoss">98.65 USDT</span>
                     </div>
 
                     <div class="result-item">
@@ -925,9 +925,12 @@
         let stopMethod = 'atr';
         let tradeType = 'long-breakout';
 
-        // Функция для форматирования чисел
-        function formatNumber(num) {
-            return num.toString().replace(/(\.\d*?[1-9])0+$/, '$1').replace(/\.$/, '');
+        // Улучшенная функция для форматирования чисел
+        function formatNumber(num, decimals = 2) {
+            if (isNaN(num)) return '0';
+            const factor = Math.pow(10, decimals);
+            const rounded = Math.round(num * factor) / factor;
+            return rounded.toString().replace(/(\.\d*?[1-9])0+$/, '$1').replace(/\.$/, '');
         }
 
         // Функции для работы с пользователями
@@ -1185,22 +1188,22 @@
 📊 Результаты расчета позиции 📊
 
 Направление: ${isLong ? 'Лонг' : 'Шорт'} (${tradeTypeName})
-Цена входа: ${entryPrice} USDT
+Цена входа: ${formatNumber(entryPrice, 4)} USDT
 Плечо: ${leverage}x
-Стоп-лосс: ${stopMethod === 'price' ? document.getElementById('stopLossPrice').value + ' (расчётный)' : atr * riskPercent + ' USDT (' + riskPercent + '% от ATR)'}
-Риск на сделку: ${riskAmount} USDT
+Стоп-лосс: ${stopMethod === 'price' ? formatNumber(document.getElementById('stopLossPrice').value, 4) + ' USDT (расчётный)' : formatNumber(atr * riskPercent / 100, 4) + ' USDT (' + riskPercent + '% от ATR)'}
+Риск на сделку: ${formatNumber(riskAmount, 2)} USDT
 Метод расчета стоп-лосса: ${stopMethodName}
 
-Размер позиции: ${formatNumber(document.getElementById('positionSize').textContent.split(' ')[0])}
-Стоп-лосс: ${formatNumber(document.getElementById('stopLoss').textContent.split(' ')[0])} USDT
+Размер позиции: ${formatNumber(document.getElementById('positionSize').textContent.split(' ')[0], 2)}
+Стоп-лосс: ${formatNumber(document.getElementById('stopLoss').textContent.split(' ')[0], 4)} USDT
 
 Тейк-профиты:
 ${Array.from(document.getElementById('takeProfitLevels').children).map(el => {
     const parts = el.textContent.trim().split(/\s+/);
-    return `• ${parts[0]} ${parts[1]} ${formatNumber(parts[2])} USDT ${parts[3]} ${formatNumber(parts[4])} USDT`;
+    return `• ${parts[0]} ${parts[1]} ${formatNumber(parts[2], 4)} USDT ${parts[3]} ${formatNumber(parts[4], 2)} USDT`;
 }).join('\n')}
 
-Цена ликвидации: ${formatNumber(document.getElementById('liquidationPrice').textContent.split(' ')[0])} USDT
+Цена ликвидации: ${formatNumber(document.getElementById('liquidationPrice').textContent.split(' ')[0], 4)} USDT
 `;
 
             try {
@@ -1293,6 +1296,17 @@ ${Array.from(document.getElementById('takeProfitLevels').children).map(el => {
                 // Установка плеча по умолчанию на 10
                 leverageInput.value = 10;
                 leverageValue.textContent = '10x';
+
+                // Установка ATR по умолчанию на 5
+                atrInput.value = 5.00;
+                atrValueSpan.textContent = '5.00 USDT';
+                atrResultSpan.textContent = '5.00 USDT';
+
+                // Установка риска по умолчанию на 27%
+                riskPercentInput.value = 27;
+                riskPercentValue.textContent = '27';
+                previewAtrPercent.textContent = '1.35 USDT';
+                previewAtrPercentValue.textContent = '27%';
 
                 updateSliderValues();
                 updateAtrPreview();
@@ -1390,7 +1404,7 @@ ${Array.from(document.getElementById('takeProfitLevels').children).map(el => {
 
                     if (entryPrice > 0 && stopLossPrice > 0) {
                         const difference = Math.abs(entryPrice - stopLossPrice);
-                        priceDifferenceSpan.textContent = formatNumber(difference) + ' USDT';
+                        priceDifferenceSpan.textContent = formatNumber(difference, 4) + ' USDT';
                     } else {
                         priceDifferenceSpan.textContent = '0 USDT';
                     }
@@ -1457,9 +1471,10 @@ ${Array.from(document.getElementById('takeProfitLevels').children).map(el => {
                 const riskPercent = parseFloat(riskPercentInput.value) / 100;
 
                 // Отображаем точное значение ATR без округления
-                atrValueSpan.textContent = formatNumber(atr) + ' USDT';
-                previewAtrPercent.textContent = formatNumber(atr * riskPercent) + ' USDT';
-                atrResultSpan.textContent = formatNumber(atr) + ' USDT';
+                atrValueSpan.textContent = formatNumber(atr, 4) + ' USDT';
+                previewAtrPercent.textContent = formatNumber(atr * riskPercent, 4) + ' USDT';
+                previewAtrPercentValue.textContent = riskPercentInput.value + '%';
+                atrResultSpan.textContent = formatNumber(atr, 4) + ' USDT';
             }
 
             // Расчет цены ликвидации
@@ -1504,7 +1519,7 @@ ${Array.from(document.getElementById('takeProfitLevels').children).map(el => {
                                 stopLossPrice = entryPrice + (atr * riskPercent);
                             }
                             // Обновляем поле ввода
-                            stopLossPriceInput.value = formatNumber(stopLossPrice);
+                            stopLossPriceInput.value = formatNumber(stopLossPrice, 4);
                         }
                     } else {
                         // Если цена стоп-лосса не введена, используем расчет через ATR
@@ -1524,10 +1539,10 @@ ${Array.from(document.getElementById('takeProfitLevels').children).map(el => {
                 const liquidationPrice = calculateLiquidationPrice(entryPrice, leverage, isLong);
 
                 // Обновление интерфейса
-                entryPriceResult.textContent = `${formatNumber(entryPrice)} USDT`;
-                positionSizeSpan.textContent = formatNumber(positionSize);
-                stopLossSpan.textContent = `${formatNumber(stopLossPrice)} USDT`;
-                liquidationPriceSpan.textContent = `${formatNumber(liquidationPrice)} USDT`;
+                entryPriceResult.textContent = `${formatNumber(entryPrice, 4)} USDT`;
+                positionSizeSpan.textContent = formatNumber(positionSize, 2);
+                stopLossSpan.textContent = `${formatNumber(stopLossPrice, 4)} USDT`;
+                liquidationPriceSpan.textContent = `${formatNumber(liquidationPrice, 4)} USDT`;
 
                 // Генерация уровней тейк-профита
                 generateTakeProfitLevels(entryPrice, stopLossPrice, isLong, rewardRatio1, rewardRatio2, positionSize);
@@ -1554,8 +1569,8 @@ ${Array.from(document.getElementById('takeProfitLevels').children).map(el => {
                     levelDiv.className = 'take-profit-item';
                     levelDiv.innerHTML = `
                         <span class="take-profit-ratio">Тейк-профит 1к${ratio}</span>
-                        <span class="take-profit-price">${formatNumber(takeProfitPrice)} USDT</span>
-                        <span class="take-profit-value">+${formatNumber(profit)} USDT</span>
+                        <span class="take-profit-price">${formatNumber(takeProfitPrice, 4)} USDT</span>
+                        <span class="take-profit-value">+${formatNumber(profit, 2)} USDT</span>
                     `;
                     takeProfitLevelsDiv.appendChild(levelDiv);
                 });
@@ -1563,14 +1578,14 @@ ${Array.from(document.getElementById('takeProfitLevels').children).map(el => {
 
             // Экспорт в текстовый файл
             function exportToText() {
-                const entryPrice = parseFloat(entryPriceInput.value) || 0;
-                const leverage = parseFloat(leverageInput.value) || 1;
-                const atr = parseFloat(atrInput.value) || 0;
-                const riskPercent = parseFloat(riskPercentInput.value);
-                const riskAmount = parseFloat(riskAmountInput.value) || 0;
-                const rewardRatio1 = parseFloat(rewardRatio1Input.value) || 3;
-                const rewardRatio2 = parseFloat(rewardRatio2Input.value) || 5;
-                const stopLossPriceDirect = parseFloat(stopLossPriceInput.value) || 0;
+                const entryPrice = parseFloat(document.getElementById('entryPrice').value) || 0;
+                const leverage = parseFloat(document.getElementById('leverage').value) || 1;
+                const atr = parseFloat(document.getElementById('atr').value) || 0;
+                const riskPercent = parseFloat(document.getElementById('riskPercent').value);
+                const riskAmount = parseFloat(document.getElementById('riskAmount').value) || 0;
+                const rewardRatio1 = parseFloat(document.getElementById('rewardRatio1').value) || 3;
+                const rewardRatio2 = parseFloat(document.getElementById('rewardRatio2').value) || 5;
+                const stopLossPriceDirect = parseFloat(document.getElementById('stopLossPrice').value) || 0;
 
                 // Получаем название типа сделки
                 let tradeTypeName = '';
@@ -1594,24 +1609,24 @@ ${Array.from(document.getElementById('takeProfitLevels').children).map(el => {
 
 Параметры сделки:
 -----------------
-Цена входа: ${entryPrice} USDT
+Цена входа: ${formatNumber(entryPrice, 4)} USDT
 Кредитное плечо: ${leverage}x
-${stopMethod === 'atr' ? `ATR: ${atr} USDT\nРиск стоп-лосс: ${riskPercent}% от ATR` : `Цена стоп-лосса: ${stopLossPriceDirect} USDT`}
-Риск на сделку: ${riskAmount} USDT
+${stopMethod === 'atr' ? `ATR: ${formatNumber(atr, 4)} USDT\nРиск стоп-лосс: ${riskPercent}% от ATR` : `Цена стоп-лосса: ${formatNumber(stopLossPriceDirect, 4)} USDT`}
+Риск на сделку: ${formatNumber(riskAmount, 2)} USDT
 Соотношение тейк-профита: 1:${rewardRatio1} и 1:${rewardRatio2}
 
 Результаты:
 -----------
-Цена входа: ${entryPrice} USDT
-Размер позиции: ${formatNumber(positionSizeSpan.textContent)}
-Стоп-лосс: ${formatNumber(stopLossSpan.textContent)}
+Цена входа: ${formatNumber(entryPrice, 4)} USDT
+Размер позиции: ${formatNumber(positionSizeSpan.textContent, 2)}
+Стоп-лосс: ${formatNumber(stopLossSpan.textContent, 4)} USDT
 
 Уровни тейк-профита:
 ${Array.from(takeProfitLevelsDiv.children).map(el =>
     el.textContent.trim().replace(/\s+/g, ' ')
 ).join('\n')}
 
-Цена ликвидации: ${formatNumber(liquidationPriceSpan.textContent)}
+Цена ликвидации: ${formatNumber(liquidationPriceSpan.textContent, 4)} USDT
                 `;
 
                 const blob = new Blob([content], {type: 'text/plain'});
@@ -1665,20 +1680,15 @@ ${Array.from(takeProfitLevelsDiv.children).map(el =>
             const mean = sum / count;
             const deviations = numbers.map(num => num - mean);
 
-            // Функция для форматирования чисел
-            const formatNumber = (num) => {
-                return num.toString().replace(/(\.\d*?[1-9])0+$/, '$1').replace(/\.$/, '');
-            };
-
             resultDiv.innerHTML = `
                 <div style="background: rgba(30,30,30,0.5); padding: 10px; border-radius: 5px;">
                     <p><strong>Чисел:</strong> ${count}</p>
-                    <p><strong>Сумма:</strong> ${formatNumber(sum)}</p>
-                    <p><strong>Среднее:</strong> ${formatNumber(mean)}</p>
+                    <p><strong>Сумма:</strong> ${formatNumber(sum, 6)}</p>
+                    <p><strong>Среднее:</strong> ${formatNumber(mean, 6)}</p>
                     <p><strong>Отклонения:</strong></p>
                     <ul style="padding-left: 20px;">
                         ${numbers.map((num, i) =>
-                            `<li>${formatNumber(num)} - ${formatNumber(mean)} = ${formatNumber(deviations[i])}</li>`
+                            `<li>${formatNumber(num, 6)} - ${formatNumber(mean, 6)} = ${formatNumber(deviations[i], 6)}</li>`
                         ).join('')}
                     </ul>
                 </div>
