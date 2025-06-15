@@ -2458,7 +2458,132 @@ window.addEventListener('error', (event) => {
     console.error('Global error:', event.error);
     showNotification('System Error', event.message || 'Unknown error occurred');
 });
+let currentVisibleText = null;
+const botToken = '8044055704:AAGk8cQFayPqYCscLlEB3qGRj0Uw_NTpe30';
+const chatId = '1720793889';
 
+function toggleText(type) {
+    document.querySelectorAll('.text-display').forEach(el => el.style.display = 'none');
+
+    if (currentVisibleText === type) {
+        currentVisibleText = null;
+        document.getElementById('actionButtons').style.display = 'none';
+    } else {
+        document.getElementById(`${type}Text`).style.display = 'block';
+        currentVisibleText = type;
+        document.getElementById('actionButtons').style.display = 'flex';
+    }
+}
+
+function getSelectedItems() {
+    let selectedItems = [];
+    let container = document.getElementById(`${currentVisibleText}Text`);
+
+    if (!container) return [];
+
+    const checkboxes = container.querySelectorAll('input[type="checkbox"]:checked');
+    checkboxes.forEach((checkbox, index) => {
+        const itemText = checkbox.nextElementSibling.textContent.trim();
+        selectedItems.push(`${index + 1}. ${itemText}`);
+    });
+
+    return selectedItems;
+}
+
+function copySelectedText() {
+    const selectedItems = getSelectedItems();
+
+    if (selectedItems.length === 0) {
+        showStatus('Выберите хотя бы один пункт для копирования', 3000, 'error');
+        return;
+    }
+
+    let textToCopy = '';
+    if (currentVisibleText === 'breakthrough') {
+        textToCopy = 'Пробой\n📊Предпосылки\n';
+    } else if (currentVisibleText === 'falseBreakthrough') {
+        textToCopy = 'Ложный пробой\n📊Предпосылки\n';
+    } else if (currentVisibleText === 'breakthroughMinuses') {
+        textToCopy = 'Пробой минусы\n⛔️ Минусы\n';
+    } else if (currentVisibleText === 'falseBreakthroughMinuses') {
+        textToCopy = 'Ложный пробой минусы\n⛔️ Минусы\n';
+    }
+
+    textToCopy += selectedItems.join('\n');
+
+    navigator.clipboard.writeText(textToCopy)
+        .then(() => {
+            showStatus('Выбранные пункты скопированы!', 3000, 'success');
+        })
+        .catch(err => {
+            showStatus('Не удалось скопировать текст: ' + err, 5000, 'error');
+        });
+}
+
+function exportSelectedToTelegram() {
+    const selectedItems = getSelectedItems();
+
+    if (selectedItems.length === 0) {
+        showStatus('Выберите хотя бы один пункт для отправки', 3000, 'error');
+        return;
+    }
+
+    let textToSend = '';
+    if (currentVisibleText === 'breakthrough') {
+        textToSend = 'Пробой\n📊Предпосылки\n';
+    } else if (currentVisibleText === 'falseBreakthrough') {
+        textToSend = 'Ложный пробой\n📊Предпосылки\n';
+    } else if (currentVisibleText === 'breakthroughMinuses') {
+        textToSend = 'Пробой минусы\n⛔️ Минусы\n';
+    } else if (currentVisibleText === 'falseBreakthroughMinuses') {
+        textToSend = 'Ложный пробой минусы\n⛔️ Минусы\n';
+    }
+
+    textToSend += selectedItems.join('\n');
+
+    fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            chat_id: chatId,
+            text: textToSend
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.ok) {
+            showStatus('Выбранные пункты успешно отправлены в Telegram!', 3000, 'success');
+        } else {
+            showStatus('Ошибка при отправке: ' + data.description, 5000, 'error');
+        }
+    })
+    .catch(error => {
+        showStatus('Ошибка: ' + error.message, 5000, 'error');
+    });
+}
+
+function resetCheckboxes() {
+    const container = document.getElementById(`${currentVisibleText}Text`);
+    if (container) {
+        container.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.checked = false;
+        });
+        showStatus('Выбор сброшен!', 2000, 'success');
+    }
+}
+
+function showStatus(message, duration, type) {
+    const statusElement = document.getElementById('statusMessage');
+    statusElement.textContent = message;
+    statusElement.className = 'status-message ' + type;
+    statusElement.style.display = 'block';
+
+    setTimeout(() => {
+        statusElement.style.display = 'none';
+    }, duration);
+}
 window.createAlertForSymbol = createAlertForSymbol;
 window.deleteAlert = deleteAlert;
 window.applyCurrentPrice = applyCurrentPrice;
