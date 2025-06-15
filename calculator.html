@@ -736,11 +736,11 @@
                         <div class="input-group">
                             <label for="riskPercent">Риск стоп-лосс (% от ATR)</label>
                             <div class="slider-container">
-                                <input type="range" id="riskPercent" min="1" max="100" value="27">
+                                <input type="range" id="riskPercent" min="1" max="100" value="10">
                                 <span class="slider-value" id="riskPercentValue">10</span>%
                             </div>
                             <div class="preview-value">
-                                Стоп-лосс: минус <span id="previewAtrPercent">1.35 USDT</span> (<span id="previewAtrPercentValue">10%</span> от ATR)
+                                Стоп-лосс: минус <span id="previewAtrPercent">0.50 USDT</span> (<span id="previewAtrPercentValue">10%</span> от ATR)
                             </div>
                         </div>
                     </div>
@@ -793,7 +793,7 @@
 
                     <div class="result-item">
                         <span>Стоп-лосс:</span>
-                        <span class="result-value loss" id="stopLoss">98.65 USDT</span>
+                        <span class="result-value loss" id="stopLoss">99.50 USDT</span>
                     </div>
 
                     <div class="result-item">
@@ -1302,11 +1302,11 @@ ${Array.from(document.getElementById('takeProfitLevels').children).map(el => {
                 atrValueSpan.textContent = '5.00 USDT';
                 atrResultSpan.textContent = '5.00 USDT';
 
-                // Установка риска по умолчанию на 27%
-                riskPercentInput.value = 27;
-                riskPercentValue.textContent = '27';
-                previewAtrPercent.textContent = '1.35 USDT';
-                previewAtrPercentValue.textContent = '27%';
+                // Установка риска по умолчанию на 10%
+                riskPercentInput.value = 10;
+                riskPercentValue.textContent = '10';
+                previewAtrPercent.textContent = '0.50 USDT';
+                previewAtrPercentValue.textContent = '10%';
 
                 updateSliderValues();
                 updateAtrPreview();
