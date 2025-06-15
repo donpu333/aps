@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body class="bg-dark">
     <nav class="shadow-sm w-full">
@@ -61,55 +62,69 @@
 
     <div class="w-full px-4 py-8">
         <div class="main-container">
+            <!-- Alerts Section -->
             <div class="card rounded-lg p-6">
                 <h2 class="text-xl font-bold mb-6 text-primary">
                     <i class="fas fa-plus-circle mr-2"></i>Создать новый алерт
                 </h2>
+
                 <form id="alertForm">
                     <input type="hidden" id="editAlertId" value="">
                     <div class="mb-4">
                         <label class="block text-gray-300 text-sm font-medium mb-2">Криптовалюта</label>
                         <div class="relative">
-                            <input type="text" id="coinSearch" placeholder="Поиск монеты..." class="w-full pl-10 pr-4 py-2 rounded-md focus:ring-primary focus:border-primary" required>
+                            <input type="text" id="coinSearch" placeholder="Поиск монеты..."
+                                class="w-full pl-10 pr-4 py-2 rounded-md focus:ring-primary focus:border-primary" required>
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <i class="fas fa-search text-gray-400"></i>
                             </div>
                             <div id="marketTypeHint" class="market-type-hint"></div>
                         </div>
                         <div id="coinError" class="validation-message">Пожалуйста, выберите криптовалюту</div>
-                        <select id="symbol" size="5" class="w-full mt-2 px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary hidden"></select>
+                        <select id="symbol" size="5"
+                            class="w-full mt-2 px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary hidden">
+                        </select>
                     </div>
+
                     <div class="mb-4">
                         <label class="block text-gray-300 text-sm font-medium mb-2">Тип алерта</label>
-                        <select id="alertType" class="w-full px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
+                        <select id="alertType"
+                            class="w-full px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
                             <option value="price">Цена</option>
                             <option value="liquidation">Ликвидации</option>
                             <option value="funding">Фандинг</option>
                             <option value="oi">Открытый интерес</option>
                         </select>
                     </div>
+
                     <div class="mb-4">
                         <label class="block text-gray-300 text-sm font-medium mb-2">Условие</label>
                         <div class="flex">
-                            <select id="condition" class="w-1/3 px-3 py-2 rounded-l-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
+                            <select id="condition"
+                                class="w-1/3 px-3 py-2 rounded-l-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
                                 <option value="+">Выше (+)</option>
                                 <option value="-">Ниже (-)</option>
                             </select>
-                            <input type="number" id="value" class="w-2/3 px-3 py-2 border-t border-b border-r rounded-r-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary" placeholder="Значение" step="any" required>
+                            <input type="number" id="value"
+                                class="w-2/3 px-3 py-2 border-t border-b border-r rounded-r-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+                                placeholder="Значение" step="any" required>
                         </div>
                         <div id="valueError" class="validation-message">Пожалуйста, укажите значение</div>
                         <div id="currentPriceContainer" class="current-price-container hidden">
                             <span class="current-price-label">Текущая цена:</span>
                             <span id="currentPriceValue" class="current-price-value"></span>
-                            <button type="button" onclick="applyCurrentPrice()" class="apply-price-btn" title="Применить текущую цену">
+                            <button type="button" onclick="applyCurrentPrice()" class="apply-price-btn"
+                                title="Применить текущую цену">
                                 <i class="fas fa-sync-alt"></i>
                                 <span>Применить</span>
                             </button>
                         </div>
                     </div>
+
                     <div class="mb-4">
                         <label class="block text-gray-300 text-sm font-medium mb-2">Количество уведомлений</label>
-                        <select id="notificationCount" class="w-full px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
+                        <select id="notificationCount"
+                            class="w-full px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
                             <option value="5" selected>5 раз (интервал 60 сек)</option>
                             <option value="1">1 раз (интервал 60 сек)</option>
                             <option value="2">2 раза (интервал 60 сек)</option>
@@ -118,6 +133,7 @@
                             <option value="0">Пока не отключу (интервал 60 сек)</option>
                         </select>
                     </div>
+
                     <div class="mb-6">
                         <label class="block text-gray-300 text-sm font-medium mb-2">Уведомления</label>
                         <div class="notification-methods">
@@ -126,15 +142,20 @@
                                 <label for="telegram" class="ml-2 block text-sm text-gray-300">
                                     <i class="fab fa-telegram mr-1 text-blue-400"></i> Telegram
                                 </label>
-                                <button onclick="openTelegramSettings()" class="ml-2 text-sm text-blue-400 hover:text-blue-300 text-xs px-2 py-1"> Настроить </button>
-                                <input type="text" id="userChatId" placeholder="Ваш Chat ID" class="ml-2 px-2 py-1 text-sm rounded-md hidden">
+                                <button onclick="openTelegramSettings()"
+                                    class="ml-2 text-sm text-blue-400 hover:text-blue-300 text-xs px-2 py-1">
+                                    Настроить
+                                </button>
+                                <input type="text" id="userChatId" placeholder="Ваш Chat ID"
+                                    class="ml-2 px-2 py-1 text-sm rounded-md hidden">
                             </div>
                             <div class="notification-method">
                                 <input id="email" type="checkbox" class="h-4 w-4 focus:ring-primary">
                                 <label for="email" class="ml-2 block text-sm text-gray-300">
                                     <i class="fas fa-envelope mr-1 text-gray-400"></i> Email
                                 </label>
-                                <input type="email" id="userEmail" placeholder="Ваш email" class="ml-2 px-2 py-1 text-sm rounded-md hidden">
+                                <input type="email" id="userEmail" placeholder="Ваш email"
+                                    class="ml-2 px-2 py-1 text-sm rounded-md hidden">
                                 <div id="userEmailError" class="validation-message">Неверный формат email</div>
                             </div>
                         </div>
@@ -160,9 +181,9 @@
                             </div>
                         </div>
                     </div>
+
                     <button type="submit" class="btn-primary w-full text-white py-2 px-4 rounded-md font-medium mt-4">
-                        <i class="fas fa-bell mr-2"></i>
-                        <span id="submitBtnText">Создать алерт</span>
+                        <i class="fas fa-bell mr-2"></i><span id="submitBtnText">Создать алерт</span>
                     </button>
                 </form>
             </div>
@@ -174,10 +195,18 @@
                             <i class="fas fa-bell mr-1"></i>Алерты
                         </h2>
                         <div class="compact-filters no-scrollbar">
-                            <button id="showActiveAlerts" class="compact-filter-btn bg-blue-900 text-blue-300 active"> Активные </button>
-                            <button id="showTriggeredAlerts" class="compact-filter-btn bg-gray-700 text-gray-300"> Сработавшие </button>
-                            <button id="showHistoryAlerts" class="compact-filter-btn bg-gray-700 text-gray-300"> История </button>
-                            <button id="showAllAlerts" class="compact-filter-btn bg-gray-700 text-gray-300"> Все </button>
+                            <button id="showActiveAlerts" class="compact-filter-btn bg-blue-900 text-blue-300 active">
+                                Активные
+                            </button>
+                            <button id="showTriggeredAlerts" class="compact-filter-btn bg-gray-700 text-gray-300">
+                                Сработавшие
+                            </button>
+                            <button id="showHistoryAlerts" class="compact-filter-btn bg-gray-700 text-gray-300">
+                                История
+                            </button>
+                            <button id="showAllAlerts" class="compact-filter-btn bg-gray-700 text-gray-300">
+                                Все
+                            </button>
                         </div>
                     </div>
                     <div class="flex items-center">
@@ -189,233 +218,322 @@
                         </button>
                     </div>
                 </div>
+
+                <!-- Вкладки для шорт и лонг алертов -->
                 <div class="flex mb-4">
-                    <button id="showLongAlerts" class="tab-btn bg-green-900 text-green-300 active px-4 py-2 rounded-l"> Лонг <span id="longAlertsCount" class="alert-counter">0</span></button>
-                    <button id="showShortAlerts" class="tab-btn bg-red-900 text-red-300 px-4 py-2 rounded-r"> Шорт <span id="shortAlertsCount" class="alert-counter">0</span></button>
+                    <button id="showLongAlerts" class="tab-btn bg-green-900 text-green-300 active px-4 py-2 rounded-l">
+                        Лонг <span id="longAlertsCount" class="alert-counter">0</span>
+                    </button>
+                    <button id="showShortAlerts" class="tab-btn bg-red-900 text-red-300 px-4 py-2 rounded-r">
+                        Шорт <span id="shortAlertsCount" class="alert-counter">0</span>
+                    </button>
                     <span id="totalAlertsCount" class="total-alerts-counter">Всего: 0</span>
                 </div>
+
+                <!-- Поисковая строка -->
                 <div class="mb-4">
                     <input type="text" id="alertSearch" placeholder="Поиск алертов..." class="w-full px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary">
                 </div>
-                <div id="longAlerts" class="alerts-container space-y-4 tab-content active"></div>
-                <div id="shortAlerts" class="alerts-container space-y-4 tab-content"></div>
+
+                <!-- Контейнеры для алертов -->
+                <div id="longAlerts" class="alerts-container space-y-4 tab-content active">
+                    <!-- Алерты для лонг -->
+                </div>
+                <div id="shortAlerts" class="alerts-container space-y-4 tab-content">
+                    <!-- Алерты для шорт -->
+                </div>
             </div>
 
+            <!-- Calculator Section -->
+            <div class="calculator-container risk-calculator">
+                <h1>Калькулятор рисков</h1>
+
+                <div class="section">
+                    <div class="section-title">Параметры сделки</div>
+
+                    <div class="direction-buttons">
+                        <button id="longBtn" class="direction-btn long active">Лонг</button>
+                        <button id="shortBtn" class="direction-btn short">Шорт</button>
+                    </div>
+
+                    <!-- Выбор типа сделки -->
+                    <div class="trade-type-selector" id="tradeTypeSelector" style="display: none;">
+                        <button class="trade-type-btn long-breakout active" data-type="long-breakout">Лонг Пробой</button>
+                        <button class="trade-type-btn long-fakeout" data-type="long-fakeout">Лонг Ложный пробой</button>
+                        <button class="trade-type-btn short-breakout" data-type="short-breakout">Шорт Пробой</button>
+                        <button class="trade-type-btn short-fakeout" data-type="short-fakeout">Шорт Ложный пробой</button>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="entryPrice">Цена входа (USDT)</label>
+                        <input type="number" id="entryPrice" min="0" step="0.00000001" value="100.00">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="leverage">Кредитное плечо</label>
+                        <div class="leverage-container">
+                            <input type="range" id="leverage" min="1" max="100" value="10">
+                            <span class="leverage-value" id="leverageValue">10x</span>
+                        </div>
+                        <div class="leverage-warning" id="leverageWarning">
+                            Высокое плечо увеличивает риск ликвидации!
+                        </div>
+                    </div>
+
+                    <!-- Переключатель способа ввода стоп-лосса -->
+                    <div class="stop-method-selector">
+                        <button class="stop-method-btn active" data-method="atr">По ATR</button>
+                        <button class="stop-method-btn" data-method="price">По цене</button>
+                    </div>
+
+                    <!-- Группа ввода по ATR -->
+                    <div class="stop-input-group active" id="atr-group">
+                        <div class="input-group">
+                            <label for="atr">ATR (USDT)</label>
+                            <input type="number" id="atr" min="0" step="0.00000001" value="5.00">
+                            <div class="preview-value">
+                                Размер ATR: <span id="atrValue">5.00 USDT</span>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="riskPercent">Риск стоп-лосс (% от ATR)</label>
+                            <div class="slider-container">
+                                <input type="range" id="riskPercent" min="1" max="100" value="10">
+                                <span class="slider-value" id="riskPercentValue">10</span>%
+                            </div>
+                            <div class="preview-value">
+                                Стоп-лосс: минус <span id="previewAtrPercent">0.50 USDT</span> (<span
+                                    id="previewAtrPercentValue">10%</span> от ATR)
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Группа ввода по цене -->
+                    <div class="stop-input-group" id="price-group">
+                        <div class="input-group">
+                            <label for="stopLossPrice">Цена стоп-лосса (USDT)</label>
+                            <input type="number" id="stopLossPrice" min="0" step="0.00000001">
+                            <div class="preview-value">
+                                Разница: <span id="priceDifference">0.00 USDT</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="riskAmount">Риск на сделку (USDT)</label>
+                        <input type="number" id="riskAmount" min="0" step="0.00000001" value="100.00">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="rewardRatio1">Соотношение тейк-профита (1:X)</label>
+                        <div class="slider-container">
+                            <input type="range" id="rewardRatio1" min="1" max="20" value="3">
+                            <span class="slider-value" id="rewardRatio1Value">3</span>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="rewardRatio2">Дополнительный тейк-профит (1:X)</label>
+                        <div class="slider-container">
+                            <input type="range" id="rewardRatio2" min="1" max="20" value="5">
+                            <span class="slider-value" id="rewardRatio2Value">5</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">Результаты</div>
+
+                    <div class="result-item">
+                        <span>Цена входа:</span>
+                        <span class="result-value" id="entryPriceResult">100.00 USDT</span>
+                    </div>
+
+                    <div class="result-item">
+                        <span>Размер позиции:</span>
+                        <span class="result-value" id="positionSize">200.0000</span>
+                    </div>
+
+                    <div class="result-item">
+                        <span>Стоп-лосс:</span>
+                        <span class="result-value loss" id="stopLoss">99.50 USDT</span>
+                    </div>
+
+                    <div class="result-item">
+                        <span>ATR:</span>
+                        <span class="result-value" id="atrResult">5.00 USDT</span>
+                    </div>
+
+                    <div class="take-profit-levels" id="takeProfitLevels">
+                        <!-- Здесь будут динамически добавляться уровни тейк-профита -->
+                    </div>
+
+                    <div class="result-item">
+                        <span>Цена ликвидации:</span>
+                        <span class="result-value loss" id="liquidationPrice">95.00 USDT</span>
+                    </div>
+                </div>
+
+                <div class="flex gap-2">
+                    <button class="export-btn flex-1" id="exportTextBtn">
+                        <i class="fas fa-file-alt mr-2"></i>Экспорт в текст
+                    </button>
+                    <button class="export-btn flex-1" id="exportTelegramBtn">
+                        <i class="fab fa-telegram mr-2"></i>Отправить в Telegram
+                    </button>
+                </div>
+            </div>
+
+            <!-- Предпосылки Section -->
             <div class="calculator-container">
                 <h2>Предпосылки</h2>
+
                 <div class="button-container">
                     <button onclick="toggleText('breakthrough')">Пробой</button>
                     <button onclick="toggleText('falseBreakthrough')">Ложный пробой</button>
-                    <button style="background-color:#C62828;" onclick="toggleText('breakthroughMinuses')">Пробой минусы</button>
-                    <button style="background-color:#C62828;" onclick="toggleText('falseBreakthroughMinuses')">Ложный пробой минусы</button>
+                    <button style="background-color: #C62828;" onclick="toggleText('breakthroughMinuses')">Пробой минусы</button>
+                    <button style="background-color: #C62828;" onclick="toggleText('falseBreakthroughMinuses')">Ложный пробой минусы</button>
                 </div>
+
                 <div id="breakthroughText" class="text-display">
                     <h3>Пробой</h3>
+
                     <p>📊Предпосылки</p>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Ближний ретест</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Нет реакции на ЛП</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Накопление</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Закрытие вблизи уровня до 5%</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">После сильного движения нет отката</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Впереди свободная зона</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Выкупной бар</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Продажный бар</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Проторговка вблизи уровня на 1D</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Проторговка вблизи уровня на коротком таймфрейме 1ч/4ч</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Подходит поджатием на 1D</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Подходит поджатием на 1ч/4ч</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Понижающие хаи и лои на 1D </span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Понижающие хаи и лои на лок.ТФ 1ч/4ч</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Повышающие хаи и лои 1D </span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Повышающие хаи и лои на лок.ТФ 1ч/4ч </span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Затухание волатильности на 1d</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Затухание волатильности на лок.ТФ 1ч/4ч</span>
-                    </div>
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Ближний ретест</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Нет реакции на ЛП</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Накопление</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Закрытие вблизи уровня до 5%</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">После сильного движения нет отката</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Впереди свободная зона</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Выкупной бар</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Продажный бар</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Проторговка вблизи уровня на 1D</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Проторговка вблизи уровня на коротком таймфрейме 1ч/4ч</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Подходит поджатием на 1D</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Подходит поджатием на 1ч/4ч</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Понижающие хаи и лои на 1D </span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Понижающие хаи и лои на лок.ТФ 1ч/4ч</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Повышающие хаи и лои 1D </span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Повышающие хаи и лои на лок.ТФ 1ч/4ч </span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Затухание волатильности на 1d</span></div>
+
+                     <div class="checkbox-item"><input type="checkbox"><span class="item-text">Затухание волатильности  на лок.ТФ 1ч/4ч</span></div>
                 </div>
+
                 <div id="falseBreakthroughText" class="text-display">
                     <h3>Ложный пробой</h3>
+
                     <p>📊Предпосылки</p>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Дальний ретест</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Подход на больших барах</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Выход повышенные объемы перед уровням на 1ч 4ч</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Экстремум</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Впереди зараженная зона</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Длинное безоткатное движение</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Закрытие вдали от уровня мин от 10%</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Нет накопления</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Резкий подход на лок таймфрейме</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Повышенная волатильность</span>
-                    </div>
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Дальний ретест</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Подход на больших барах</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Выход повышенные объемы перед уровням на 1ч 4ч</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Экстремум</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Впереди зараженная зона</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Длинное безоткатное движение</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Закрытие вдали от уровня мин от 10%</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Нет накопления</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Резкий подход на лок таймфрейме</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Повышенная волатильность</span></div>
                 </div>
+
                 <div id="breakthroughMinusesText" class="text-display">
                     <h3>Пробой минусы</h3>
+
                     <p>⛔️ Минусы</p>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Повышенная волатильность на 1D </span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Повышенная волатильность на лок.ТФ 1ч/4ч </span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Зараженная зона на 1D</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Зараженная зона на лок.ТФ</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Глубокий ЛП</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Резкий подход на лок ТФ</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Далеко закрылись от уровня</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Пройдено больше половины ATR</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Накопление на 1ч далеко от уровня</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Выравнивание баров на лок.ТФ</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Выход повышенного объёма на лок.ТФ </span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Слабое накопление на 1D</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Слабое накопление на лок.ТФ</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Уровень часто прошивается на лок.ТФ</span>
-                    </div>
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Повышенная волатильность на 1D </span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Повышенная волатильность на лок.ТФ 1ч/4ч </span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Зараженная зона на 1D</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Зараженная зона на лок.ТФ</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Глубокий ЛП</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Резкий подход на лок ТФ</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Далеко закрылись от уровня</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Пройдено больше половины ATR</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Накопление на 1ч далеко от уровня</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Выравнивание баров на лок.ТФ</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Выход повышенного объёма на лок.ТФ </span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Слабое накопление на 1D</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Слабое накопление на лок.ТФ</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Уровень часто прошивается на лок.ТФ</span></div>
                 </div>
+
                 <div id="falseBreakthroughMinusesText" class="text-display">
                     <h3>Ложный пробой минусы</h3>
+
                     <p>⛔️ Минусы</p>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Повышенная волатильность</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">В переди свободная зона </span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox">
-                        <span class="item-text">Глубокий пробой</span>
-                    </div>
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Повышенная волатильность</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">В переди свободная зона </span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Глубокий пробой</span></div>
                 </div>
+
                 <div id="actionButtons" class="action-buttons-container">
                     <button id="copyBtn" class="action-btn" onclick="copySelectedText()">Копировать выбранное</button>
                     <button id="exportBtn" class="action-btn export-btn" onclick="exportSelectedToTelegram()">Отправить в Telegram</button>
                     <button id="resetBtn" class="reset-btn" onclick="resetCheckboxes()">Сбросить выбор</button>
                 </div>
+
                 <div id="statusMessage" class="status-message"></div>
+            </div>
+
+            <!-- Average Calculator -->
+            <div class="calculator-container average-calculator">
+                <h1>Калькулятор среднего</h1>
+                <div class="section">
+                    <div class="input-group">
+                        <label for="numbersInput">Введите числа через пробел:</label>
+                        <input type="text" id="numbersInput" placeholder="5 10 15 20 0.0000012">
+                    </div>
+                    <button onclick="calculateAverage()"
+                        style="width: 100%; padding: 10px; background: var(--accent-color); border: none; border-radius: 5px; color: white; font-weight: 600;">Рассчитать</button>
+                    <div id="result" style="margin-top: 15px;"></div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div id="notificationModal" class="fixed bottom-4 right-4 w-80 rounded-lg shadow-lg border-l-4 border-accent-green hidden" style="background-color:#1E1E1E;">
+    <div id="notificationModal"
+        class="fixed bottom-4 right-4 w-80 rounded-lg shadow-lg border-l-4 border-accent-green hidden"
+        style="background-color: #1E1E1E;">
         <div class="p-4">
             <div class="flex justify-between items-start">
                 <div class="flex-1">
@@ -441,6 +559,7 @@
         </div>
     </div>
 
+    <!-- Telegram Settings Modal -->
     <div id="telegramSettingsModal" class="edit-modal">
         <div class="edit-modal-content">
             <div class="flex justify-between items-center mb-4">
@@ -451,26 +570,38 @@
             </div>
             <div class="mb-4">
                 <p class="text-gray-300 mb-4">Для получения уведомлений в Telegram вам нужно подписаться на нашего бота:</p>
+
                 <ol class="list-decimal text-gray-300 pl-6 mb-4">
                     <li class="mb-2">Откройте Telegram и найдите нашего бота: @CryptoAlert88_bot</li>
                     <li class="mb-2">Нажмите кнопку Start в диалоге с ботом</li>
                     <li class="mb-2">Вернитесь на эту страницу и введите ваш Chat ID</li>
                 </ol>
+
                 <p class="text-gray-300 mb-4">Или отсканируйте QR-код:</p>
+
                 <div class="flex justify-center mb-4">
                     <div class="bg-white p-2">
-                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://t.me/CryptoAlert88_bot" alt="QR Code">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://t.me/CryptoAlert88_bot"
+                            alt="QR Code">
                     </div>
                 </div>
+
                 <div class="mb-4">
                     <label class="block text-gray-300 text-sm font-medium mb-2">Ваш Chat ID</label>
-                    <input type="text" id="telegramChatId" placeholder="Ваш Chat ID" class="w-full px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary" value="">
+                    <input type="text" id="telegramChatId" placeholder="Ваш Chat ID"
+                        class="w-full px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+                        value="">
                 </div>
-                <button onclick="saveTelegramSettings()" class="btn-primary w-full text-white py-2 px-4 rounded-md font-medium text-sm"> Сохранить настройки </button>
+
+                <button onclick="saveTelegramSettings()"
+                    class="btn-primary w-full text-white py-2 px-4 rounded-md font-medium text-sm">
+                    Сохранить настройки
+                </button>
             </div>
         </div>
     </div>
 
+    <!-- Bot Connection Hint Modal -->
     <div id="botConnectionHint" class="edit-modal">
         <div class="edit-modal-content">
             <div class="flex justify-between items-center mb-4">
@@ -488,7 +619,9 @@
         </div>
     </div>
 
-    <div id="loginModal" class="fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-80 flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-300">
+    <!-- Login Modal -->
+    <div id="loginModal"
+        class="fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-80 flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-300">
         <div class="bg-dark rounded-lg p-6 w-full max-w-md">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-xl font-bold text-primary">Вход в аккаунт</h3>
@@ -505,12 +638,17 @@
                     <label for="loginPassword">Пароль</label>
                     <input type="password" id="loginPassword" placeholder="Ваш пароль">
                 </div>
-                <button onclick="handleLogin()" class="btn-primary w-full text-white py-2 px-4 rounded-md font-medium mt-4"> Войти </button>
+                <button onclick="handleLogin()"
+                    class="btn-primary w-full text-white py-2 px-4 rounded-md font-medium mt-4">
+                    Войти
+                </button>
             </div>
         </div>
     </div>
 
-    <div id="registerModal" class="fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-80 flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-300">
+    <!-- Register Modal -->
+    <div id="registerModal"
+        class="fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-80 flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-300">
         <div class="bg-dark rounded-lg p-6 w-full max-w-md">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-xl font-bold text-primary">Регистрация</h3>
@@ -531,9 +669,14 @@
                     <label for="registerConfirmPassword">Подтвердите пароль</label>
                     <input type="password" id="registerConfirmPassword" placeholder="Повторите пароль">
                 </div>
-                <button onclick="handleRegister()" class="btn-primary w-full text-white py-2 px-4 rounded-md font-medium mt-4"> Зарегистрироваться </button>
+                <button onclick="handleRegister()"
+                    class="btn-primary w-full text-white py-2 px-4 rounded-md font-medium mt-4">
+                    Зарегистрироваться
+                </button>
             </div>
         </div>
     </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
