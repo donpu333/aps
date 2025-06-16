@@ -21,7 +21,7 @@ let alertCooldowns = {};
 let apiManager;
 let activeTriggeredAlerts = {};
 
-// Глобальные переменные для калькулятора рисков
+// Глобальные переменные для калькулятора риска
 let isLong = true;
 let stopMethod = 'atr';
 let tradeType = 'long-breakout';
@@ -45,6 +45,7 @@ function handleRegister() {
     const password = document.getElementById('registerPassword').value;
     const confirmPassword = document.getElementById('registerConfirmPassword')?.value;
 
+    // Валидация полей
     if (!email || !password || !confirmPassword) {
         showNotification('Ошибка', 'Все поля обязательны для заполнения');
         return;
@@ -65,6 +66,7 @@ function handleRegister() {
         return;
     }
 
+    // Проверяем, есть ли уже такой пользователь
     const users = JSON.parse(localStorage.getItem('users') || '[]');
     const userExists = users.some(user => user.email === email);
 
@@ -73,23 +75,27 @@ function handleRegister() {
         return;
     }
 
+    // Создаем нового пользователя
     const newUser = {
         email: email,
-        password: btoa(password),
+        password: btoa(password), // Простое шифрование (не безопасно для продакшена!)
         createdAt: new Date().toISOString(),
         alerts: [],
         telegramSettings: {
-            botToken: TG_BOT_TOKEN,
+            botToken: '',
             chatId: ''
         }
     };
 
+    // Сохраняем пользователя
     users.push(newUser);
     localStorage.setItem('users', JSON.stringify(users));
     localStorage.setItem('currentUser', JSON.stringify({ email: email }));
 
     showNotification('Успех', 'Регистрация прошла успешно!');
     closeRegisterModal();
+
+    // Обновляем интерфейс для зарегистрированного пользователя
     updateUserUI(email);
 }
 
@@ -131,572 +137,19 @@ function updateUserUI(email) {
     const logoutMenuItem = document.getElementById('logoutMenuItem');
 
     if (email) {
+        // Пользователь авторизован
         if (userProfileBtn) userProfileBtn.classList.remove('hidden');
         if (userName) userName.textContent = email.split('@')[0];
         if (loginMenuItem) loginMenuItem.classList.add('hidden');
         if (registerMenuItem) registerMenuItem.classList.add('hidden');
         if (logoutMenuItem) logoutMenuItem.classList.remove('hidden');
     } else {
+        // Гость
         if (userProfileBtn) userProfileBtn.classList.add('hidden');
         if (loginMenuItem) loginMenuItem.classList.remove('hidden');
         if (registerMenuItem) registerMenuItem.classList.remove('hidden');
         if (logoutMenuItem) logoutMenuItem.classList.add('hidden');
     }
-}
-
-// Функции для работы с Telegram
-function showTelegramSettings() {
-    const modal = document.getElementById('telegramSettingsModal');
-    if (modal) {
-        modal.classList.add('active');
-    }
-
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const user = users.find(u => u.email === currentUser?.email);
-
-    if (user) {
-        document.getElementById('telegramChatId').value = user.telegramSettings?.chatId || '';
-    }
-}
-
-function closeTelegramSettingsModal() {
-    const modal = document.getElementById('telegramSettingsModal');
-    if (modal) {
-        modal.classList.remove('active');
-    }
-}
-
-function saveTelegramSettings() {
-    const chatId = document.getElementById('telegramChatId').value.trim();
-
-    if (!chatId) {
-        showNotification('Ошибка', 'Пожалуйста, укажите Chat ID');
-        return;
-    }
-
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    if (!currentUser || !currentUser.email) {
-        showNotification('Ошибка', 'Пользователь не авторизован');
-        return;
-    }
-
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const userIndex = users.findIndex(u => u.email === currentUser.email);
-
-    if (userIndex !== -1) {
-        if (!users[userIndex].telegramSettings) {
-            users[userIndex].telegramSettings = {};
-        }
-
-        users[userIndex].telegramSettings.chatId = chatId;
-        localStorage.setItem('users', JSON.stringify(users));
-
-        showNotification('Успех', 'Настройки Telegram сохранены');
-        closeTelegramSettingsModal();
-    } else {
-        showNotification('Ошибка', 'Пользователь не найден');
-    }
-}
-
-async function testTelegramConnection() {
-    const chatId = document.getElementById('telegramChatId').value.trim();
-
-    if (!chatId) {
-        showNotification('Ошибка', 'Пожалуйста, укажите Chat ID');
-        return;
-    }
-
-    try {
-        const response = await fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                chat_id: chatId,
-                text: '✅ Проверка связи: Crypto Calculator успешно подключен к вашему Telegram!',
-                parse_mode: 'Markdown'
-            })
-        });
-
-        const data = await response.json();
-
-        if (data.ok) {
-            showNotification('Успех', 'Сообщение успешно отправлено в Telegram!');
-        } else {
-            showNotification('Ошибка', `Ошибка при отправке: ${data.description || 'неизвестная ошибка'}`);
-        }
-    } catch (error) {
-        showNotification('Ошибка', `Ошибка соединения: ${error.message}`);
-    }
-}
-
-async function sendToTelegram() {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const user = users.find(u => u.email === currentUser?.email);
-
-    if (!user || !user.telegramSettings || !user.telegramSettings.chatId) {
-        showNotification('Ошибка', 'Настройки Telegram не найдены');
-        return;
-    }
-
-    const chatId = user.telegramSettings.chatId;
-    const entryPrice = parseFloat(document.getElementById('entryPrice').value) || 0;
-    const leverage = parseFloat(document.getElementById('leverage').value) || 1;
-    const riskAmount = parseFloat(document.getElementById('riskAmount').value) || 0;
-    const atr = parseFloat(document.getElementById('atr').value) || 0;
-    const riskPercent = parseFloat(document.getElementById('riskPercent').value) || 0;
-
-    let tradeTypeName = '';
-    switch (tradeType) {
-        case 'long-breakout': tradeTypeName = 'Лонг Пробой'; break;
-        case 'long-fakeout': tradeTypeName = 'Лонг Ложный пробой'; break;
-        case 'short-breakout': tradeTypeName = 'Шорт Пробой'; break;
-        case 'short-fakeout': tradeTypeName = 'Шорт Ложный пробой'; break;
-    }
-
-    const stopMethodName = stopMethod === 'atr' ? 'По ATR' : 'По цене';
-
-    const messageText = `
-📊 Результаты расчета позиции 📊
-
-Направление: ${isLong ? 'Лонг' : 'Шорт'} (${tradeTypeName})
-Цена входа: ${formatNumber(entryPrice, 8)} USDT
-Плечо: ${leverage}x
-Стоп-лосс: ${stopMethod === 'price' ? formatNumber(document.getElementById('stopLossPrice').value, 8) + ' USDT (расчётный)' : formatNumber(atr * riskPercent / 100, 8) + ' USDT (' + riskPercent + '% от ATR)'}
-Риск на сделку: ${formatNumber(riskAmount, 8)} USDT
-Метод расчета стоп-лосса: ${stopMethodName}
-
-Размер позиции: ${formatNumber(document.getElementById('positionSize').textContent.split(' ')[0], 8)}
-Стоп-лосс: ${formatNumber(document.getElementById('stopLoss').textContent.split(' ')[0], 8)} USDT
-
-Тейк-профиты:
-${Array.from(document.getElementById('takeProfitLevels').children).map(el => {
-    const parts = el.textContent.trim().split(/\s+/);
-    return `• ${parts[0]} ${parts[1]} ${formatNumber(parts[2], 8)} USDT ${parts[3]} ${formatNumber(parts[4], 8)} USDT`;
-}).join('\n')}
-
-Цена ликвидации: ${formatNumber(document.getElementById('liquidationPrice').textContent.split(' ')[0], 8)} USDT
-`;
-
-    try {
-        const response = await fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                chat_id: chatId,
-                text: messageText,
-                parse_mode: 'Markdown'
-            })
-        });
-
-        const data = await response.json();
-
-        if (data.ok) {
-            showNotification('Успех', 'Расчет успешно отправлен в Telegram!');
-        } else {
-            showNotification('Ошибка', `Ошибка при отправке: ${data.description || 'неизвестная ошибка'}`);
-        }
-    } catch (error) {
-        showNotification('Ошибка', `Ошибка соединения: ${error.message}`);
-    }
-}
-
-// Функция для показа уведомлений
-function showNotification(title, message) {
-    const modal = document.getElementById('notificationModal');
-    const notificationTitle = document.getElementById('notificationTitle');
-    const notificationMessage = document.getElementById('notificationMessage');
-
-    if (!modal || !notificationTitle || !notificationMessage) return;
-
-    notificationTitle.textContent = title;
-    notificationMessage.textContent = message;
-
-    modal.classList.remove('hidden');
-    setTimeout(() => {
-        modal.classList.add('hidden');
-    }, 5000);
-}
-
-// Risk Calculator Functions
-function initCalculator() {
-    const longBtn = document.getElementById('longBtn');
-    const shortBtn = document.getElementById('shortBtn');
-    const entryPriceInput = document.getElementById('entryPrice');
-    const leverageInput = document.getElementById('leverage');
-    const leverageValue = document.getElementById('leverageValue');
-    const leverageWarning = document.getElementById('leverageWarning');
-    const atrInput = document.getElementById('atr');
-    const riskPercentInput = document.getElementById('riskPercent');
-    const riskPercentValue = document.getElementById('riskPercentValue');
-    const riskAmountInput = document.getElementById('riskAmount');
-    const rewardRatio1Input = document.getElementById('rewardRatio1');
-    const rewardRatio1Value = document.getElementById('rewardRatio1Value');
-    const rewardRatio2Input = document.getElementById('rewardRatio2');
-    const rewardRatio2Value = document.getElementById('rewardRatio2Value');
-    const atrValueSpan = document.getElementById('atrValue');
-    const previewAtrPercent = document.getElementById('previewAtrPercent');
-    const previewAtrPercentValue = document.getElementById('previewAtrPercentValue');
-    const stopLossPriceInput = document.getElementById('stopLossPrice');
-    const positionSizeSpan = document.getElementById('positionSize');
-    const stopLossSpan = document.getElementById('stopLoss');
-    const takeProfitLevelsDiv = document.getElementById('takeProfitLevels');
-    const liquidationPriceSpan = document.getElementById('liquidationPrice');
-    const atrResultSpan = document.getElementById('atrResult');
-
-    leverageInput.value = 10;
-    leverageValue.textContent = '10x';
-    atrInput.value = 5.00;
-    atrValueSpan.textContent = '5.00 USDT';
-    atrResultSpan.textContent = '5.00 USDT';
-    riskPercentInput.value = 27;
-    riskPercentValue.textContent = '27';
-    previewAtrPercent.textContent = '1.35 USDT';
-    previewAtrPercentValue.textContent = '27%';
-
-    longBtn.addEventListener('click', () => {
-        isLong = true;
-        longBtn.classList.add('active');
-        shortBtn.classList.remove('active');
-        updateTradeTypeButtons();
-        calculateRisk();
-    });
-
-    shortBtn.addEventListener('click', () => {
-        isLong = false;
-        shortBtn.classList.add('active');
-        longBtn.classList.remove('active');
-        updateTradeTypeButtons();
-        calculateRisk();
-    });
-
-    const tradeTypeButtons = document.querySelectorAll('.trade-type-btn');
-    tradeTypeButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            tradeType = button.dataset.type;
-            tradeTypeButtons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
-            calculateRisk();
-        });
-    });
-
-    entryPriceInput.addEventListener('input', calculateRisk);
-    leverageInput.addEventListener('input', () => {
-        leverageValue.textContent = leverageInput.value + 'x';
-        leverageWarning.style.display = leverageInput.value > 10 ? 'block' : 'none';
-        calculateRisk();
-    });
-
-    atrInput.addEventListener('input', () => {
-        updateAtrPreview();
-        calculateRisk();
-    });
-
-    riskPercentInput.addEventListener('input', () => {
-        updateSliderValues();
-        updateAtrPreview();
-        calculateRisk();
-    });
-
-    riskAmountInput.addEventListener('input', calculateRisk);
-    rewardRatio1Input.addEventListener('input', () => {
-        updateSliderValues();
-        calculateRisk();
-    });
-
-    rewardRatio2Input.addEventListener('input', () => {
-        updateSliderValues();
-        calculateRisk();
-    });
-
-    const stopMethodButtons = document.querySelectorAll('.stop-method-btn');
-    stopMethodButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            stopMethod = button.dataset.method;
-            stopMethodButtons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
-            document.getElementById('atr-group').classList.remove('active');
-            document.getElementById('price-group').classList.remove('active');
-
-            if (stopMethod === 'atr') {
-                document.getElementById('atr-group').classList.add('active');
-            } else {
-                document.getElementById('price-group').classList.add('active');
-            }
-            calculateRisk();
-        });
-    });
-
-    stopLossPriceInput.addEventListener('input', () => {
-        const entryPrice = parseFloat(entryPriceInput.value) || 0;
-        const stopLossPrice = parseFloat(stopLossPriceInput.value) || 0;
-        const priceDifferenceSpan = document.getElementById('priceDifference');
-
-        if (entryPrice > 0 && stopLossPrice > 0) {
-            const difference = Math.abs(entryPrice - stopLossPrice);
-            priceDifferenceSpan.textContent = formatNumber(difference, 8) + ' USDT';
-        } else {
-            priceDifferenceSpan.textContent = '0 USDT';
-        }
-        calculateRisk();
-    });
-
-    document.getElementById('exportTextBtn').addEventListener('click', exportToText);
-    document.getElementById('exportTelegramBtn').addEventListener('click', sendToTelegram);
-}
-
-function updateTradeTypeButtons() {
-    const tradeTypeSelector = document.getElementById('tradeTypeSelector');
-    tradeTypeSelector.style.display = 'flex';
-
-    const longBreakoutBtn = document.querySelector('.trade-type-btn.long-breakout');
-    const longFakeoutBtn = document.querySelector('.trade-type-btn.long-fakeout');
-    const shortBreakoutBtn = document.querySelector('.trade-type-btn.short-breakout');
-    const shortFakeoutBtn = document.querySelector('.trade-type-btn.short-fakeout');
-
-    if (isLong) {
-        longBreakoutBtn.style.display = '';
-        longFakeoutBtn.style.display = '';
-        shortBreakoutBtn.style.display = 'none';
-        shortFakeoutBtn.style.display = 'none';
-        tradeType = 'long-breakout';
-        longBreakoutBtn.classList.add('active');
-        longFakeoutBtn.classList.remove('active');
-    } else {
-        longBreakoutBtn.style.display = 'none';
-        longFakeoutBtn.style.display = 'none';
-        shortBreakoutBtn.style.display = '';
-        shortFakeoutBtn.style.display = '';
-        tradeType = 'short-breakout';
-        shortBreakoutBtn.classList.add('active');
-        shortFakeoutBtn.classList.remove('active');
-    }
-}
-
-function updateSliderValues() {
-    const riskPercentValue = document.getElementById('riskPercentValue');
-    const rewardRatio1Value = document.getElementById('rewardRatio1Value');
-    const rewardRatio2Value = document.getElementById('rewardRatio2Value');
-
-    riskPercentValue.textContent = document.getElementById('riskPercent').value;
-    rewardRatio1Value.textContent = document.getElementById('rewardRatio1').value;
-    rewardRatio2Value.textContent = document.getElementById('rewardRatio2').value;
-}
-
-function updateAtrPreview() {
-    const atr = parseFloat(document.getElementById('atr').value) || 0;
-    const riskPercent = parseFloat(document.getElementById('riskPercent').value) / 100;
-    const atrValueSpan = document.getElementById('atrValue');
-    const previewAtrPercent = document.getElementById('previewAtrPercent');
-    const previewAtrPercentValue = document.getElementById('previewAtrPercentValue');
-    const atrResultSpan = document.getElementById('atrResult');
-
-    atrValueSpan.textContent = formatNumber(atr, 8) + ' USDT';
-    previewAtrPercent.textContent = formatNumber(atr * riskPercent, 8) + ' USDT';
-    previewAtrPercentValue.textContent = document.getElementById('riskPercent').value + '%';
-    atrResultSpan.textContent = formatNumber(atr, 8) + ' USDT';
-}
-
-function calculateLiquidationPrice(entryPrice, leverage, isLong) {
-    if (leverage <= 1) return isLong ? 0 : Infinity;
-
-    if (isLong) {
-        return Math.max(0, entryPrice * (1 - (1 / leverage)));
-    } else {
-        return entryPrice * (1 + (1 / leverage));
-    }
-}
-
-function calculateRisk() {
-    const entryPrice = parseFloat(document.getElementById('entryPrice').value) || 0;
-    const leverage = parseFloat(document.getElementById('leverage').value) || 1;
-    const atr = parseFloat(document.getElementById('atr').value) || 0;
-    const riskPercent = parseFloat(document.getElementById('riskPercent').value) / 100;
-    const riskAmount = parseFloat(document.getElementById('riskAmount').value) || 0;
-    const rewardRatio1 = parseFloat(document.getElementById('rewardRatio1').value) || 3;
-    const rewardRatio2 = parseFloat(document.getElementById('rewardRatio2').value) || 5;
-    const stopLossPriceDirect = parseFloat(document.getElementById('stopLossPrice').value) || 0;
-
-    let stopLossPrice;
-    if (stopMethod === 'atr') {
-        if (isLong) {
-            stopLossPrice = entryPrice - (atr * riskPercent);
-        } else {
-            stopLossPrice = entryPrice + (atr * riskPercent);
-        }
-    } else {
-        if (stopLossPriceDirect > 0) {
-            if ((isLong && stopLossPriceDirect < entryPrice) || (!isLong && stopLossPriceDirect > entryPrice)) {
-                stopLossPrice = stopLossPriceDirect;
-            } else {
-                if (isLong) {
-                    stopLossPrice = entryPrice - (atr * riskPercent);
-                } else {
-                    stopLossPrice = entryPrice + (atr * riskPercent);
-                }
-                document.getElementById('stopLossPrice').value = formatNumber(stopLossPrice, 8);
-            }
-        } else {
-            if (isLong) {
-                stopLossPrice = entryPrice - (atr * riskPercent);
-            } else {
-                stopLossPrice = entryPrice + (atr * riskPercent);
-            }
-        }
-    }
-
-    const priceDifference = Math.abs(entryPrice - stopLossPrice);
-    const positionSize = priceDifference > 0 ? (riskAmount / priceDifference) : 0;
-    const liquidationPrice = calculateLiquidationPrice(entryPrice, leverage, isLong);
-
-    document.getElementById('entryPriceResult').textContent = `${formatNumber(entryPrice, 8)} USDT`;
-    document.getElementById('positionSize').textContent = formatNumber(positionSize, 8);
-    document.getElementById('stopLoss').textContent = `${formatNumber(stopLossPrice, 8)} USDT`;
-    document.getElementById('liquidationPrice').textContent = `${formatNumber(liquidationPrice, 8)} USDT`;
-
-    generateTakeProfitLevels(entryPrice, stopLossPrice, isLong, rewardRatio1, rewardRatio2, positionSize);
-}
-
-function generateTakeProfitLevels(entryPrice, stopLossPrice, isLong, ratio1, ratio2, positionSize) {
-    const takeProfitLevelsDiv = document.getElementById('takeProfitLevels');
-    takeProfitLevelsDiv.innerHTML = '';
-
-    const levels = [ratio1, ratio2];
-
-    levels.forEach(ratio => {
-        let takeProfitPrice;
-        if (isLong) {
-            takeProfitPrice = entryPrice + (entryPrice - stopLossPrice) * ratio;
-        } else {
-            takeProfitPrice = entryPrice - (stopLossPrice - entryPrice) * ratio;
-        }
-
-        const priceDiff = Math.abs(takeProfitPrice - entryPrice);
-        const profit = priceDiff * positionSize;
-
-        const levelDiv = document.createElement('div');
-        levelDiv.className = 'take-profit-item';
-        levelDiv.innerHTML = `
-            <span class="take-profit-ratio">Тейк-профит 1к${ratio}</span>
-            <span class="take-profit-price">${formatNumber(takeProfitPrice, 8)} USDT</span>
-            <span class="take-profit-value">+${formatNumber(profit, 8)} USDT</span>
-        `;
-        takeProfitLevelsDiv.appendChild(levelDiv);
-    });
-}
-
-function exportToText() {
-    const entryPrice = parseFloat(document.getElementById('entryPrice').value) || 0;
-    const leverage = parseFloat(document.getElementById('leverage').value) || 1;
-    const atr = parseFloat(document.getElementById('atr').value) || 0;
-    const riskPercent = parseFloat(document.getElementById('riskPercent').value);
-    const riskAmount = parseFloat(document.getElementById('riskAmount').value) || 0;
-    const rewardRatio1 = parseFloat(document.getElementById('rewardRatio1').value) || 3;
-    const rewardRatio2 = parseFloat(document.getElementById('rewardRatio2').value) || 5;
-
-    let tradeTypeName = '';
-    switch (tradeType) {
-        case 'long-breakout': tradeTypeName = 'Лонг Пробой'; break;
-        case 'long-fakeout': tradeTypeName = 'Лонг Ложный пробой'; break;
-        case 'short-breakout': tradeTypeName = 'Шорт Пробой'; break;
-        case 'short-fakeout': tradeTypeName = 'Шорт Ложный пробой'; break;
-    }
-
-    const stopMethodName = stopMethod === 'atr' ? 'По ATR' : 'По цене';
-
-    const content = `
-Калькулятор рисков - Результаты
-===============================
-Дата: ${new Date().toLocaleString()}
-Направление: ${isLong ? 'Лонг' : 'Шорт'}
-Тип сделки: ${tradeTypeName}
-Метод расчета стоп-лосса: ${stopMethodName}
-
-Параметры сделки:
------------------
-Цена входа: ${formatNumber(entryPrice, 8)} USDT
-Кредитное плечо: ${leverage}x
-${stopMethod === 'atr' ? `ATR: ${formatNumber(atr, 8)} USDT\nРиск стоп-лосс: ${riskPercent}% от ATR` : `Цена стоп-лосса: ${formatNumber(document.getElementById('stopLossPrice').value, 8)} USDT`}
-Риск на сделку: ${formatNumber(riskAmount, 8)} USDT
-Соотношение тейк-профита: 1:${rewardRatio1} и 1:${rewardRatio2}
-
-Результаты:
------------
-Цена входа: ${formatNumber(entryPrice, 8)} USDT
-Размер позиции: ${document.getElementById('positionSize').textContent}
-Стоп-лосс: ${document.getElementById('stopLoss').textContent}
-
-Уровни тейк-профита:
-${Array.from(document.getElementById('takeProfitLevels').children).map(el =>
-    el.textContent.trim().replace(/\s+/g, ' ')
-).join('\n')}
-
-Цена ликвидации: ${document.getElementById('liquidationPrice').textContent}
-    `;
-
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'расчет_рисков.txt';
-    a.click();
-    URL.revokeObjectURL(url);
-}
-
-// Калькулятор среднего
-function calculateAverage() {
-    const input = document.getElementById('numbersInput').value.trim();
-    const resultDiv = document.getElementById('result');
-
-    if (!input) {
-        resultDiv.innerHTML = '<p style="color: #F44336;">Введите числа!</p>';
-        return;
-    }
-
-    let numbers;
-    try {
-        numbers = input.split(' ')
-            .map(num => num.replace(',', '.'))
-            .filter(num => num !== '')
-            .map(num => {
-                const parsed = parseFloat(num);
-                if (isNaN(parsed)) {
-                    throw new Error();
-                }
-                return parsed;
-            });
-
-        if (numbers.length === 0) {
-            throw new Error();
-        }
-    } catch {
-        resultDiv.innerHTML = '<p style="color: #F44336;">Ошибка: вводите только числа, разделённые пробелами!</p>';
-        return;
-    }
-
-    const sum = numbers.reduce((sum, num) => sum + num, 0);
-    const count = numbers.length;
-    const mean = sum / count;
-    const deviations = numbers.map(num => num - mean);
-
-    resultDiv.innerHTML = `
-        <div style="background: rgba(30,30,30,0.5); padding: 10px; border-radius: 5px;">
-            <p><strong>Чисел:</strong> ${count}</p>
-            <p><strong>Сумма:</strong> ${formatNumber(sum, 8)}</p>
-            <p><strong>Среднее:</strong> ${formatNumber(mean, 8)}</p>
-            <p><strong>Отклонения:</strong></p>
-            <ul style="padding-left: 20px;">
-                ${numbers.map((num, i) =>
-                    `<li>${formatNumber(num, 8)} - ${formatNumber(mean, 8)} = ${formatNumber(deviations[i], 8)}</li>`
-                ).join('')}
-            </ul>
-        </div>
-    `;
 }
 
 // Функция для сохранения сработавшего алерта в историю
@@ -717,8 +170,21 @@ function loadTriggeredAlerts() {
 // Сохраняем состояние приложения
 function saveAppState() {
     try {
+        // Сохраняем алерты
         localStorage.setItem('cryptoAlerts', JSON.stringify(userAlerts));
+
+        // Сохраняем текущий фильтр
         localStorage.setItem('alertFilter', currentAlertFilter);
+
+        // Сохраняем настройки Telegram
+        const telegramCheckbox = document.getElementById('telegram');
+        const tgSettings = {
+            chatId: localStorage.getItem('tg_chat_id'),
+            enabled: telegramCheckbox ? telegramCheckbox.checked : false
+        };
+        localStorage.setItem('tgSettings', JSON.stringify(tgSettings));
+
+        console.log("Состояние сохранено");
         return true;
     } catch (error) {
         console.error("Ошибка при сохранении состояния:", error);
@@ -729,20 +195,40 @@ function saveAppState() {
 // Загружаем состояние приложения
 function loadAppState() {
     try {
+        // Загружаем алерты
         const savedAlerts = localStorage.getItem('cryptoAlerts');
         if (savedAlerts) {
             userAlerts = JSON.parse(savedAlerts);
         }
 
+        // Загружаем фильтр
         const savedFilter = localStorage.getItem('alertFilter');
         if (savedFilter) {
             currentAlertFilter = savedFilter;
         }
 
+        // Загружаем настройки Telegram
+        const tgSettings = JSON.parse(localStorage.getItem('tgSettings') || '{}');
+        if (tgSettings.chatId) {
+            localStorage.setItem('tg_chat_id', tgSettings.chatId);
+            const userChatId = document.getElementById('userChatId');
+            if (userChatId) {
+                userChatId.value = tgSettings.chatId;
+                userChatId.classList.remove('hidden');
+            }
+        }
+
+        if (tgSettings.enabled !== undefined) {
+            const telegramCheckbox = document.getElementById('telegram');
+            if (telegramCheckbox) {
+                telegramCheckbox.checked = tgSettings.enabled;
+            }
+        }
+
         console.log("Состояние загружено");
         return true;
     } catch (error) {
-        console.error("Ошибка при загрузке состояния:", error);
+        console.error("Ошибка при загрузении состояния:", error);
         return false;
     }
 }
@@ -914,6 +400,7 @@ async function exportAllActiveAlerts() {
         return;
     }
 
+    // Формируем сообщение
     let message = '📋 Список активных алертов:\n\n';
     activeAlerts.forEach((alert, index) => {
         message += `${index + 1}. ${alert.symbol} ${alert.condition} ${alert.value}\n`;
@@ -997,6 +484,7 @@ function hideValidationError(fieldId) {
 function validateForm() {
     let isValid = true;
 
+    // Проверка подключения к боту если Telegram выбран
     const telegramCheckbox = document.getElementById('telegram');
     if (telegramCheckbox && telegramCheckbox.checked) {
         const chatId = localStorage.getItem('tg_chat_id') || document.getElementById('userChatId')?.value;
@@ -1006,6 +494,7 @@ function validateForm() {
         }
     }
 
+    // Проверка криптовалюты
     const coinSearch = document.getElementById('coinSearch');
     const symbol = document.getElementById('symbol');
 
@@ -1016,6 +505,7 @@ function validateForm() {
         hideValidationError('coinSearch');
     }
 
+    // Проверка значения
     const value = document.getElementById('value');
     if (!value || !value.value.trim()) {
         showValidationError('value', 'Пожалуйста, укажите значение');
@@ -1027,6 +517,7 @@ function validateForm() {
         hideValidationError('value');
     }
 
+    // Валидация Telegram Chat ID
     if (telegramCheckbox && telegramCheckbox.checked) {
         const userChatId = document.getElementById('userChatId');
         if (!userChatId || !userChatId.value.trim()) {
@@ -1035,6 +526,7 @@ function validateForm() {
         }
     }
 
+    // Валидация email
     const emailCheckbox = document.getElementById('email');
     if (emailCheckbox && emailCheckbox.checked) {
         const userEmail = document.getElementById('userEmail');
@@ -1055,6 +547,7 @@ function validateForm() {
 function validateEditForm() {
     let isValid = true;
 
+    // Проверка значения
     const value = document.getElementById('editValue');
     if (!value || !value.value.trim()) {
         showValidationError('editValue', 'Пожалуйста, укажите значение');
@@ -1071,6 +564,7 @@ function validateEditForm() {
 
 async function loadMarketData() {
     try {
+        // Проверяем соединение перед загрузкой данных
         if (!apiManager.connectionState.connected) {
             const connected = await apiManager.checkAPIConnection();
             if (!connected) {
@@ -1078,6 +572,7 @@ async function loadMarketData() {
             }
         }
 
+        // Загрузка фьючерсных данных
         const futuresResponse = await fetch('https://fapi.binance.com/fapi/v1/exchangeInfo');
         if (!futuresResponse.ok) throw new Error(`Futures API error: ${futuresResponse.status}`);
         const futuresData = await futuresResponse.json();
@@ -1092,6 +587,7 @@ async function loadMarketData() {
                 marketType: 'futures'
             }));
 
+        // Загрузка спотовых данных
         const spotResponse = await fetch('https://api.binance.com/api/v3/exchangeInfo');
         if (!spotResponse.ok) throw new Error(`Spot API error: ${spotResponse.status}`);
         const spotData = await spotResponse.json();
@@ -1180,9 +676,11 @@ async function createAlertForSymbol(symbol, currentPrice) {
     valueInput.value = currentPrice;
     symbolInput.classList.add('hidden');
 
+    // Скрываем ошибки валидации при выборе из списка
     hideValidationError('coinSearch');
     hideValidationError('value');
 
+    // Получаем текущую цену и показываем её
     const currentPriceValue = await apiManager.getCurrentPrice(symbol, marketType);
     if (currentPriceValue !== null) {
         const currentPriceContainer = document.getElementById('currentPriceContainer');
@@ -1196,6 +694,7 @@ async function createAlertForSymbol(symbol, currentPrice) {
 
 async function addUserAlert(symbol, type, condition, value, notificationMethods, notificationCount, chatId) {
     try {
+        // Проверяем наличие подключения для Telegram
         if (notificationMethods.includes('telegram')) {
             const savedChatId = localStorage.getItem('tg_chat_id') || chatId;
             if (!savedChatId) {
@@ -1225,6 +724,7 @@ async function addUserAlert(symbol, type, condition, value, notificationMethods,
         userAlerts.push(newAlert);
         saveAppState();
 
+        // Обновляем список алертов сразу после добавления
         loadUserAlerts(currentAlertFilter);
 
         return true;
@@ -1403,6 +903,7 @@ function loadUserAlerts(filter = 'active') {
         </div>
     `;
 
+    // Обновляем счетчики алертов
     updateAlertsCounter();
 }
 
@@ -1482,6 +983,7 @@ function openEditModal(alert) {
 
     if (!editModal || !editFormContent) return;
 
+    // Создаем HTML для формы редактирования
     editFormContent.innerHTML = `
         <form id="editAlertForm" class="space-y-4">
             <input type="hidden" id="editAlertId" value="${alert.id}">
@@ -1592,6 +1094,7 @@ function openEditModal(alert) {
         </form>
     `;
 
+    // Получаем текущую цену для отображения
     apiManager.getCurrentPrice(alert.symbol, alert.marketType).then(price => {
         if (price !== null) {
             const currentPriceValue = document.getElementById('editCurrentPriceValue');
@@ -1601,6 +1104,7 @@ function openEditModal(alert) {
         }
     });
 
+    // Назначаем обработчики событий для чекбоксов
     const telegramCheckbox = document.getElementById('editTelegram');
     if (telegramCheckbox) {
         telegramCheckbox.addEventListener('change', function() {
@@ -1637,6 +1141,7 @@ function openEditModal(alert) {
         });
     }
 
+    // Назначаем обработчик отправки формы
     const editForm = document.getElementById('editAlertForm');
     if (editForm) {
         editForm.addEventListener('submit', function(e) {
@@ -1645,6 +1150,7 @@ function openEditModal(alert) {
         });
     }
 
+    // Отображаем модальное окно
     editModal.classList.add('active');
 }
 
@@ -1685,6 +1191,7 @@ function handleEditSubmit(alertId) {
         return;
     }
 
+    // Обновляем алерт
     const updatedAlert = {
         id: parseInt(alertId),
         symbol,
@@ -1701,6 +1208,7 @@ function handleEditSubmit(alertId) {
         marketType: getMarketTypeBySymbol(symbol)
     };
 
+    // Обновляем массив алертов
     userAlerts = userAlerts.map(a => a.id === parseInt(alertId) ? updatedAlert : a);
     saveAppState();
 
@@ -1708,9 +1216,11 @@ function handleEditSubmit(alertId) {
         localStorage.setItem('userEmail', userEmail);
     }
 
+    // Обновляем интерфейс
     loadUserAlerts(currentAlertFilter);
     showNotification('Успешно', `Алерт для ${symbol} обновлен`);
 
+    // Закрываем модальное окно
     closeEditModal();
 }
 
@@ -1725,6 +1235,7 @@ function closeEditModal() {
 async function checkAlerts() {
     const now = Date.now();
 
+    // Проверка доступности бота
     try {
         const response = await fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/getMe`);
         if (!response.ok) throw new Error('Бот недоступен');
@@ -1745,7 +1256,7 @@ async function checkAlerts() {
                 const cooldownKey = `${alert.symbol}_${alert.condition}_${alert.value}`;
                 const lastNotification = alertCooldowns[cooldownKey] || 0;
 
-                if (now - lastNotification > 30000) {
+                if (now - lastNotification > 30000) { // 30 секунд кд
                     const message = `🚨 Алерт сработал!\nСимвол: ${alert.symbol}\nУсловие: ${alert.condition} ${alert.value}\nТекущая цена: ${price}`;
 
                     if (alert.notificationMethods.includes('telegram') && alert.chatId) {
@@ -1755,24 +1266,31 @@ async function checkAlerts() {
                     alert.triggeredCount++;
                     alertCooldowns[cooldownKey] = now;
 
+                    // Добавляем в активные сработавшие алерты для анимации
                     activeTriggeredAlerts[alert.id] = true;
 
+                    // Через 5 секунд убираем анимацию
                     setTimeout(() => {
                         delete activeTriggeredAlerts[alert.id];
                         loadUserAlerts(currentAlertFilter);
                     }, 5000);
 
+                    // Проверяем лимит уведомлений
                     if (alert.notificationCount > 0 && alert.triggeredCount >= alert.notificationCount) {
                         alert.triggered = true;
                         showNotification('Алерт завершен', `Алерт для ${alert.symbol} достиг лимита уведомлений (${alert.notificationCount})`);
                     }
 
+                    // Сохраняем в историю
                     saveTriggeredAlert(alert);
 
+                    // Показываем уведомление в интерфейсе
                     showNotification('Алерт сработал', `Символ: ${alert.symbol}\nУсловие: ${alert.condition} ${alert.value}\nТекущая цена: ${price}`);
 
+                    // Сохраняем изменения
                     saveAppState();
 
+                    // Обновляем интерфейс
                     loadUserAlerts(currentAlertFilter);
                 }
             }
@@ -1782,8 +1300,16 @@ async function checkAlerts() {
     }
 }
 
+// Telegram settings functions
 function openTelegramSettings() {
     const modal = document.getElementById('telegramSettingsModal');
+    const chatIdInput = document.getElementById('telegramChatId');
+    const savedChatId = localStorage.getItem('tg_chat_id');
+
+    if (chatIdInput && savedChatId) {
+        chatIdInput.value = savedChatId;
+    }
+
     if (modal) {
         modal.classList.add('active');
     }
@@ -1796,7 +1322,7 @@ function closeTelegramSettings() {
     }
 }
 
-function saveTelegramSettings() {
+async function saveTelegramSettings() {
     const chatIdInput = document.getElementById('telegramChatId');
     const userChatId = document.getElementById('userChatId');
 
@@ -1804,6 +1330,7 @@ function saveTelegramSettings() {
         const chatId = chatIdInput.value.trim();
         if (chatId) {
             try {
+                // Сохраняем chat_id в localStorage
                 localStorage.setItem('tg_chat_id', chatId);
                 localStorage.setItem('tg_enabled', 'true');
                 userChatId.value = chatId;
@@ -1821,6 +1348,7 @@ function saveTelegramSettings() {
     }
 }
 
+// Bot connection hint functions
 function showBotConnectionHint() {
     const modal = document.getElementById('botConnectionHint');
     if (modal) modal.classList.add('active');
@@ -1831,6 +1359,7 @@ function closeBotConnectionHint() {
     if (modal) modal.classList.remove('active');
 }
 
+// Menu functions
 function toggleMenu() {
     const menuContent = document.getElementById('menuContent');
     if (menuContent) {
@@ -1840,21 +1369,25 @@ function toggleMenu() {
 
 function showHome() {
     toggleMenu();
+    // Перенаправляем на главную страницу
     window.location.href = 'index.html';
 }
 
 function showCalculator() {
     toggleMenu();
+    // Перенаправляем на страницу калькулятора
     window.location.href = 'calculator.html';
 }
 
 function showAlerts() {
     toggleMenu();
+    // Перенаправляем на страницу алертов
     window.location.href = 'alerts.html';
 }
 
 function showWidget() {
     toggleMenu();
+    // Перенаправляем на страницу виджета
     window.location.href = 'widget.html';
 }
 
@@ -1893,6 +1426,7 @@ function resetForm() {
     if (alertForm) {
         alertForm.reset();
 
+        // Дополнительные сбросы
         const coinSearch = document.getElementById('coinSearch');
         if (coinSearch) {
             coinSearch.value = '';
@@ -1930,6 +1464,7 @@ function resetForm() {
             submitBtnText.textContent = 'Создать алерт';
         }
 
+        // Сбрасываем чекбоксы уведомлений к состоянию по умолчанию
         const telegramCheckbox = document.getElementById('telegram');
         if (telegramCheckbox) {
             telegramCheckbox.checked = true;
@@ -1940,6 +1475,7 @@ function resetForm() {
             emailCheckbox.checked = false;
         }
 
+        // Скрываем дополнительные поля и очищаем их
         const userChatIdInput = document.getElementById('userChatId');
         if (userChatIdInput) {
             userChatIdInput.value = '';
@@ -1952,11 +1488,13 @@ function resetForm() {
             userEmailInput.classList.add('hidden');
         }
 
+        // Устанавливаем значение по умолчанию для количества уведомлений
         const notificationCountSelect = document.getElementById('notificationCount');
         if (notificationCountSelect) {
             notificationCountSelect.value = '5';
         }
 
+        // Очищаем все ошибки валидации
         document.querySelectorAll('.validation-message').forEach(el => {
             el.style.display = 'none';
         });
@@ -2010,8 +1548,10 @@ function setupEventListeners() {
             const hint = document.getElementById('marketTypeHint');
             if (hint) hint.innerHTML = badge;
 
+            // Скрываем ошибки валидации при выборе из списка
             hideValidationError('coinSearch');
 
+            // Получаем текущую цену и показываем её
             apiManager.getCurrentPrice(symbol, marketType).then(price => {
                 if (price !== null) {
                     const currentPriceContainer = document.getElementById('currentPriceContainer');
@@ -2069,12 +1609,14 @@ function setupEventListeners() {
         alertForm.addEventListener('submit', async function(e) {
             e.preventDefault();
 
+            // Добавляем проверку подключения к боту
             const telegramCheckbox = document.getElementById('telegram');
             if (telegramCheckbox && telegramCheckbox.checked && !localStorage.getItem('tg_chat_id')) {
                 showBotConnectionHint();
                 return;
             }
 
+            // Валидация формы
             if (!validateForm()) return;
 
             const symbol = document.getElementById('symbol')?.value;
@@ -2113,6 +1655,7 @@ function setupEventListeners() {
 
             const editAlertId = document.getElementById('editAlertId')?.value;
             if (editAlertId) {
+                // Редактирование существующего алерта
                 const updatedAlert = {
                     id: parseInt(editAlertId),
                     symbol,
@@ -2140,10 +1683,12 @@ function setupEventListeners() {
                 showNotification('Успешно', `Алерт для ${symbol} обновлен`);
                 resetForm();
             } else {
+                // Создание нового алерта
                 const success = await addUserAlert(symbol, alertType, condition, value, notificationMethods, notificationCount, userChatId);
                 if (success) {
                     showNotification('Успешно', `Алерт для ${symbol} создан`);
                     resetForm();
+                    // Обновляем список алертов
                     loadUserAlerts(currentAlertFilter);
                 }
             }
@@ -2168,6 +1713,7 @@ function setupEventListeners() {
         });
     }
 
+    // Обработчики для кнопок фильтрации алертов
     const showActiveAlertsBtn = document.getElementById('showActiveAlerts');
     if (showActiveAlertsBtn) {
         showActiveAlertsBtn.addEventListener('click', () => loadUserAlerts('active'));
@@ -2188,6 +1734,7 @@ function setupEventListeners() {
         showAllAlertsBtn.addEventListener('click', () => loadUserAlerts('all'));
     }
 
+    // Обработчик для импорта алертов из файла (только фьючерсы)
     const bulkImportFile = document.getElementById('bulkImportFile');
     if (bulkImportFile) {
         bulkImportFile.addEventListener('change', async function(event) {
@@ -2201,6 +1748,7 @@ function setupEventListeners() {
                 let importedCount = 0;
                 let skippedCount = 0;
 
+                // Получаем текущие настройки уведомлений
                 const useTelegram = document.getElementById('telegram')?.checked || false;
                 const useEmail = document.getElementById('email')?.checked || false;
                 const userChatId = useTelegram ? (localStorage.getItem('tg_chat_id') || document.getElementById('userChatId')?.value) : null;
@@ -2217,6 +1765,7 @@ function setupEventListeners() {
                     return;
                 }
 
+                // Проверяем подключение к боту если Telegram выбран
                 if (notificationMethods.includes('telegram') && !userChatId) {
                     showBotConnectionHint();
                     return;
@@ -2226,6 +1775,7 @@ function setupEventListeners() {
                     const trimmedLine = line.trim();
                     if (!trimmedLine) continue;
 
+                    // Исправляем разбор строки
                     const parts = trimmedLine.split(/\s+/);
                     if (parts.length < 3) {
                         skippedCount++;
@@ -2246,12 +1796,14 @@ function setupEventListeners() {
                         continue;
                     }
 
+                    // Проверяем что символ является фьючерсным
                     const isFutures = allFutures.some(f => f.symbol === symbol);
                     if (!isFutures) {
                         skippedCount++;
                         continue;
                     }
 
+                    // Добавляем алерт
                     const success = await addUserAlert(
                         symbol,
                         alertType,
@@ -2275,17 +1827,20 @@ function setupEventListeners() {
 
                 loadUserAlerts(currentAlertFilter);
 
+                // Сбрасываем значение input файла, чтобы можно было загрузить тот же файл снова
                 event.target.value = '';
             };
             reader.readAsText(file);
         });
     }
 
+    // Обработчик для меню
     const menuButton = document.getElementById('menuButton');
     if (menuButton) {
         menuButton.addEventListener('click', toggleMenu);
     }
 
+    // Закрываем меню при клике вне его
     window.addEventListener('click', function(event) {
         const menuContent = document.getElementById('menuContent');
         const menuButton = document.getElementById('menuButton');
@@ -2297,6 +1852,7 @@ function setupEventListeners() {
         }
     });
 
+    // Обработчики для вкладок шорт и лонг алертов
     const showLongAlertsBtn = document.getElementById('showLongAlerts');
     if (showLongAlertsBtn) {
         showLongAlertsBtn.addEventListener('click', () => {
@@ -2321,6 +1877,7 @@ function setupEventListeners() {
         });
     }
 
+    // Обработчик для поисковой строки
     const alertSearch = document.getElementById('alertSearch');
     if (alertSearch) {
         alertSearch.addEventListener('input', function() {
@@ -2339,20 +1896,768 @@ function setupEventListeners() {
     }
 }
 
-// Запуск приложения
-document.addEventListener('DOMContentLoaded', async () => {
-    apiManager = new BinanceAPIManager();
-    await apiManager.init();
-    loadAppState();
-    setupEventListeners();
-    await loadMarketData();
-    loadUserAlerts(currentAlertFilter);
-    initCalculator();
+// Risk Calculator Functions
+function initCalculator() {
+    // Элементы интерфейса
+    const longBtn = document.getElementById('longBtn');
+    const shortBtn = document.getElementById('shortBtn');
+    const entryPriceInput = document.getElementById('entryPrice');
+    const entryPriceResult = document.getElementById('entryPriceResult');
+    const leverageInput = document.getElementById('leverage');
+    const leverageValue = document.getElementById('leverageValue');
+    const leverageWarning = document.getElementById('leverageWarning');
+    const atrInput = document.getElementById('atr');
+    const riskPercentInput = document.getElementById('riskPercent');
+    const riskPercentValue = document.getElementById('riskPercentValue');
+    const riskAmountInput = document.getElementById('riskAmount');
+    const rewardRatio1Input = document.getElementById('rewardRatio1');
+    const rewardRatio1Value = document.getElementById('rewardRatio1Value');
+    const rewardRatio2Input = document.getElementById('rewardRatio2');
+    const rewardRatio2Value = document.getElementById('rewardRatio2Value');
+    const atrValueSpan = document.getElementById('atrValue');
+    const previewAtrPercent = document.getElementById('previewAtrPercent');
+    const previewAtrPercentValue = document.getElementById('previewAtrPercentValue');
+    const stopLossPriceInput = document.getElementById('stopLossPrice');
+    const priceDifferenceSpan = document.getElementById('priceDifference');
 
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    if (currentUser && currentUser.email) {
-        updateUserUI(currentUser.email);
+    // Элементы результатов
+    const positionSizeSpan = document.getElementById('positionSize');
+    const stopLossSpan = document.getElementById('stopLoss');
+    const takeProfitLevelsDiv = document.getElementById('takeProfitLevels');
+    const liquidationPriceSpan = document.getElementById('liquidationPrice');
+    const atrResultSpan = document.getElementById('atrResult');
+
+    // Переключатели метода ввода стоп-лосса
+    const stopMethodButtons = document.querySelectorAll('.stop-method-btn');
+    const atrGroup = document.getElementById('atr-group');
+    const priceGroup = document.getElementById('price-group');
+
+    // Кнопки типа сделки
+    const tradeTypeButtons = document.querySelectorAll('.trade-type-btn');
+
+    // Установка плеча по умолчанию на 10
+    leverageInput.value = 10;
+    leverageValue.textContent = '10x';
+
+    // Установка ATR по умолчанию на 5
+    atrInput.value = 5.00;
+    atrValueSpan.textContent = '5.00 USDT';
+    atrResultSpan.textContent = '5.00 USDT';
+
+    // Установка риска по умолчанию на 27%
+    riskPercentInput.value = 27;
+    riskPercentValue.textContent = '27';
+    previewAtrPercent.textContent = '1.35 USDT';
+    previewAtrPercentValue.textContent = '27%';
+
+    updateSliderValues();
+    updateAtrPreview();
+    calculateRisk();
+
+    // Назначение обработчиков событий
+    longBtn.addEventListener('click', () => {
+        isLong = true;
+        longBtn.classList.add('active');
+        shortBtn.classList.remove('active');
+
+        // Обновляем кнопки типа сделки
+        updateTradeTypeButtons();
+        calculateRisk();
+    });
+
+    shortBtn.addEventListener('click', () => {
+        isLong = false;
+        shortBtn.classList.add('active');
+        longBtn.classList.remove('active');
+
+        // Обновляем кнопки типа сделки
+        updateTradeTypeButtons();
+        calculateRisk();
+    });
+
+    // Обработчики для кнопки типа сделки
+    tradeTypeButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            tradeType = button.dataset.type;
+
+            // Обновляем активные кнопки
+            tradeTypeButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+
+            calculateRisk();
+        });
+    });
+
+    entryPriceInput.addEventListener('input', calculateRisk);
+    leverageInput.addEventListener('input', () => {
+        leverageValue.textContent = leverageInput.value + 'x';
+        if (leverageInput.value > 10) {
+            leverageWarning.style.display = 'block';
+        } else {
+            leverageWarning.style.display = 'none';
+        }
+        calculateRisk();
+    });
+    atrInput.addEventListener('input', () => {
+        updateAtrPreview();
+        calculateRisk();
+    });
+    riskPercentInput.addEventListener('input', () => {
+        updateSliderValues();
+        updateAtrPreview();
+        calculateRisk();
+    });
+    riskAmountInput.addEventListener('input', calculateRisk);
+    rewardRatio1Input.addEventListener('input', () => {
+        updateSliderValues();
+        calculateRisk();
+    });
+    rewardRatio2Input.addEventListener('input', () => {
+        updateSliderValues();
+        calculateRisk();
+    });
+
+    // Обработчики для переключателя метода ввода стоп-лосса
+    stopMethodButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            stopMethod = button.dataset.method;
+
+            // Обновляем активные кнопки и группы ввода
+            stopMethodButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+
+            atrGroup.classList.remove('active');
+            priceGroup.classList.remove('active');
+
+            if (stopMethod === 'atr') {
+                atrGroup.classList.add('active');
+            } else {
+                priceGroup.classList.add('active');
+            }
+
+            calculateRisk();
+        });
+    });
+
+    // Обработчик для прямого ввода цены стоп-лосса
+    stopLossPriceInput.addEventListener('input', () => {
+        const entryPrice = parseFloat(entryPriceInput.value) || 0;
+        const stopLossPrice = parseFloat(stopLossPriceInput.value) || 0;
+
+        if (entryPrice > 0 && stopLossPrice > 0) {
+            const difference = Math.abs(entryPrice - stopLossPrice);
+            priceDifferenceSpan.textContent = formatNumber(difference, 8) + ' USDT';
+        } else {
+            priceDifferenceSpan.textContent = '0 USDT';
+        }
+
+        calculateRisk();
+    });
+
+    // Инициализация кнопки экспорта
+    document.getElementById('exportTextBtn').addEventListener('click', exportToText);
+    document.getElementById('exportTelegramBtn').addEventListener('click', sendToTelegram);
+}
+
+// Обновление кнопок типа сделки в зависимости от направления
+function updateTradeTypeButtons() {
+    const tradeTypeSelector = document.getElementById('tradeTypeSelector');
+    tradeTypeSelector.style.display = 'flex';
+
+    const longBreakoutBtn = document.querySelector('.trade-type-btn.long-breakout');
+    const longFakeoutBtn = document.querySelector('.trade-type-btn.long-fakeout');
+    const shortBreakoutBtn = document.querySelector('.trade-type-btn.short-breakout');
+    const shortFakeoutBtn = document.querySelector('.trade-type-btn.short-fakeout');
+
+    if (isLong) {
+        // Показываем только лонг кнопки
+        longBreakoutBtn.style.display = '';
+        longFakeoutBtn.style.display = '';
+        shortBreakoutBtn.style.display = 'none';
+        shortFakeoutBtn.style.display = 'none';
+
+        // Активируем лонг пробой по умолчанию
+        tradeType = 'long-breakout';
+        longBreakoutBtn.classList.add('active');
+        longFakeoutBtn.classList.remove('active');
+    } else {
+        // Показываем только шорт кнопки
+        longBreakoutBtn.style.display = 'none';
+        longFakeoutBtn.style.display = 'none';
+        shortBreakoutBtn.style.display = '';
+        shortFakeoutBtn.style.display = '';
+
+        // Активируем шорт пробой по умолчанию
+        tradeType = 'short-breakout';
+        shortBreakoutBtn.classList.add('active');
+        shortFakeoutBtn.classList.remove('active');
+    }
+}
+
+// Обновление значений слайдеров
+function updateSliderValues() {
+    const riskPercentValue = document.getElementById('riskPercentValue');
+    const rewardRatio1Value = document.getElementById('rewardRatio1Value');
+    const rewardRatio2Value = document.getElementById('rewardRatio2Value');
+
+    const riskPercentInput = document.getElementById('riskPercent');
+    const rewardRatio1Input = document.getElementById('rewardRatio1');
+    const rewardRatio2Input = document.getElementById('rewardRatio2');
+
+    if (riskPercentValue && riskPercentInput) {
+        riskPercentValue.textContent = riskPercentInput.value;
+    }
+    if (rewardRatio1Value && rewardRatio1Input) {
+        rewardRatio1Value.textContent = rewardRatio1Input.value;
+    }
+    if (rewardRatio2Value && rewardRatio2Input) {
+        rewardRatio2Value.textContent = rewardRatio2Input.value;
+    }
+}
+
+// Предварительный просмотр ATR
+function updateAtrPreview() {
+    const atrInput = document.getElementById('atr');
+    const riskPercentInput = document.getElementById('riskPercent');
+    const atrValueSpan = document.getElementById('atrValue');
+    const previewAtrPercent = document.getElementById('previewAtrPercent');
+    const previewAtrPercentValue = document.getElementById('previewAtrPercentValue');
+    const atrResultSpan = document.getElementById('atrResult');
+
+    if (!atrInput || !riskPercentInput || !atrValueSpan || !previewAtrPercent || !previewAtrPercentValue || !atrResultSpan) return;
+
+    const atr = parseFloat(atrInput.value) || 0;
+    const riskPercent = parseFloat(riskPercentInput.value) / 100;
+
+    // Отображаем точное значение ATR без округления
+    atrValueSpan.textContent = formatNumber(atr, 8) + ' USDT';
+    previewAtrPercent.textContent = formatNumber(atr * riskPercent, 8) + ' USDT';
+    previewAtrPercentValue.textContent = riskPercentInput.value + '%';
+    atrResultSpan.textContent = formatNumber(atr, 8) + ' USDT';
+}
+
+// Расчет цены ликвидации
+function calculateLiquidationPrice(entryPrice, leverage, isLong) {
+    if (leverage <= 1) return isLong ? 0 : Infinity;
+    
+    if (isLong) {
+        return Math.max(0, entryPrice * (1 - (1 / leverage)));
+    } else {
+        return entryPrice * (1 + (1 / leverage));
+    }
+}
+
+// Основная функция расчета
+function calculateRisk() {
+    const entryPriceInput = document.getElementById('entryPrice');
+    const leverageInput = document.getElementById('leverage');
+    const atrInput = document.getElementById('atr');
+    const riskPercentInput = document.getElementById('riskPercent');
+    const riskAmountInput = document.getElementById('riskAmount');
+    const rewardRatio1Input = document.getElementById('rewardRatio1');
+    const rewardRatio2Input = document.getElementById('rewardRatio2');
+    const stopLossPriceInput = document.getElementById('stopLossPrice');
+    
+    const entryPriceResult = document.getElementById('entryPriceResult');
+    const positionSizeSpan = document.getElementById('positionSize');
+    const stopLossSpan = document.getElementById('stopLoss');
+    const takeProfitLevelsDiv = document.getElementById('takeProfitLevels');
+    const liquidationPriceSpan = document.getElementById('liquidationPrice');
+
+    if (!entryPriceInput || !leverageInput || !atrInput || !riskPercentInput || !riskAmountInput || 
+        !rewardRatio1Input || !rewardRatio2Input || !stopLossPriceInput || !entryPriceResult || 
+        !positionSizeSpan || !stopLossSpan || !takeProfitLevelsDiv || !liquidationPriceSpan) {
+        return;
     }
 
-    setInterval(checkAlerts, 2000);
+    const entryPrice = parseFloat(entryPriceInput.value) || 0;
+    const leverage = parseFloat(leverageInput.value) || 1;
+    const atr = parseFloat(atrInput.value) || 0;
+    const riskPercent = parseFloat(riskPercentInput.value) / 100;
+    const riskAmount = parseFloat(riskAmountInput.value) || 0;
+    const rewardRatio1 = parseFloat(rewardRatio1Input.value) || 3;
+    const rewardRatio2 = parseFloat(rewardRatio2Input.value) || 5;
+    const stopLossPriceDirect = parseFloat(stopLossPriceInput.value) || 0;
+
+    // Расчет стоп-лосса в зависимости от выбранного метода
+    let stopLossPrice;
+    if (stopMethod === 'atr') {
+        if (isLong) {
+            stopLossPrice = entryPrice - (atr * riskPercent);
+        } else {
+            stopLossPrice = entryPrice + (atr * riskPercent);
+        }
+    } else {
+        // Проверяем корректность введенной цены стоп-лосса
+        if (stopLossPriceDirect > 0) {
+            if ((isLong && stopLossPriceDirect < entryPrice) ||
+                (!isLong && stopLossPriceDirect > entryPrice)) {
+                stopLossPrice = stopLossPriceDirect;
+            } else {
+                // Некорректная цена стоп-лосса - используем расчет через ATR
+                if (isLong) {
+                    stopLossPrice = entryPrice - (atr * riskPercent);
+                } else {
+                    stopLossPrice = entryPrice + (atr * riskPercent);
+                }
+                // Обновляем поле ввода
+                stopLossPriceInput.value = formatNumber(stopLossPrice, 8);
+            }
+        } else {
+            // Если цена стоп-лосса не введена, используем расчет через ATR
+            if (isLong) {
+                stopLossPrice = entryPrice - (atr * riskPercent);
+            } else {
+                stopLossPrice = entryPrice + (atr * riskPercent);
+            }
+        }
+    }
+
+    // Точный расчет размера позиции
+    const priceDifference = Math.abs(entryPrice - stopLossPrice);
+    const positionSize = priceDifference > 0 ? 
+        (riskAmount / priceDifference) : 0;
+
+    // Расчет цены ликвидации
+    const liquidationPrice = calculateLiquidationPrice(entryPrice, leverage, isLong);
+
+    // Обновление интерфейса
+    entryPriceResult.textContent = `${formatNumber(entryPrice, 8)} USDT`;
+    positionSizeSpan.textContent = formatNumber(positionSize, 8);
+    stopLossSpan.textContent = `${formatNumber(stopLossPrice, 8)} USDT`;
+    liquidationPriceSpan.textContent = `${formatNumber(liquidationPrice, 8)} USDT`;
+
+    // Генерация уровней тейк-профита
+    generateTakeProfitLevels(entryPrice, stopLossPrice, isLong, rewardRatio1, rewardRatio2, positionSize);
+}
+
+// Генерация уровней тейк-профита
+function generateTakeProfitLevels(entryPrice, stopLossPrice, isLong, ratio1, ratio2, positionSize) {
+    const takeProfitLevelsDiv = document.getElementById('takeProfitLevels');
+    if (!takeProfitLevelsDiv) return;
+
+    takeProfitLevelsDiv.innerHTML = '';
+
+    // Создаем массив уровней тейк-профита
+    const levels = [ratio1, ratio2];
+
+    levels.forEach(ratio => {
+        let takeProfitPrice;
+        if (isLong) {
+            takeProfitPrice = entryPrice + (entryPrice - stopLossPrice) * ratio;
+        } else {
+            takeProfitPrice = entryPrice - (stopLossPrice - entryPrice) * ratio;
+        }
+
+        // Правильный расчет прибыли
+        const priceDiff = Math.abs(takeProfitPrice - entryPrice);
+        const profit = priceDiff * positionSize;
+
+        const levelDiv = document.createElement('div');
+        levelDiv.className = 'take-profit-item';
+        levelDiv.innerHTML = `
+            <span class="take-profit-ratio">Тейк-профит 1к${ratio}</span>
+            <span class="take-profit-price">${formatNumber(takeProfitPrice, 8)} USDT</span>
+            <span class="take-profit-value">+${formatNumber(profit, 8)} USDT</span>
+        `;
+        takeProfitLevelsDiv.appendChild(levelDiv);
+    });
+}
+
+// Экспорт в текстовый файл
+function exportToText() {
+    const entryPrice = parseFloat(document.getElementById('entryPrice').value) || 0;
+    const leverage = parseFloat(document.getElementById('leverage').value) || 1;
+    const atr = parseFloat(document.getElementById('atr').value) || 0;
+    const riskPercent = parseFloat(document.getElementById('riskPercent').value);
+    const riskAmount = parseFloat(document.getElementById('riskAmount').value) || 0;
+    const rewardRatio1 = parseFloat(document.getElementById('rewardRatio1').value) || 3;
+    const rewardRatio2 = parseFloat(document.getElementById('rewardRatio2').value) || 5;
+    const stopLossPriceDirect = parseFloat(document.getElementById('stopLossPrice').value) || 0;
+
+    // Получаем название типа сделки
+    let tradeTypeName = '';
+    switch(tradeType) {
+        case 'long-breakout': tradeTypeName = 'Лонг Пробой'; break;
+        case 'long-fakeout': tradeTypeName = 'Лонг Ложный пробой'; break;
+        case 'short-breakout': tradeTypeName = 'Шорт Пробой'; break;
+        case 'short-fakeout': tradeTypeName = 'Шорт Ложный пробой'; break;
+    }
+
+    // Получаем метод расчета стоп-лосса
+    const stopMethodName = stopMethod === 'atr' ? 'По ATR' : 'По цене';
+
+    const content = `
+Калькулятор рисков - Результаты
+===============================
+Дата: ${new Date().toLocaleString()}
+Направление: ${isLong ? 'Лонг' : 'Шорт'}
+Тип сделки: ${tradeTypeName}
+Метод расчета стоп-лосса: ${stopMethodName}
+
+Параметры сделки:
+-----------------
+Цена входа: ${formatNumber(entryPrice, 8)} USDT
+Кредитное плечо: ${leverage}x
+${stopMethod === 'atr' ? `ATR: ${formatNumber(atr, 8)} USDT\nРиск стоп-лосс: ${riskPercent}% от ATR` : `Цена стоп-лосса: ${formatNumber(stopLossPriceDirect, 8)} USDT`}
+Риск на сделку: ${formatNumber(riskAmount, 8)} USDT
+Соотношение тейк-профита: 1:${rewardRatio1} и 1:${rewardRatio2}
+
+Результаты:
+-----------
+Цена входа: ${formatNumber(entryPrice, 8)} USDT
+Размер позиции: ${formatNumber(document.getElementById('positionSize').textContent, 8)}
+Стоп-лосс: ${formatNumber(document.getElementById('stopLoss').textContent, 8)} USDT
+
+Уровни тейк-профита:
+${Array.from(document.getElementById('takeProfitLevels').children).map(el =>
+    el.textContent.trim().replace(/\s+/g, ' ')
+).join('\n')}
+
+Цена ликвидации: ${formatNumber(document.getElementById('liquidationPrice').textContent, 8)} USDT
+    `;
+
+    const blob = new Blob([content], {type: 'text/plain'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'расчет_рисков.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+// Функция для отправки в Telegram
+async function sendToTelegram() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    const user = users.find(u => u.email === currentUser?.email);
+
+    if (!user || !user.telegramSettings || !user.telegramSettings.botToken || !user.telegramSettings.chatId) {
+        showNotification('Настройки Telegram не найдены', 'error');
+        return;
+    }
+
+    const botToken = user.telegramSettings.botToken;
+    const chatId = user.telegramSettings.chatId;
+
+    const entryPrice = parseFloat(document.getElementById('entryPrice').value) || 0;
+    const leverage = parseFloat(document.getElementById('leverage').value) || 1;
+    const riskAmount = parseFloat(document.getElementById('riskAmount').value) || 0;
+    const atr = parseFloat(document.getElementById('atr').value) || 0;
+    const riskPercent = parseFloat(document.getElementById('riskPercent').value) || 0;
+
+    // Получаем название типа сделки
+    let tradeTypeName = '';
+    switch(tradeType) {
+        case 'long-breakout': tradeTypeName = 'Лонг Пробой'; break;
+        case 'long-fakeout': tradeTypeName = 'Лонг Ложный пробой'; break;
+        case 'short-breakout': tradeTypeName = 'Шорт Пробой'; break;
+        case 'short-fakeout': tradeTypeName = 'Шорт Ложный пробой'; break;
+    }
+
+    // Получаем метод расчета стоп-лосса
+    const stopMethodName = stopMethod === 'atr' ? 'По ATR' : 'По цене';
+
+    // Формируем текст сообщения
+    const messageText = `
+📊 Результаты расчета позиции 📊
+
+Направление: ${isLong ? 'Лонг' : 'Шорт'} (${tradeTypeName})
+Цена входа: ${formatNumber(entryPrice, 8)} USDT
+Плечо: ${leverage}x
+Стоп-лосс: ${stopMethod === 'price' ? formatNumber(document.getElementById('stopLossPrice').value, 8) + ' USDT (расчётный)' : formatNumber(atr * riskPercent / 100, 8) + ' USDT (' + riskPercent + '% от ATR)'}
+Риск на сделку: ${formatNumber(riskAmount, 8)} USDT
+Метод расчета стоп-лосса: ${stopMethodName}
+
+Размер позиции: ${formatNumber(document.getElementById('positionSize').textContent.split(' ')[0], 8)}
+Стоп-лосс: ${formatNumber(document.getElementById('stopLoss').textContent.split(' ')[0], 8)} USDT
+
+Тейк-профиты:
+${Array.from(document.getElementById('takeProfitLevels').children).map(el => {
+    const parts = el.textContent.trim().split(/\s+/);
+    return `• ${parts[0]} ${parts[1]} ${formatNumber(parts[2], 8)} USDT ${parts[3]} ${formatNumber(parts[4], 8)} USDT`;
+}).join('\n')}
+
+Цена ликвидации: ${formatNumber(document.getElementById('liquidationPrice').textContent.split(' ')[0], 8)} USDT
+`;
+
+    try {
+        const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                chat_id: chatId,
+                text: messageText,
+                parse_mode: 'Markdown'
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.ok) {
+            showNotification('Расчет успешно отправлен в Telegram!', 'success');
+        } else {
+            showNotification('Ошибка при отправке: ' + (data.description || 'неизвестная ошибка'), 'error');
+        }
+    } catch (error) {
+        showNotification('Ошибка соединения: ' + error.message, 'error');
+    }
+}
+
+// Калькулятор среднего
+function calculateAverage() {
+    const input = document.getElementById('numbersInput').value.trim();
+    const resultDiv = document.getElementById('result');
+
+    if (!input) {
+        resultDiv.innerHTML = '<p style="color: #F44336;">Введите числа!</p>';
+        return;
+    }
+
+    let numbers;
+    try {
+        // Разбиваем строку на числа, учитывая как точку, так и запятую в качестве разделителя
+        numbers = input.split(' ')
+            .map(num => num.replace(',', '.')) // заменяем запятые на точки
+            .filter(num => num !== '') // удаляем пустые строки
+            .map(num => {
+                // Преобразуем строку в число
+                const parsed = parseFloat(num);
+                if (isNaN(parsed)) {
+                    throw new Error();
+                }
+                return parsed;
+            });
+
+        if (numbers.length === 0) {
+            throw new Error();
+        }
+    } catch {
+        resultDiv.innerHTML = '<p style="color: #F44336;">Ошибка: вводите только числа, разделённые пробелами!</p>';
+        return;
+    }
+
+    const sum = numbers.reduce((sum, num) => sum + num, 0);
+    const count = numbers.length;
+    const mean = sum / count;
+    const deviations = numbers.map(num => num - mean);
+
+    resultDiv.innerHTML = `
+        <div style="background: rgba(30,30,30,0.5); padding: 10px; border-radius: 5px;">
+            <p><strong>Чисел:</strong> ${count}</p>
+            <p><strong>Сумма:</strong> ${formatNumber(sum, 8)}</p>
+            <p><strong>Среднее:</strong> ${formatNumber(mean, 8)}</p>
+            <p><strong>Отклонения:</strong></p>
+            <ul style="padding-left: 20px;">
+                ${numbers.map((num, i) =>
+                    `<li>${formatNumber(num, 8)} - ${formatNumber(mean, 8)} = ${formatNumber(deviations[i], 8)}</li>`
+                ).join('')}
+            </ul>
+        </div>
+    `;
+}
+
+// Предпосылки functions
+let currentVisibleText = null;
+const botToken = '8044055704:AAGk8cQFayPqYCscLlEB3qGRj0Uw_NTpe30';
+const chatId = '1720793889';
+
+function toggleText(type) {
+    // Hide all text displays
+    document.querySelectorAll('.text-display').forEach(el => el.style.display = 'none');
+
+    if (currentVisibleText === type) {
+        // If clicking the same button, hide everything
+        currentVisibleText = null;
+        document.getElementById('actionButtons').style.display = 'none';
+    } else {
+        // Show the selected text
+        document.getElementById(`${type}Text`).style.display = 'block';
+        currentVisibleText = type;
+        document.getElementById('actionButtons').style.display = 'flex';
+    }
+}
+
+function getSelectedItems() {
+    let selectedItems = [];
+    let container = document.getElementById(`${currentVisibleText}Text`);
+
+    if (!container) return [];
+
+    const checkboxes = container.querySelectorAll('input[type="checkbox"]:checked');
+    checkboxes.forEach((checkbox, index) => {
+        const itemText = checkbox.nextElementSibling.textContent.trim();
+        selectedItems.push(`${index + 1}. ${itemText}`);
+    });
+
+    return selectedItems;
+}
+
+function copySelectedText() {
+    const selectedItems = getSelectedItems();
+
+    if (selectedItems.length === 0) {
+        showStatus('Выберите хотя бы один пункт для копирования', 3000, 'error');
+        return;
+    }
+
+    let textToCopy = '';
+    if (currentVisibleText === 'breakthrough') {
+        textToCopy = 'Пробой\n📊Предпосылки\n';
+    } else if (currentVisibleText === 'falseBreakthrough') {
+        textToCopy = 'Ложный пробой\n📊Предпосылки\n';
+    } else if (currentVisibleText === 'breakthroughMinuses') {
+        textToCopy = 'Пробой минусы\n⛔️ Минусы\n';
+    } else if (currentVisibleText === 'falseBreakthroughMinuses') {
+        textToCopy = 'Ложный пробой минусы\n⛔️ Минусы\n';
+    }
+
+    textToCopy += selectedItems.join('\n');
+
+    navigator.clipboard.writeText(textToCopy)
+        .then(() => {
+            showStatus('Выбранные пункты скопированы!', 3000, 'success');
+        })
+        .catch(err => {
+            showStatus('Не удалось скопировать текст: ' + err, 5000, 'error');
+        });
+}
+
+function exportSelectedToTelegram() {
+    const selectedItems = getSelectedItems();
+
+    if (selectedItems.length === 0) {
+        showStatus('Выберите хотя бы один пункт для отправки', 3000, 'error');
+        return;
+    }
+
+    let textToSend = '';
+    if (currentVisibleText === 'breakthrough') {
+        textToSend = 'Пробой\n📊Предпосылки\n';
+    } else if (currentVisibleText === 'falseBreakthrough') {
+        textToSend = 'Ложный пробой\n📊Предпосылки\n';
+    } else if (currentVisibleText === 'breakthroughMinuses') {
+        textToSend = 'Пробой минусы\n⛔️ Минусы\n';
+    } else if (currentVisibleText === 'falseBreakthroughMinuses') {
+        textToSend = 'Ложный пробой минусы\n⛔️ Минусы\n';
+    }
+
+    textToSend += selectedItems.join('\n');
+
+    fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            chat_id: chatId,
+            text: textToSend
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.ok) {
+            showStatus('Выбранные пункты успешно отправлены в Telegram!', 3000, 'success');
+        } else {
+            showStatus('Ошибка при отправке: ' + data.description, 5000, 'error');
+        }
+    })
+    .catch(error => {
+        showStatus('Ошибка: ' + error.message, 5000, 'error');
+    });
+}
+
+function resetCheckboxes() {
+    const container = document.getElementById(`${currentVisibleText}Text`);
+    if (!container) return;
+
+    const checkboxes = container.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+    });
+
+    showStatus('Все галочки сброшены', 2000, 'success');
+}
+
+function showStatus(message, duration, type) {
+    const statusElement = document.getElementById('statusMessage');
+    statusElement.textContent = message;
+    statusElement.className = 'status-message ' + type;
+    statusElement.style.display = 'block';
+
+    setTimeout(() => {
+        statusElement.style.display = 'none';
+    }, duration);
+}
+
+// Инициализация приложения
+document.addEventListener('DOMContentLoaded', async () => {
+    apiManager = new BinanceAPIManager();
+
+    try {
+        await apiManager.init();
+        loadAppState();
+        setupEventListeners();
+        await loadMarketData();
+        loadUserAlerts(currentAlertFilter);
+        initCalculator();
+
+        // Проверяем сохраненный chat_id
+        const savedChatId = localStorage.getItem('tg_chat_id');
+        if (savedChatId) {
+            const userChatId = document.getElementById('userChatId');
+            if (userChatId) userChatId.value = savedChatId;
+        }
+
+        // Проверяем сохраненный email
+        const savedEmail = localStorage.getItem('userEmail');
+        if (savedEmail) {
+            const userEmail = document.getElementById('userEmail');
+            if (userEmail) userEmail.value = savedEmail;
+        }
+
+        // Проверяем авторизацию пользователя
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (currentUser && currentUser.email) {
+            updateUserUI(currentUser.email);
+        }
+
+        // Запускаем проверку алертов каждые 2 секунды
+        setInterval(checkAlerts, 2000);
+    } catch (error) {
+        console.error('Failed to initialize application:', error);
+        showNotification('Critical Error', 'Failed to connect to Binance API');
+    }
 });
+
+// Глобальный обработчик ошибок
+window.addEventListener('error', (event) => {
+    console.error('Global error:', event.error);
+    showNotification('System Error', event.message || 'Unknown error occurred');
+});
+
+window.createAlertForSymbol = createAlertForSymbol;
+window.deleteAlert = deleteAlert;
+window.applyCurrentPrice = applyCurrentPrice;
+window.applyCurrentPriceForEdit = applyCurrentPriceForEdit;
+window.editAlert = editAlert;
+window.closeEditModal = closeEditModal;
+window.openTelegramSettings = openTelegramSettings;
+window.closeTelegramSettings = closeTelegramSettings;
+window.saveTelegramSettings = saveTelegramSettings;
+window.showBotConnectionHint = showBotConnectionHint;
+window.closeBotConnectionHint = closeBotConnectionHint;
+window.showHome = showHome;
+window.showLoginForm = showLoginForm;
+window.closeLoginModal = closeLoginModal;
+window.showRegisterForm = showRegisterForm;
+window.closeRegisterModal = closeRegisterModal;
+window.handleLogin = handleLogin;
+window.handleRegister = handleRegister;
+window.handleLogout = handleLogout;
+window.toggleMenu = toggleMenu;
+window.resetForm = resetForm;
+window.calculateAverage = calculateAverage;
+window.resetCheckboxes = resetCheckboxes;
