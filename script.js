@@ -1,12 +1,4 @@
-// Конфигурация API
-const API_CONFIG = {
-    RECONNECT_INTERVAL: 5000,
-    TIMEOUT: 10000,
-    MAX_RETRIES: 3,
-    ENDPOINTS: {
-        TEST: 'https://api.binance.com/api/v3/ping',
-        FUTURES: 'https://fapi.binance.com',
-        SPOT: 'https://api.binance.com'
+
     }
 };
 
