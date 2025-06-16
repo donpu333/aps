@@ -1944,11 +1944,11 @@ function initCalculator() {
     atrValueSpan.textContent = '5.00 USDT';
     atrResultSpan.textContent = '5.00 USDT';
 
-    // Установка риска по умолчанию на 27%
-    riskPercentInput.value = 27;
-    riskPercentValue.textContent = '27';
+    // Установка риска по умолчанию на 10%
+    riskPercentInput.value = 10;
+    riskPercentValue.textContent = '10';
     previewAtrPercent.textContent = '1.35 USDT';
-    previewAtrPercentValue.textContent = '27%';
+    previewAtrPercentValue.textContent = '10%';
 
     updateSliderValues();
     updateAtrPreview();
