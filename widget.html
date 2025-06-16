@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crypto Tools - Виджеты и Предпосылки</title>
+    <title>Crypto Tools - Виджеты</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         body {
             background-color: #121212;
@@ -19,7 +20,7 @@
             display: flex;
             flex-direction: column;
             gap: 30px;
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
         }
         
@@ -146,80 +147,418 @@
             50% { opacity: 0.5; }
             100% { opacity: 1; }
         }
-        
-        /* Premises styles */
-        .button-container {
+
+        /* Dashboard styles */
+        .dashboard-row {
             display: flex;
             gap: 15px;
-            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 10px;
         }
         
-        .premise-button {
-            background-color: #1E88E5;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
+        .dashboard-row::-webkit-scrollbar {
+            height: 6px;
         }
         
-        .premise-button:hover {
-            background-color: #1565C0;
+        .dashboard-row::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
         }
         
-        .text-display {
-            background-color: #1e1e1e;
-            padding: 15px;
-            border-radius: 5px;
-            white-space: pre-line;
-            display: none;
-            margin-top: 15px;
-            border: 1px solid #333;
+        .dashboard-row::-webkit-scrollbar-thumb {
+            background: rgba(92, 119, 255, 0.5);
+            border-radius: 10px;
         }
         
-        .action-btn {
-            background-color: #4CAF50;
-            padding: 8px 15px;
-            margin-right: 10px;
-            border: none;
-            border-radius: 5px;
-            color: white;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s;
+        .panel {
+            background: rgba(15, 18, 42, 0.9);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(92, 119, 255, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            min-width: 300px;
+            flex: 1;
         }
         
-        .action-btn:hover {
-            background-color: #45a049;
+        .panel:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
         }
         
-        .export-btn {
-            background-color: #2196F3;
-        }
-        
-        .export-btn:hover {
-            background-color: #0b7dda;
-        }
-        
-        .action-buttons-container {
+        .panel-header {
+            padding: 18px 20px;
+            font-size: 1.1rem;
+            font-weight: 600;
             display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            display: none;
+            align-items: center;
         }
         
-        #statusMessage {
-            margin-top: 15px;
-            color: #4CAF50;
-            display: none;
+        .panel-header i {
+            margin-right: 12px;
+            font-size: 1.2rem;
         }
         
-        .premises-container {
-            max-width: 1200px;
-            margin: 30px auto;
+        .long .panel-header {
+            background: linear-gradient(90deg, #0a7e3a, #1db954);
+            color: white;
+        }
+        
+        .short .panel-header {
+            background: linear-gradient(90deg, #b71c1c, #f44336);
+            color: white;
+        }
+        
+        .long-wait .panel-header,
+        .short-wait .panel-header {
+            background: linear-gradient(90deg, #1565C0, #42A5F5);
+            color: white;
+        }
+        
+        .panel-content {
+            padding: 15px;
+        }
+        
+        .input-group {
+            display: flex;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .ticker-input {
+            flex-grow: 1;
+            padding: 10px 15px;
+            border: none;
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+            font-size: 0.9rem;
+            outline: none;
+        }
+        
+        .ticker-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .add-btn {
             padding: 0 20px;
+            border: none;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .long .add-btn {
+            background: #1db954;
+            color: white;
+        }
+        
+        .short .add-btn {
+            background: #f44336;
+            color: white;
+        }
+        
+        .long-wait .add-btn,
+        .short-wait .add-btn {
+            background: #42A5F5;
+            color: white;
+        }
+        
+        .add-btn:hover {
+            filter: brightness(1.15);
+        }
+        
+        .ticker-list {
+            list-style: none;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        
+        .ticker-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .ticker-list::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        
+        .ticker-list::-webkit-scrollbar-thumb {
+            background: rgba(92, 119, 255, 0.5);
+            border-radius: 10px;
+        }
+        
+        .ticker-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            border-left: 4px solid;
+            cursor: pointer;
+        }
+        
+        .long .ticker-item {
+            border-left-color: #1db954;
+        }
+        
+        .short .ticker-item {
+            border-left-color: #f44336;
+        }
+        
+        .long-wait .ticker-item,
+        .short-wait .ticker-item {
+            border-left-color: #42A5F5;
+        }
+        
+        .ticker-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+        
+        .ticker-info {
+            flex-grow: 1;
+        }
+        
+        .ticker-name {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 3px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .ticker-name span {
+            margin-left: 8px;
+            font-size: 0.8rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .price-info {
+            font-size: 0.85rem;
+            color: #a0a0d0;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .price-value {
+            display: flex;
+            align-items: center;
+        }
+        
+        .price-change {
+            margin-left: 8px;
+            font-weight: 500;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.8rem;
+        }
+        
+        .added-date {
+            font-size: 0.65rem;
+            color: rgba(160, 160, 208, 0.7);
+            margin-top: 2px;
+        }
+        
+        .positive {
+            background: rgba(29, 185, 84, 0.2);
+            color: #1db954;
+        }
+        
+        .negative {
+            background: rgba(244, 67, 54, 0.2);
+            color: #f44336;
+        }
+        
+        .neutral {
+            background: rgba(255, 255, 255, 0.1);
+            color: #a0a0d0;
+        }
+        
+        .delete-btn {
+            background: rgba(244, 67, 54, 0.2);
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #f44336;
+            font-size: 1rem;
+            margin-left: 10px;
+        }
+        
+        .delete-btn:hover {
+            background: rgba(244, 67, 54, 0.3);
+            transform: scale(1.1);
+        }
+        
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(15, 18, 42, 0.9);
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 20px;
+            border: 1px solid rgba(92, 119, 255, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #00c9ff, #92fe9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            color: #a0a0d0;
+            margin-top: 3px;
+        }
+        
+        .error-message {
+            color: #f44336;
+            font-size: 0.75rem;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: #1a1a2e;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+        
+        .modal-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+        
+        .modal-input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            border-radius: 5px;
+        }
+        
+        .modal-textarea {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            margin-bottom: 15px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            border-radius: 5px;
+            resize: none;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .modal-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .modal-btn-cancel {
+            background: #f44336;
+            color: white;
+        }
+        
+        .modal-btn-confirm {
+            background: #1db954;
+            color: white;
+        }
+        
+        .file-input-container {
+            margin-bottom: 15px;
+        }
+        
+        .file-input-label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            color: #a0a0d0;
+        }
+        
+        .file-input {
+            width: 100%;
+        }
+        
+        .import-options {
+            margin-bottom: 15px;
+        }
+        
+        .import-option {
+            margin-right: 15px;
+        }
+        
+        @media (max-width: 1200px) {
+            .dashboard-row {
+                flex-wrap: wrap;
+            }
+            
+            .panel {
+                min-width: calc(50% - 10px);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-row {
+                flex-direction: column;
+            }
+            
+            .panel {
+                min-width: 100%;
+            }
+            
+            .stats-bar {
+                flex-direction: column;
+                gap: 10px;
+            }
         }
     </style>
 </head>
@@ -291,73 +630,115 @@
                 </div>
             </div>
             
-            <!-- Premises Section -->
+            <!-- Крипто трейдер дашборд -->
             <div class="widget-box">
-                <h2 class="text-xl font-bold mb-4">Предпосылки</h2>
-                
-                <div class="button-container">
-                    <button class="premise-button" onclick="toggleText('breakthrough')">Пробой</button>
-                    <button class="premise-button" onclick="toggleText('falseBreakthrough')">Ложный пробой</button>
+                <div class="container">
+                    <header>
+                        <h1>КРИПТО ТРЕЙДЕР ДАШБОРД</h1>
+                        <p class="subtitle">Отслеживайте свои Long и Short позиции, а также ожидаемые точки входа на рынок</p>
+                    </header>
+                    
+                    <div class="dashboard-row">
+                        <!-- Long Panel -->
+                        <div class="panel long">
+                            <div class="panel-header">
+                                <i class="fas fa-arrow-trend-up"></i>
+                                LONG ПОЗИЦИИ
+                            </div>
+                            <div class="panel-content">
+                                <div class="input-group">
+                                    <input type="text" class="ticker-input" placeholder="Введите тикер">
+                                    <button class="add-btn" onclick="addTicker('long')">+</button>
+                                </div>
+                                <button class="add-btn" style="width:100%;margin-bottom:10px;" onclick="showImportModal('long')">
+                                    <i class="fas fa-file-import"></i> Импорт
+                                </button>
+                                <div class="error-message" id="long-error"></div>
+                                <ul class="ticker-list" id="long-list"></ul>
+                            </div>
+                        </div>
+                        
+                        <!-- Short Panel -->
+                        <div class="panel short">
+                            <div class="panel-header">
+                                <i class="fas fa-arrow-trend-down"></i>
+                                SHORT ПОЗИЦИИ
+                            </div>
+                            <div class="panel-content">
+                                <div class="input-group">
+                                    <input type="text" class="ticker-input" placeholder="Введите тикер">
+                                    <button class="add-btn" onclick="addTicker('short')">+</button>
+                                </div>
+                                <button class="add-btn" style="width:100%;margin-bottom:10px;" onclick="showImportModal('short')">
+                                    <i class="fas fa-file-import"></i> Импорт
+                                </button>
+                                <div class="error-message" id="short-error"></div>
+                                <ul class="ticker-list" id="short-list"></ul>
+                            </div>
+                        </div>
+                        
+                        <!-- Long Wait Panel -->
+                        <div class="panel long-wait">
+                            <div class="panel-header">
+                                <i class="fas fa-hourglass-half"></i>
+                                LONG ОЖИДАНИЕ
+                            </div>
+                            <div class="panel-content">
+                                <div class="input-group">
+                                    <input type="text" class="ticker-input" placeholder="Введите тикер">
+                                    <button class="add-btn" onclick="addTicker('long-wait')">+</button>
+                                </div>
+                                <button class="add-btn" style="width:100%;margin-bottom:10px;" onclick="showImportModal('long-wait')">
+                                    <i class="fas fa-file-import"></i> Импорт
+                                </button>
+                                <div class="error-message" id="long-wait-error"></div>
+                                <ul class="ticker-list" id="long-wait-list"></ul>
+                            </div>
+                        </div>
+                        
+                        <!-- Short Wait Panel -->
+                        <div class="panel short-wait">
+                            <div class="panel-header">
+                                <i class="fas fa-hourglass-half"></i>
+                                SHORT ОЖИДАНИЕ
+                            </div>
+                            <div class="panel-content">
+                                <div class="input-group">
+                                    <input type="text" class="ticker-input" placeholder="Введите тикер">
+                                    <button class="add-btn" onclick="addTicker('short-wait')">+</button>
+                                </div>
+                                <button class="add-btn" style="width:100%;margin-bottom:10px;" onclick="showImportModal('short-wait')">
+                                    <i class="fas fa-file-import"></i> Импорт
+                                </button>
+                                <div class="error-message" id="short-wait-error"></div>
+                                <ul class="ticker-list" id="short-wait-list"></ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-bar">
+                        <div class="stat-item">
+                            <div class="stat-value" id="total-tickers">0</div>
+                            <div class="stat-label">АКТИВНЫХ ТИКЕРОВ</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="long-count">0</div>
+                            <div class="stat-label">LONG ПОЗИЦИЙ</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="short-count">0</div>
+                            <div class="stat-label">SHORT ПОЗИЦИЙ</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="long-wait-count">0</div>
+                            <div class="stat-label">ОЖИДАНИЕ LONG</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="short-wait-count">0</div>
+                            <div class="stat-label">ОЖИДАНИЕ SHORT</div>
+                        </div>
+                    </div>
                 </div>
-                
-                <div id="breakthroughText" class="text-display">
-                     Пробой
-                    
-                    📊Предпосылки
-                    
-                    ✅ Ближний ретест
-                    
-                    ✅ Нет реакции на ЛП
-                    
-                    ✅ Накопление 
-                    
-                    ✅ Закрытие в близи уровня до 5% 
-                    
-                    ✅ После сильного движения нет отката
-                    
-                    ✅ В переди свободная зона
-                    
-                    ✅ Выкупной бар(или Продажный)
-                    
-                    ✅ Проторговка в близи уровня(на Лок/ТФ)
-                    
-                    ✅ Подходит поджатием
-                    
-                    ✅ Понижающие хаи или лои(или повышающие)
-                    
-                    ✅ Затухание волатильности
-                </div>
-                
-                <div id="falseBreakthroughText" class="text-display">
-                    Ложный пробой
-                    
-                    📊Предпосылки
-                    
-                    ✅ Дальний ретест
-                    
-                    ✅ Подход на больших барах 
-                    
-                    ✅ Выход повышеные обьемы перед уровням на 1ч 4ч
-                    
-                    ✅ В переди заражоная зона
-                    
-                    ✅ Длинное без откатное движение
-                    
-                    ✅ Закрытие в дали от уровня мин от 10% 
-                    
-                    ✅ Нет накопления
-                    
-                    ✅ Резкий подход на лок таймфрейме
-                    
-                    ✅ Повышеная волатильность
-                </div>
-                
-                <div id="actionButtons" class="action-buttons-container">
-                    <button id="copyBtn" class="action-btn" onclick="copyText()">Копировать текст</button>
-                    <button id="exportBtn" class="action-btn export-btn" onclick="exportToTelegram()">Отправить в Telegram</button>
-                </div>
-                
-                <div id="statusMessage"></div>
             </div>
             
             <!-- Индекс страха и жадности -->
@@ -383,6 +764,45 @@
         </div>
     </div>
 
+    <!-- Модальное окно для ручного ввода цены -->
+    <div class="modal" id="priceModal">
+        <div class="modal-content">
+            <div class="modal-title">Редактировать <span id="modalTicker"></span></div>
+            <input type="number" step="0.000001" class="modal-input" id="priceInput" placeholder="Цена (USD)">
+            <input type="number" step="0.01" class="modal-input" id="changeInput" placeholder="Изменение (%)">
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-cancel" onclick="closeModal()">Отмена</button>
+                <button class="modal-btn modal-btn-confirm" onclick="confirmManualPrice()">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для импорта тикеров -->
+    <div class="modal" id="importModal">
+        <div class="modal-content">
+            <div class="modal-title">Импорт тикеров в <span id="importModalTitle"></span></div>
+            
+            <div class="file-input-container">
+                <label class="file-input-label">Выберите текстовый файл с тикерами:</label>
+                <input type="file" id="fileInput" class="file-input" accept=".txt">
+            </div>
+            
+            <div class="import-options">
+                <label class="import-option">
+                    <input type="radio" name="importFormat" value="newline" checked> Разделение переносами строк
+                </label>
+                <label class="import-option">
+                    <input type="radio" name="importFormat" value="comma"> Разделение запятыми
+                </label>
+            </div>
+            
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-cancel" onclick="closeImportModal()">Отмена</button>
+                <button class="modal-btn modal-btn-confirm" onclick="importTickers()">Импортировать</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Menu functions
         function toggleMenu() {
@@ -400,99 +820,44 @@
             alert('Функция регистрации в разработке');
         }
 
-        // Premises functions
-        let currentVisibleText = null;
-        const botToken = '8044055704:AAGk8cQFayPqYCscLlEB3qGRj0Uw_NTpe30';
-        const chatId = '1720793889';
-        
-        function toggleText(type) {
-            const breakthroughText = document.getElementById('breakthroughText');
-            const falseBreakthroughText = document.getElementById('falseBreakthroughText');
-            const actionButtons = document.getElementById('actionButtons');
-            
-            // Hide all texts first
-            breakthroughText.style.display = 'none';
-            falseBreakthroughText.style.display = 'none';
-            
-            if (currentVisibleText === type) {
-                // If clicking the same button, hide everything
-                currentVisibleText = null;
-                actionButtons.style.display = 'none';
-            } else {
-                // Show the selected text
-                if (type === 'breakthrough') {
-                    breakthroughText.style.display = 'block';
-                    currentVisibleText = 'breakthrough';
-                } else if (type === 'falseBreakthrough') {
-                    falseBreakthroughText.style.display = 'block';
-                    currentVisibleText = 'falseBreakthrough';
-                }
-                actionButtons.style.display = 'flex';
-            }
-        }
-        
-        function copyText() {
-            let textToCopy = '';
-            if (currentVisibleText === 'breakthrough') {
-                textToCopy = document.getElementById('breakthroughText').innerText;
-            } else if (currentVisibleText === 'falseBreakthrough') {
-                textToCopy = document.getElementById('falseBreakthroughText').innerText;
-            }
-            
-            navigator.clipboard.writeText(textToCopy)
-                .then(() => {
-                    showStatus('Текст скопирован! Теперь вы можете вставить его в Telegram.', 3000);
-                })
-                .catch(err => {
-                    showStatus('Не удалось скопировать текст: ' + err, 5000);
-                });
-        }
-        
-        function exportToTelegram() {
-            let textToSend = '';
-            if (currentVisibleText === 'breakthrough') {
-                textToSend = document.getElementById('breakthroughText').innerText;
-            } else if (currentVisibleText === 'falseBreakthrough') {
-                textToSend = document.getElementById('falseBreakthroughText').innerText;
-            }
-            
-            const statusElement = document.getElementById('statusMessage');
-            
-            fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    chat_id: chatId,
-                    text: textToSend
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.ok) {
-                    showStatus('Сообщение успешно отправлено в Telegram!', 3000);
-                } else {
-                    showStatus('Ошибка при отправке: ' + data.description, 5000);
-                }
-            })
-            .catch(error => {
-                showStatus('Ошибка: ' + error.message, 5000);
-            });
-        }
-        
-        function showStatus(message, duration) {
-            const statusElement = document.getElementById('statusMessage');
-            statusElement.textContent = message;
-            statusElement.style.display = 'block';
-            
-            setTimeout(() => {
-                statusElement.style.display = 'none';
-            }, duration);
-        }
+        // Dashboard functions
+        // Объект для хранения данных о тикерах
+        const tickersData = {
+            'long': {},
+            'short': {},
+            'long-wait': {},
+            'short-wait': {}
+        };
 
-        // Инициализация меню
+        // Переменные для модальных окон
+        const priceModal = document.getElementById('priceModal');
+        const modalTicker = document.getElementById('modalTicker');
+        const priceInput = document.getElementById('priceInput');
+        const changeInput = document.getElementById('changeInput');
+        
+        const importModal = document.getElementById('importModal');
+        const importModalTitle = document.getElementById('importModalTitle');
+        const fileInput = document.getElementById('fileInput');
+        
+        let currentTicker = '';
+        let currentListType = '';
+        let currentImportListType = '';
+
+        // Загрузка данных из localStorage при загрузке страницы
         document.addEventListener('DOMContentLoaded', function() {
+            loadTickersFromStorage();
+            updateStats();
+            
+            // Запускаем обновление цен каждые 10 секунд
+            setInterval(updateAllPrices, 10000);
+            
+            // Первое обновление цен
+            updateAllPrices();
+            
+            // Добавляем обработчики для Enter
+            setupInputHandlers();
+            
+            // Инициализация меню
             const menuButton = document.getElementById('menuButton');
             if (menuButton) {
                 menuButton.addEventListener('click', toggleMenu);
@@ -510,6 +875,375 @@
                 }
             });
         });
+
+        // Настройка обработчиков для полей ввода
+        function setupInputHandlers() {
+            document.querySelectorAll('.ticker-input').forEach(input => {
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        const panel = this.closest('.panel');
+                        const type = panel.classList.contains('long') ? 'long' :
+                                    panel.classList.contains('short') ? 'short' :
+                                    panel.classList.contains('long-wait') ? 'long-wait' : 'short-wait';
+                        addTicker(type);
+                    }
+                });
+            });
+        }
+
+        // Загрузка тикеров из localStorage
+        function loadTickersFromStorage() {
+            const savedData = localStorage.getItem('cryptoDashboardTickers');
+            if (savedData) {
+                const parsedData = JSON.parse(savedData);
+                
+                for (const listType in parsedData) {
+                    if (parsedData.hasOwnProperty(listType)) {
+                        tickersData[listType] = parsedData[listType];
+                        
+                        // Восстанавливаем элементы на странице
+                        const list = document.getElementById(`${listType}-list`);
+                        list.innerHTML = '';
+                        
+                        for (const ticker in parsedData[listType]) {
+                            if (parsedData[listType].hasOwnProperty(ticker)) {
+                                const tickerData = parsedData[listType][ticker];
+                                addTickerToList(ticker, listType);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Сохранение тикеров в localStorage
+        function saveTickersToStorage() {
+            localStorage.setItem('cryptoDashboardTickers', JSON.stringify(tickersData));
+            updateStats();
+        }
+
+        // Добавление тикера
+        async function addTicker(listType) {
+            const input = document.querySelector(`.${listType} .ticker-input`);
+            const errorElement = document.getElementById(`${listType}-error`);
+            let ticker = input.value.trim().toUpperCase();
+            
+            // Нормализация тикера (удаляем все не-буквы и цифры)
+            ticker = ticker.replace(/[^A-Z0-9]/g, '');
+            
+            if (!ticker) {
+                showError(errorElement, 'Введите тикер');
+                return;
+            }
+            
+            // Добавляем USDT если его нет в конце
+            if (!ticker.endsWith('USDT')) {
+                ticker += 'USDT';
+            }
+            
+            if (tickersData[listType][ticker]) {
+                showError(errorElement, 'Этот тикер уже добавлен');
+                return;
+            }
+            
+            // Создаем новый тикер
+            const now = new Date();
+            tickersData[listType][ticker] = {
+                name: ticker.replace('USDT', ''),
+                price: '0.000000',
+                change: '0.00',
+                isBinance: false,
+                addedDate: now.toISOString()
+            };
+            
+            // Пробуем получить данные с Binance
+            try {
+                const response = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${ticker}`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    tickersData[listType][ticker].price = parseFloat(data.lastPrice).toFixed(6);
+                    tickersData[listType][ticker].change = parseFloat(data.priceChangePercent).toFixed(2);
+                    tickersData[listType][ticker].isBinance = true;
+                }
+            } catch (error) {
+                console.error(`Ошибка при проверке тикера ${ticker}:`, error);
+            }
+            
+            // Добавляем на страницу
+            addTickerToList(ticker, listType);
+            saveTickersToStorage();
+            input.value = '';
+            hideError(errorElement);
+            
+            // Открываем модальное окно для ручного ввода (если не Binance)
+            if (!tickersData[listType][ticker].isBinance) {
+                editTicker(ticker, listType);
+            }
+        }
+
+        // Добавление тикера в список на странице
+        function addTickerToList(ticker, listType) {
+            const list = document.getElementById(`${listType}-list`);
+            const tickerData = tickersData[listType][ticker];
+            
+            const changeNum = parseFloat(tickerData.change);
+            const changeClass = changeNum > 0 ? 'positive' : 
+                              changeNum < 0 ? 'negative' : 'neutral';
+            
+            const addedDate = new Date(tickerData.addedDate);
+            const formattedDate = addedDate.toLocaleString();
+            
+            const listItem = document.createElement('li');
+            listItem.className = 'ticker-item';
+            listItem.dataset.ticker = ticker;
+            listItem.dataset.listType = listType;
+            listItem.innerHTML = `
+                <div class="ticker-info">
+                    <div class="ticker-name">${ticker} <span>${tickerData.name}</span></div>
+                    <div class="price-info">
+                        <div class="price-value">
+                            $${tickerData.price}
+                            <span class="price-change ${changeClass}">${tickerData.change}%</span>
+                        </div>
+                        <div class="added-date">Добавлен: ${formattedDate}</div>
+                    </div>
+                </div>
+                <button class="delete-btn" onclick="removeTicker(event, this)">×</button>
+            `;
+            
+            // Добавляем обработчик клика для редактирования
+            listItem.querySelector('.ticker-info').addEventListener('click', function() {
+                editTicker(ticker, listType);
+            });
+            
+            list.appendChild(listItem);
+        }
+
+        // Редактирование тикера
+        function editTicker(ticker, listType) {
+            currentTicker = ticker;
+            currentListType = listType;
+            const tickerData = tickersData[listType][ticker];
+            
+            modalTicker.textContent = ticker;
+            priceInput.value = tickerData.price;
+            changeInput.value = tickerData.change;
+            priceModal.style.display = 'flex';
+        }
+
+        // Закрытие модального окна
+        function closeModal() {
+            priceModal.style.display = 'none';
+        }
+
+        // Подтверждение ручного ввода цены
+        function confirmManualPrice() {
+            const price = parseFloat(priceInput.value);
+            const change = parseFloat(changeInput.value) || 0;
+            
+            if (!isNaN(price)) {
+                tickersData[currentListType][currentTicker].price = price.toFixed(6);
+                tickersData[currentListType][currentTicker].change = change.toFixed(2);
+                
+                // Обновляем на странице
+                updateTickerOnPage(currentTicker, currentListType);
+                
+                saveTickersToStorage();
+                closeModal();
+            }
+        }
+
+        // Обновление тикера на странице
+        function updateTickerOnPage(ticker, listType) {
+            const tickerData = tickersData[listType][ticker];
+            const listItem = document.querySelector(`.ticker-item[data-ticker="${ticker}"][data-list-type="${listType}"]`);
+            
+            if (listItem) {
+                const changeNum = parseFloat(tickerData.change);
+                const changeClass = changeNum > 0 ? 'positive' : 
+                                  changeNum < 0 ? 'negative' : 'neutral';
+                
+                const addedDate = new Date(tickerData.addedDate);
+                const formattedDate = addedDate.toLocaleString();
+                
+                listItem.querySelector('.price-value').innerHTML = `$${tickerData.price} <span class="price-change ${changeClass}">${tickerData.change}%</span>`;
+                listItem.querySelector('.added-date').textContent = `Добавлен: ${formattedDate}`;
+            }
+        }
+
+        // Удаление тикера
+        function removeTicker(event, button) {
+            event.stopPropagation();
+            const listItem = button.parentElement;
+            const ticker = listItem.dataset.ticker;
+            const listType = listItem.dataset.listType;
+            
+            // Удаляем из объекта данных
+            delete tickersData[listType][ticker];
+            
+            // Удаляем со страницы
+            listItem.remove();
+            
+            // Сохраняем в localStorage
+            saveTickersToStorage();
+        }
+
+        // Обновление цены для одного тикера
+        async function updateTickerPrice(ticker, listType) {
+            const tickerData = tickersData[listType][ticker];
+            
+            // Обновляем только тикеры с Binance
+            if (tickerData.isBinance) {
+                try {
+                    const response = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${ticker}`);
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        tickerData.price = parseFloat(data.lastPrice).toFixed(6);
+                        tickerData.change = parseFloat(data.priceChangePercent).toFixed(2);
+                        
+                        // Обновляем на странице
+                        updateTickerOnPage(ticker, listType);
+                        
+                        saveTickersToStorage();
+                    }
+                } catch (error) {
+                    console.error(`Ошибка при обновлении ${ticker}:`, error);
+                }
+            }
+        }
+
+        // Обновление цен для всех тикеров
+        function updateAllPrices() {
+            for (const listType in tickersData) {
+                if (tickersData.hasOwnProperty(listType)) {
+                    for (const ticker in tickersData[listType]) {
+                        if (tickersData[listType].hasOwnProperty(ticker)) {
+                            updateTickerPrice(ticker, listType);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Обновление статистики
+        function updateStats() {
+            let totalTickers = 0;
+            let longCount = 0;
+            let shortCount = 0;
+            let longWaitCount = 0;
+            let shortWaitCount = 0;
+            
+            for (const listType in tickersData) {
+                if (tickersData.hasOwnProperty(listType)) {
+                    const count = Object.keys(tickersData[listType]).length;
+                    totalTickers += count;
+                    
+                    if (listType === 'long') longCount = count;
+                    if (listType === 'short') shortCount = count;
+                    if (listType === 'long-wait') longWaitCount = count;
+                    if (listType === 'short-wait') shortWaitCount = count;
+                }
+            }
+            
+            document.getElementById('total-tickers').textContent = totalTickers;
+            document.getElementById('long-count').textContent = longCount;
+            document.getElementById('short-count').textContent = shortCount;
+            document.getElementById('long-wait-count').textContent = longWaitCount;
+            document.getElementById('short-wait-count').textContent = shortWaitCount;
+        }
+
+        // Показать сообщение об ошибке
+        function showError(element, message) {
+            element.textContent = message;
+            element.style.display = 'block';
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 3000);
+        }
+
+        // Скрыть сообщение об ошибке
+        function hideError(element) {
+            element.style.display = 'none';
+        }
+
+        // Показать модальное окно импорта
+        function showImportModal(listType) {
+            currentImportListType = listType;
+            const titles = {
+                'long': 'LONG позиции',
+                'short': 'SHORT позиции',
+                'long-wait': 'LONG ожидание',
+                'short-wait': 'SHORT ожидание'
+            };
+            
+            importModalTitle.textContent = titles[listType];
+            fileInput.value = '';
+            importModal.style.display = 'flex';
+        }
+
+        // Закрыть модальное окно импорта
+        function closeImportModal() {
+            importModal.style.display = 'none';
+        }
+
+        // Импорт тикеров из файла
+        function importTickers() {
+            const file = fileInput.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const content = e.target.result;
+                const format = document.querySelector('input[name="importFormat"]:checked').value;
+                let tickers = [];
+                
+                if (format === 'newline') {
+                    tickers = content.split('\n')
+                        .map(t => t.trim().toUpperCase())
+                        .filter(t => t.length > 0);
+                } else {
+                    tickers = content.split(',')
+                        .map(t => t.trim().toUpperCase())
+                        .filter(t => t.length > 0);
+                }
+                
+                // Добавляем каждый тикер
+                tickers.forEach(ticker => {
+                    // Нормализация тикера
+                    ticker = ticker.replace(/[^A-Z0-9]/g, '');
+                    if (!ticker) return;
+                    
+                    // Добавляем USDT если его нет в конце
+                    if (!ticker.endsWith('USDT')) {
+                        ticker += 'USDT';
+                    }
+                    
+                    // Проверяем, не добавлен ли уже тикер
+                    if (!tickersData[currentImportListType][ticker]) {
+                        const now = new Date();
+                        tickersData[currentImportListType][ticker] = {
+                            name: ticker.replace('USDT', ''),
+                            price: '0.000000',
+                            change: '0.00',
+                            isBinance: false,
+                            addedDate: now.toISOString()
+                        };
+                        
+                        // Добавляем на страницу
+                        addTickerToList(ticker, currentImportListType);
+                    }
+                });
+                
+                saveTickersToStorage();
+                closeImportModal();
+                
+                // Пробуем обновить цены для новых тикеров
+                updateAllPrices();
+            };
+            reader.readAsText(file);
+        }
     </script>
 </body>
 </html>
