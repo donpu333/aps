@@ -115,62 +115,109 @@
     <div id="breakthroughText" class="text-display">
         <h3>Пробой</h3>
         <p>📊Предпосылки</p>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Ближний ретест</span></div>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Нет реакции на ЛП</span></div>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Накопление</span></div>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Закрытие вблизи уровня до 5%</span></div>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">После сильного движения нет отката</span></div>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Впереди свободная зона</span></div>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Выкупной бар</span></div>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Продажный бар</span></div>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Проторговка вблизи уровня на 1D</span></div>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Проторговка вблизи уровня на коротком таймфрейме 1ч/4ч</span></div>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Подходит поджатием на 1D</span></div>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Подходит поджатием на 1ч/4ч</span></div>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Понижающие хаи и лои</span></div>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Повышающие хаи и лои</span></div>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Затухание волатильности</span></div>
-    </div>
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Ближний ретест</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Нет реакции на ЛП</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Накопление</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Закрытие вблизи уровня до 5%</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">После сильного движения нет отката</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Впереди свободная зона</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Выкупной бар</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Продажный бар</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Проторговка вблизи уровня на 1D</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Проторговка вблизи уровня на коротком таймфрейме 1ч/4ч</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Подходит поджатием на 1D</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Подходит поджатием на 1ч/4ч</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Понижающие хаи и лои на 1D </span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Понижающие хаи и лои на лок.ТФ 1ч/4ч</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Повышающие хаи и лои 1D </span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Повышающие хаи и лои на лок.ТФ 1ч/4ч </span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Затухание волатильности на 1d</span></div>
+
+                     <div class="checkbox-item"><input type="checkbox"><span class="item-text">Затухание волатильности  на лок.ТФ 1ч/4ч</span></div>
+                </div>
 
     <div id="falseBreakthroughText" class="text-display">
         <h3>Ложный пробой</h3>
         <p>📊Предпосылки</p>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Дальний ретест</span></div>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Подход на больших барах</span></div>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Выход повышенные объемы перед уровням на 1ч 4ч</span></div>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Экстремум</span></div>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Впереди зараженная зона</span></div>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Длинное безоткатное движение</span></div>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Закрытие вдали от уровня мин от 10%</span></div>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Нет накопления</span></div>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Резкий подход на лок таймфрейме</span></div>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Повышенная волатильность</span></div>
-    </div>
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Дальний ретест</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Подход на больших барах</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Выход повышенные объемы перед уровням на 1ч 4ч</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Экстремум</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Впереди зараженная зона</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Длинное безоткатное движение</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Закрытие вдали от уровня мин от 10%</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Нет накопления</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Резкий подход на лок таймфрейме</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Повышенная волатильность</span></div>
+                </div>
 
     <div id="breakthroughMinusesText" class="text-display">
         <h3>Пробой минусы</h3>
         <p>⛔️ Минусы</p>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Повышенная волатильность</span></div>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Зараженная зона на 1D</span></div>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Зараженная зона на лок.ТФ</span></div>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Глубокий ЛП</span></div>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Резкий подход на лок ТФ</span></div>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Далеко закрылись от уровня</span></div>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Пройдено больше половины ATR</span></div>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Накопление на 1ч далеко от уровня</span></div>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Выравнивание баров на лок.ТФ</span></div>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Слабое накопление на 1D</span></div>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Слабое накопление на лок.ТФ</span></div>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Уровень часто прошивается на лок.ТФ</span></div>
-    </div>
+                     <div class="checkbox-item"><input type="checkbox"><span class="item-text">Повышенная волатильность на 1D </span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Повышенная волатильность на лок.ТФ 1ч/4ч </span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Зараженная зона на 1D</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Зараженная зона на лок.ТФ</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Глубокий ЛП</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Резкий подход на лок ТФ</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Далеко закрылись от уровня</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Пройдено больше половины ATR</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Накопление на 1ч далеко от уровня</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Выравнивание баров на лок.ТФ</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Выход повышенного объёма на лок.ТФ </span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Слабое накопление на 1D</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Слабое накопление на лок.ТФ</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Уровень часто прошивается на лок.ТФ</span></div>
+                </div>
+
 
     <div id="falseBreakthroughMinusesText" class="text-display">
         <h3>Ложный пробой минусы</h3>
         <p>⛔️ Минусы</p>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Повышенная волатильность</span></div>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Зараженная зона на 1D</span></div>
-        <div class="checkbox-item"><input type="checkbox"><span class="item-text">Зараженная зона на лок.ТФ</span></div>
-    </div>
+                     <div class="checkbox-item"><input type="checkbox"><span class="item-text">Повышенная волатильность</span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">В переди свободная зона </span></div>
+
+                    <div class="checkbox-item"><input type="checkbox"><span class="item-text">Глубокий пробой</span></div>
+                </div>
 
     <div id="actionButtons" class="action-buttons-container">
         <button id="copyBtn" class="action-btn" onclick="copySelectedText()">Копировать выбранное</button>
