@@ -1361,7 +1361,7 @@
             }
             
             // Добавляем USDT если его нет в конце (и это не фьючерс)
-            if (!ticker.endsWith('USDT') && !ticker.includes('_PERP')) {
+            if (!ticker.endsWith('USDT') && !ticker.includes('.P')) {
                 ticker += 'USDT';
             }
             
@@ -1372,7 +1372,7 @@
             
             // Создаем новый тикер
             const now = new Date();
-            const tickerName = popularTickers[ticker] ? popularTickers[ticker].name : ticker.replace(/USDT$|_PERP$/, '');
+            const tickerName = popularTickers[ticker] ? popularTickers[ticker].name : ticker.replace(/USDT$|.P$/, '');
             
             tickersData[listType][ticker] = {
                 name: tickerName,
@@ -1387,7 +1387,7 @@
                 let apiUrl;
                 if (ticker.includes('_PERP')) {
                     // Для фьючерсов используем Futures API
-                    const futuresTicker = ticker.replace('_PERP', '');
+                    const futuresTicker = ticker.replace('.P', '');
                     apiUrl = `https://fapi.binance.com/fapi/v1/ticker/24hr?symbol=${futuresTicker}`;
                 } else {
                     // Для спота используем Spot API
