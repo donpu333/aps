@@ -7,7 +7,8 @@ const API_CONFIG = {
         TEST: 'https://api.binance.com/api/v3/ping',
         FUTURES: 'https://fapi.binance.com',
         SPOT: 'https://api.binance.com'
-    }
+    },
+    PRICE_COMPARISON_EPSILON: 0.00000001 // Точность сравнения цен
 };
 
 // Конфигурация Telegram - ваш токен бота
@@ -346,17 +347,43 @@ class BinanceAPIManager {
     async getCurrentPrice(symbol, marketType) {
         try {
             const endpoint = marketType === 'futures'
-                ? `https://fapi.binance.com/fapi/v1/ticker/price?symbol=${symbol}`
-                : `https://api.binance.com/api/v3/ticker/price?symbol=${symbol}`;
+                ? `${API_CONFIG.ENDPOINTS.FUTURES}/fapi/v1/ticker/price?symbol=${symbol}`
+                : `${API_CONFIG.ENDPOINTS.SPOT}/api/v3/ticker/price?symbol=${symbol}`;
 
             const response = await this._fetchWithTimeout(endpoint);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            
             const data = await response.json();
-            return parseFloat(data.price);
+            
+            // Валидация ответа API
+            if (!data || typeof data.price !== 'string') {
+                console.error('Invalid price data:', data);
+                return null;
+            }
+            
+            const price = parseFloat(data.price);
+            return isNaN(price) ? null : price;
         } catch (error) {
-            console.error('Error getting current price:', error);
+            console.error(`Error getting price for ${symbol}:`, error);
             return null;
         }
     }
+}
+
+// Улучшенная функция сравнения цен
+function comparePrices(currentPrice, condition, targetPrice) {
+    const epsilon = API_CONFIG.PRICE_COMPARISON_EPSILON;
+    
+    // Форматируем числа для точного сравнения
+    const cp = parseFloat(currentPrice.toFixed(8));
+    const tp = parseFloat(targetPrice.toFixed(8));
+    
+    if (condition === '>') {
+        return cp - tp > epsilon;
+    } else if (condition === '<') {
+        return tp - cp > epsilon;
+    }
+    return false;
 }
 
 // Функция для отправки уведомлений в Telegram
@@ -383,6 +410,76 @@ async function sendTelegramNotification(message, chatId) {
     } catch (error) {
         console.error('Ошибка отправки сообщения:', error);
         return false;
+    }
+}
+
+// Новая функция для обработки сработавшего алерта
+async function handleTriggeredAlert(alert, currentPrice) {
+    const message = `🚨 Алерт сработал!\nСимвол: ${alert.symbol}\n` +
+                    `Условие: ${alert.condition} ${alert.value}\n` +
+                    `Текущая цена: ${formatNumber(currentPrice, 8)}`;
+    
+    // Отправка в Telegram
+    if (alert.notificationMethods.includes('telegram') && alert.chatId) {
+        try {
+            await sendTelegramNotification(message, alert.chatId);
+            alert.triggeredCount++;
+        } catch (error) {
+            console.error('Failed to send Telegram alert:', error);
+        }
+    }
+    
+    // Показываем уведомление в интерфейсе
+    showNotification('Алерт сработал', 
+        `Символ: ${alert.symbol}\n` +
+        `Условие: ${alert.condition} ${alert.value}\n` +
+        `Текущая цена: ${formatNumber(currentPrice, 8)}`);
+}
+
+async function checkAlerts() {
+    const now = Date.now();
+
+    for (const alert of userAlerts.filter(a => !a.triggered)) {
+        try {
+            // Всегда получаем свежую цену, без кеширования
+            const price = await apiManager.getCurrentPrice(alert.symbol, alert.marketType);
+            if (price === null) continue;
+
+            // Безопасное сравнение цен
+            const conditionMet = comparePrices(price, alert.condition, alert.value);
+
+            if (conditionMet) {
+                const cooldownKey = `${alert.symbol}_${alert.condition}_${alert.value}`;
+                const lastNotification = alertCooldowns[cooldownKey] || 0;
+
+                if (now - lastNotification > 30000) { // 30 секунд кд
+                    // Логируем детали срабатывания для отладки
+                    console.log(`Alert triggered: ${alert.symbol} ${alert.condition} ${alert.value} | Current: ${price} | Time: ${new Date().toISOString()}`);
+                    
+                    // Отправка уведомлений и обработка срабатывания
+                    await handleTriggeredAlert(alert, price);
+                    
+                    alertCooldowns[cooldownKey] = now;
+                    activeTriggeredAlerts[alert.id] = true;
+
+                    setTimeout(() => {
+                        delete activeTriggeredAlerts[alert.id];
+                        loadUserAlerts(currentAlertFilter);
+                    }, 5000);
+
+                    if (alert.notificationCount > 0 && alert.triggeredCount >= alert.notificationCount) {
+                        alert.triggered = true;
+                        console.log(`Alert ${alert.id} reached notification limit`);
+                    }
+
+                    saveTriggeredAlert(alert);
+                    saveAppState();
+                    loadUserAlerts(currentAlertFilter);
+                }
+            }
+        } catch (error) {
+            console.error(`Error checking alert ${alert.id}:`, error);
+        }
     }
 }
 
@@ -1230,74 +1327,6 @@ function closeEditModal() {
 
     if (editModal) editModal.classList.remove('active');
     if (editFormContent) editFormContent.innerHTML = '';
-}
-
-async function checkAlerts() {
-    const now = Date.now();
-
-    // Проверка доступности бота
-    try {
-        const response = await fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/getMe`);
-        if (!response.ok) throw new Error('Бот недоступен');
-    } catch (error) {
-        console.error('Бот недоступен:', error);
-        showNotification('Ошибка', 'Telegram бот недоступен');
-        return;
-    }
-
-    for (const alert of userAlerts.filter(a => !a.triggered)) {
-        try {
-            const price = await apiManager.getCurrentPrice(alert.symbol, alert.marketType);
-            if (price === null) continue;
-
-            const conditionMet = eval(`${price} ${alert.condition} ${alert.value}`);
-
-            if (conditionMet) {
-                const cooldownKey = `${alert.symbol}_${alert.condition}_${alert.value}`;
-                const lastNotification = alertCooldowns[cooldownKey] || 0;
-
-                if (now - lastNotification > 30000) { // 30 секунд кд
-                    const message = `🚨 Алерт сработал!\nСимвол: ${alert.symbol}\nУсловие: ${alert.condition} ${alert.value}\nТекущая цена: ${price}`;
-
-                    if (alert.notificationMethods.includes('telegram') && alert.chatId) {
-                        await sendTelegramNotification(message, alert.chatId);
-                    }
-
-                    alert.triggeredCount++;
-                    alertCooldowns[cooldownKey] = now;
-
-                    // Добавляем в активные сработавшие алерты для анимации
-                    activeTriggeredAlerts[alert.id] = true;
-
-                    // Через 5 секунд убираем анимацию
-                    setTimeout(() => {
-                        delete activeTriggeredAlerts[alert.id];
-                        loadUserAlerts(currentAlertFilter);
-                    }, 5000);
-
-                    // Проверяем лимит уведомлений
-                    if (alert.notificationCount > 0 && alert.triggeredCount >= alert.notificationCount) {
-                        alert.triggered = true;
-                        showNotification('Алерт завершен', `Алерт для ${alert.symbol} достиг лимита уведомлений (${alert.notificationCount})`);
-                    }
-
-                    // Сохраняем в историю
-                    saveTriggeredAlert(alert);
-
-                    // Показываем уведомление в интерфейсе
-                    showNotification('Алерт сработал', `Символ: ${alert.symbol}\nУсловие: ${alert.condition} ${alert.value}\nТекущая цена: ${price}`);
-
-                    // Сохраняем изменения
-                    saveAppState();
-
-                    // Обновляем интерфейс
-                    loadUserAlerts(currentAlertFilter);
-                }
-            }
-        } catch (error) {
-            console.error(`Ошибка проверки алерта ${alert.symbol}:`, error);
-        }
-    }
 }
 
 // Telegram settings functions
