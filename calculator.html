@@ -818,6 +818,9 @@
                     <button class="export-btn flex-1" id="exportTelegramBtn">
                         <i class="fab fa-telegram mr-2"></i>Отправить в Telegram
                     </button>
+                    <button class="export-btn flex-1" id="copyCalculationBtn">
+                        <i class="fas fa-copy mr-2"></i>Копировать расчет
+                    </button>
                 </div>
             </div>
 
@@ -931,6 +934,73 @@
             const factor = Math.pow(10, decimals);
             const rounded = Math.round(num * factor) / factor;
             return rounded.toString().replace(/(\.\d*?[1-9])0+$/, '$1').replace(/\.$/, '');
+        }
+
+        // Функция для генерации текста расчета
+        function generateCalculationText() {
+            const entryPrice = parseFloat(document.getElementById('entryPrice').value) || 0;
+            const leverage = parseFloat(document.getElementById('leverage').value) || 1;
+            const atr = parseFloat(document.getElementById('atr').value) || 0;
+            const riskPercent = parseFloat(document.getElementById('riskPercent').value);
+            const riskAmount = parseFloat(document.getElementById('riskAmount').value) || 0;
+            const rewardRatio1 = parseFloat(document.getElementById('rewardRatio1').value) || 3;
+            const rewardRatio2 = parseFloat(document.getElementById('rewardRatio2').value) || 5;
+            const stopLossPriceDirect = parseFloat(document.getElementById('stopLossPrice').value) || 0;
+
+            // Получаем название типа сделки
+            let tradeTypeName = '';
+            switch(tradeType) {
+                case 'long-breakout': tradeTypeName = 'Лонг Пробой'; break;
+                case 'long-fakeout': tradeTypeName = 'Лонг Ложный пробой'; break;
+                case 'short-breakout': tradeTypeName = 'Шорт Пробой'; break;
+                case 'short-fakeout': tradeTypeName = 'Шорт Ложный пробой'; break;
+            }
+
+            // Получаем метод расчета стоп-лосса
+            const stopMethodName = stopMethod === 'atr' ? 'По ATR' : 'По цене';
+
+            const text = `
+Калькулятор рисков - Результаты
+===============================
+Дата: ${new Date().toLocaleString()}
+Направление: ${isLong ? 'Лонг' : 'Шорт'}
+Тип сделки: ${tradeTypeName}
+Метод расчета стоп-лосса: ${stopMethodName}
+
+Параметры сделки:
+-----------------
+Цена входа: ${formatNumber(entryPrice, 8)} USDT
+Кредитное плечо: ${leverage}x
+${stopMethod === 'atr' ? `ATR: ${formatNumber(atr, 8)} USDT\nРиск стоп-лосс: ${riskPercent}% от ATR` : `Цена стоп-лосса: ${formatNumber(stopLossPriceDirect, 8)} USDT`}
+Риск на сделку: ${formatNumber(riskAmount, 8)} USDT
+Соотношение тейк-профита: 1:${rewardRatio1} и 1:${rewardRatio2}
+
+Результаты:
+-----------
+Цена входа: ${formatNumber(entryPrice, 8)} USDT
+Размер позиции: ${document.getElementById('positionSize').textContent}
+Стоп-лосс: ${document.getElementById('stopLoss').textContent}
+
+Уровни тейк-профита:
+${Array.from(document.getElementById('takeProfitLevels').children).map(el =>
+    el.textContent.trim().replace(/\s+/g, ' ')
+).join('\n')}
+
+Цена ликвидации: ${document.getElementById('liquidationPrice').textContent}
+            `;
+
+            return text;
+        }
+
+        // Функция для копирования расчета в буфер обмена
+        function copyCalculationToClipboard() {
+            const calculationText = generateCalculationText();
+            
+            navigator.clipboard.writeText(calculationText).then(() => {
+                showNotification('Расчет скопирован в буфер обмена!', 'success');
+            }).catch(err => {
+                showNotification('Не удалось скопировать расчет: ' + err, 'error');
+            });
         }
 
         // Функции для работы с пользователями
@@ -1165,46 +1235,7 @@
             const botToken = user.telegramSettings.botToken;
             const chatId = user.telegramSettings.chatId;
 
-            const entryPrice = parseFloat(document.getElementById('entryPrice').value) || 0;
-            const leverage = parseFloat(document.getElementById('leverage').value) || 1;
-            const riskAmount = parseFloat(document.getElementById('riskAmount').value) || 0;
-            const atr = parseFloat(document.getElementById('atr').value) || 0;
-            const riskPercent = parseFloat(document.getElementById('riskPercent').value) || 0;
-
-            // Получаем название типа сделки
-            let tradeTypeName = '';
-            switch(tradeType) {
-                case 'long-breakout': tradeTypeName = 'Лонг Пробой'; break;
-                case 'long-fakeout': tradeTypeName = 'Лонг Ложный пробой'; break;
-                case 'short-breakout': tradeTypeName = 'Шорт Пробой'; break;
-                case 'short-fakeout': tradeTypeName = 'Шорт Ложный пробой'; break;
-            }
-
-            // Получаем метод расчета стоп-лосса
-            const stopMethodName = stopMethod === 'atr' ? 'По ATR' : 'По цене';
-
-            // Формируем текст сообщения
-            const messageText = `
-📊 Результаты расчета позиции 📊
-
-Направление: ${isLong ? 'Лонг' : 'Шорт'} (${tradeTypeName})
-Цена входа: ${formatNumber(entryPrice, 8)} USDT
-Плечо: ${leverage}x
-Стоп-лосс: ${stopMethod === 'price' ? formatNumber(document.getElementById('stopLossPrice').value, 8) + ' USDT (расчётный)' : formatNumber(atr * riskPercent / 100, 8) + ' USDT (' + riskPercent + '% от ATR)'}
-Риск на сделку: ${formatNumber(riskAmount, 8)} USDT
-Метод расчета стоп-лосса: ${stopMethodName}
-
-Размер позиции: ${formatNumber(document.getElementById('positionSize').textContent.split(' ')[0], 8)}
-Стоп-лосс: ${formatNumber(document.getElementById('stopLoss').textContent.split(' ')[0], 8)} USDT
-
-Тейк-профиты:
-${Array.from(document.getElementById('takeProfitLevels').children).map(el => {
-    const parts = el.textContent.trim().split(/\s+/);
-    return `• ${parts[0]} ${parts[1]} ${formatNumber(parts[2], 8)} USDT ${parts[3]} ${formatNumber(parts[4], 8)} USDT`;
-}).join('\n')}
-
-Цена ликвидации: ${formatNumber(document.getElementById('liquidationPrice').textContent.split(' ')[0], 8)} USDT
-`;
+            const calculationText = generateCalculationText();
 
             try {
                 const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
@@ -1214,7 +1245,7 @@ ${Array.from(document.getElementById('takeProfitLevels').children).map(el => {
                     },
                     body: JSON.stringify({
                         chat_id: chatId,
-                        text: messageText,
+                        text: calculationText,
                         parse_mode: 'Markdown'
                     })
                 });
@@ -1415,6 +1446,7 @@ ${Array.from(document.getElementById('takeProfitLevels').children).map(el => {
                 // Инициализация кнопки экспорта
                 document.getElementById('exportTextBtn').addEventListener('click', exportToText);
                 document.getElementById('exportTelegramBtn').addEventListener('click', sendToTelegram);
+                document.getElementById('copyCalculationBtn').addEventListener('click', copyCalculationToClipboard);
 
                 // Проверяем авторизацию пользователя
                 const currentUser = JSON.parse(localStorage.getItem('currentUser'));
@@ -1583,57 +1615,7 @@ ${Array.from(document.getElementById('takeProfitLevels').children).map(el => {
 
             // Экспорт в текстовый файл
             function exportToText() {
-                const entryPrice = parseFloat(document.getElementById('entryPrice').value) || 0;
-                const leverage = parseFloat(document.getElementById('leverage').value) || 1;
-                const atr = parseFloat(document.getElementById('atr').value) || 0;
-                const riskPercent = parseFloat(document.getElementById('riskPercent').value);
-                const riskAmount = parseFloat(document.getElementById('riskAmount').value) || 0;
-                const rewardRatio1 = parseFloat(document.getElementById('rewardRatio1').value) || 3;
-                const rewardRatio2 = parseFloat(document.getElementById('rewardRatio2').value) || 5;
-                const stopLossPriceDirect = parseFloat(document.getElementById('stopLossPrice').value) || 0;
-
-                // Получаем название типа сделки
-                let tradeTypeName = '';
-                switch(tradeType) {
-                    case 'long-breakout': tradeTypeName = 'Лонг Пробой'; break;
-                    case 'long-fakeout': tradeTypeName = 'Лонг Ложный пробой'; break;
-                    case 'short-breakout': tradeTypeName = 'Шорт Пробой'; break;
-                    case 'short-fakeout': tradeTypeName = 'Шорт Ложный пробой'; break;
-                }
-
-                // Получаем метод расчета стоп-лосса
-                const stopMethodName = stopMethod === 'atr' ? 'По ATR' : 'По цене';
-
-                const content = `
-Калькулятор рисков - Результаты
-===============================
-Дата: ${new Date().toLocaleString()}
-Направление: ${isLong ? 'Лонг' : 'Шорт'}
-Тип сделки: ${tradeTypeName}
-Метод расчета стоп-лосса: ${stopMethodName}
-
-Параметры сделки:
------------------
-Цена входа: ${formatNumber(entryPrice, 8)} USDT
-Кредитное плечо: ${leverage}x
-${stopMethod === 'atr' ? `ATR: ${formatNumber(atr, 8)} USDT\nРиск стоп-лосс: ${riskPercent}% от ATR` : `Цена стоп-лосса: ${formatNumber(stopLossPriceDirect, 8)} USDT`}
-Риск на сделку: ${formatNumber(riskAmount, 8)} USDT
-Соотношение тейк-профита: 1:${rewardRatio1} и 1:${rewardRatio2}
-
-Результаты:
------------
-Цена входа: ${formatNumber(entryPrice, 8)} USDT
-Размер позиции: ${formatNumber(positionSizeSpan.textContent, 8)}
-Стоп-лосс: ${formatNumber(stopLossSpan.textContent, 8)} USDT
-
-Уровни тейк-профита:
-${Array.from(takeProfitLevelsDiv.children).map(el =>
-    el.textContent.trim().replace(/\s+/g, ' ')
-).join('\n')}
-
-Цена ликвидации: ${formatNumber(liquidationPriceSpan.textContent, 8)} USDT
-                `;
-
+                const content = generateCalculationText();
                 const blob = new Blob([content], {type: 'text/plain'});
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -1793,6 +1775,7 @@ ${Array.from(takeProfitLevelsDiv.children).map(el =>
         window.saveTelegramSettings = saveTelegramSettings;
         window.testTelegramConnection = testTelegramConnection;
         window.sendToTelegram = sendToTelegram;
+        window.copyCalculationToClipboard = copyCalculationToClipboard;
     </script>
 </body>
 </html>
